@@ -39,10 +39,15 @@ main{max-width:960px;margin:0 auto;padding:40px 24px}
 .sbtn:hover{border-color:#444;color:var(--text2)}
 .sbtn.on{border-color:var(--accent);color:var(--accent);background:var(--adim)}
 .lbl{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin:0 0 14px}
-.spin{display:flex;gap:6px;justify-content:center;padding:60px 0}
-.sdot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.2s infinite}
-.sdot:nth-child(2){animation-delay:.2s}.sdot:nth-child(3){animation-delay:.4s}
 @keyframes pulse{0%,80%,100%{opacity:.15}40%{opacity:1}}
+.loader-wrap{display:flex;flex-direction:column;align-items:center;padding:60px 0;gap:14px}
+.scr-word{font-family:'DM Mono',monospace;font-size:40px;font-weight:500;color:var(--accent);letter-spacing:6px;text-shadow:0 0 24px rgba(127,255,110,.35);min-width:240px;text-align:center}
+.loader-msg{font-size:12px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+.loader-msg::after{content:'';animation:dotsani 1.4s steps(4,end) infinite}
+@keyframes dotsani{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+.loader-bar{width:200px;height:1px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}
+.loader-fill{height:100%;background:var(--accent);border-radius:2px;animation:barslide 1.6s ease-in-out infinite;box-shadow:0 0 8px rgba(127,255,110,.5)}
+@keyframes barslide{0%{transform:translateX(-100%);width:35%}50%{width:55%}100%{transform:translateX(380%);width:35%}}
 .empty{text-align:center;padding:60px 0;color:var(--text3);font-size:15px;line-height:1.8}
 .empty strong{color:var(--text2);font-weight:500}
 .errbox{background:var(--redbg);border:1px solid var(--redbr);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--red);font-family:'DM Mono',monospace;word-break:break-all;white-space:pre-wrap;margin-bottom:16px}
@@ -100,7 +105,7 @@ footer{text-align:center;padding:40px 24px;color:var(--text3);font-size:12px;bor
       <div class="srow"><span class="slbl">Стиль:</span><div id="sc"></div></div>
     </div>
     <div id="ea"></div>
-    <div id="la" style="display:none"><div class="spin"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div></div>
+    <div id="la" style="display:none"><div class="loader-wrap"><div class="scr-word" id="scr-word">naming</div><div class="loader-msg">ИИ генерирует названия</div><div class="loader-bar"><div class="loader-fill"></div></div></div></div>
     <div class="empty" id="em">Введите ключевые слова<br><strong>например: "органическая косметика Ташкент"</strong></div>
     <div id="rh"></div>
     <div class="grid" id="gr"></div>
@@ -113,6 +118,28 @@ footer{text-align:center;padding:40px 24px;color:var(--text3);font-size:12px;bor
 <footer>NameGen.uz · Проверка .uz: rdap.cctld.uz (UZINFOCOM) → Google DNS (резерв)</footer>
 
 <script>
+var SCR_CHARS='abcdefghijklmnopqrstuvwxyz';
+var SCR_WORDS=['namegen','branding','startup','creative','bizname','ideabot','venture','product'];
+var scrTimer=null;
+function startScramble(){
+  var el=document.getElementById('scr-word');
+  if(!el)return;
+  var wi=0,frame=0;
+  function tick(){
+    var target=SCR_WORDS[wi%SCR_WORDS.length];
+    var out='';
+    for(var i=0;i<target.length;i++){
+      out+=frame>i*4?target[i]:SCR_CHARS[Math.floor(Math.random()*SCR_CHARS.length)];
+    }
+    el.textContent=out;
+    frame++;
+    if(frame>=target.length*4+12){frame=0;wi++;}
+    scrTimer=setTimeout(tick,55);
+  }
+  tick();
+}
+function stopScramble(){if(scrTimer){clearTimeout(scrTimer);scrTimer=null;}}
+
 var ST=[
   {id:'brandable',l:'Брендовые'},{id:'wordmix',l:'Словослияние'},
   {id:'foreign',l:'Иностранные'},{id:'spelling',l:'Нестандартное написание'},
@@ -160,7 +187,7 @@ function gen() {
   document.getElementById('em').style.display = 'none';
   document.getElementById('rh').innerHTML = '';
   document.getElementById('gr').innerHTML = '';
-  document.getElementById('la').style.display = 'block';
+  document.getElementById('la').style.display = 'block'; startScramble();
 
   fetch('/api/generate', {
     method: 'POST',
@@ -199,7 +226,7 @@ function gen() {
     document.getElementById('em').innerHTML = 'Что-то пошло не так.<br><strong>Детали выше ↑</strong>';
   })
   .finally(function() {
-    document.getElementById('la').style.display = 'none';
+    stopScramble(); document.getElementById('la').style.display = 'none';
     btn.disabled = false;
   });
 }
