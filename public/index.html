@@ -499,8 +499,8 @@ function updateIg(un,result){
     el.style.cursor='pointer';
     el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   } else {
-    el.className='soc-btn ig-taken';
-    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — занят</span>';
+    el.className='soc-btn ig-btn';
+    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверьте вручную</span>';
     el.style.cursor='pointer';
     el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   }
