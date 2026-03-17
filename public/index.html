@@ -99,7 +99,7 @@ footer{text-align:center;padding:40px 24px;color:var(--text3);font-size:12px;bor
   <div id="v-gen">
     <div class="sbox">
       <div class="irow">
-        <input class="inp" id="kw" placeholder="кофе, доставка, Ташкент..." onkeydown="if(event.key==='Enter')gen()"/>
+        <div style="position:relative;flex:1"><input class="inp" id="kw" placeholder="кофе, доставка, Ташкент..." onkeydown="if(event.key==='Enter')gen()" oninput="toggleClear()" style="width:100%;padding-right:42px"/><button id="clr-btn" onclick="clearKw()" title="Очистить" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;padding:2px 4px;transition:color .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">×</button></div>
         <button class="gbtn" id="gb" onclick="gen()">Генерировать →</button>
       </div>
       <div class="srow"><span class="slbl">Стиль:</span><div id="sc"></div></div>
@@ -118,6 +118,9 @@ footer{text-align:center;padding:40px 24px;color:var(--text3);font-size:12px;bor
 <footer>NameGen.uz - Разработано в MAZE | 2026</footer>
 
 <script>
+function toggleClear(){var b=document.getElementById('clr-btn');if(b)b.style.display=document.getElementById('kw').value?'block':'none';}
+function clearKw(){document.getElementById('kw').value='';document.getElementById('clr-btn').style.display='none';document.getElementById('kw').focus();}
+
 var SCR_CHARS='abcdefghijklmnopqrstuvwxyz';
 var SCR_WORDS=['namegen','branding','startup','creative','bizname','ideabot','venture','product'];
 var scrTimer=null;
