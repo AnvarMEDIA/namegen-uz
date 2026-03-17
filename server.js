@@ -29,8 +29,7 @@ app.post('/api/generate', async (req, res) => {
     spelling:    'Нестандартное написание (Fiverr, Tumblr)',
     short:       'Максимально короткие (до 6 букв)',
     abstract:    'Абстрактные (без прямой связи с ключевым словом)',
-    uzbek_roots: 'Узбекские корни',
-    turkic:      'Тюркские слова',
+    uzbek_roots: 'Узбекские и тюркские корни',
   };
   const styleLabel = styleMap[style] || style;
 
@@ -39,11 +38,9 @@ app.post('/api/generate', async (req, res) => {
       'Use Uzbek morphological roots: nur (light), baxt (happiness), zafar (victory), yulduz (star), ' +
       'gulzor (flower garden), tong (dawn), oltin (gold). ' +
       'Combine with Uzbek suffixes: -kor (doer), -zor (place of), -chi (worker), -lik (quality), -bon (keeper). ' +
-      'Examples of valid combinations: nurkor, baxtzor, tondchi, oltinlik.',
-    turkic:
-      'Use Turkic roots: yol (road/path), kuch (strength/power), bek (leader/strong), ' +
+      'Also draw from Turkic roots: yol (road/path), kuch (strength/power), bek (leader/strong), ' +
       'ay (moon), el (nation/people). ' +
-      'Blend them creatively: yolbek, kuchay, elbek, ayol, kucher.',
+      'Mix both sets freely: nurkor, baxtzor, tondchi, yolbek, kuchay, elbek.',
   };
   const extraInstruction = styleExtra[style]
     ? `\nStyle-specific rules: ${styleExtra[style]}`
