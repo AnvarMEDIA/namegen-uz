@@ -40,10 +40,10 @@ exports.handler = async (event) => {
     messages: [{
       role: 'user',
       content:
-        `Generate 12 brand names for: "${keywords.trim()}"\n` +
+        `Generate 10 brand names for: "${keywords.trim()}"\n` +
         `Style: ${styleLabel}\n` +
         `STRICT: only a-z and 0-9 in the "name" field. The tagline is in Russian (1 short sentence).\n` +
-        `Return ONLY: {"names":[{"name":"zuno","tagline":"тэглайн на русском"},...]} — 12 items.`
+        `Return ONLY: {"names":[{"name":"zuno","tagline":"тэглайн на русском"},...]} — 10 items.`
     }]
   };
 
