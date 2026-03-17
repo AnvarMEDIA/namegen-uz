@@ -23,26 +23,54 @@ app.post('/api/generate', async (req, res) => {
   }
 
   const styleMap = {
-    brandable: 'Брендовые (придуманные слова типа Spotify, Kodak)',
-    wordmix:   'Словослияние (Facebook = face+book)',
-    foreign:   'Иностранные слова (латынь, итальянский, японский)',
-    spelling:  'Нестандартное написание (Fiverr, Tumblr)',
-    short:     'Максимально короткие (до 6 букв)',
-    abstract:  'Абстрактные (без прямой связи с ключевым словом)',
+    brandable:   'Брендовые (придуманные слова типа Spotify, Kodak)',
+    wordmix:     'Словослияние (Facebook = face+book)',
+    foreign:     'Иностранные слова (латынь, итальянский, японский)',
+    spelling:    'Нестандартное написание (Fiverr, Tumblr)',
+    short:       'Максимально короткие (до 6 букв)',
+    abstract:    'Абстрактные (без прямой связи с ключевым словом)',
+    uzbek_roots: 'Узбекские корни',
+    turkic:      'Тюркские слова',
   };
   const styleLabel = styleMap[style] || style;
 
+  const styleExtra = {
+    uzbek_roots:
+      'Use Uzbek morphological roots: nur (light), baxt (happiness), zafar (victory), yulduz (star), ' +
+      'gulzor (flower garden), tong (dawn), oltin (gold). ' +
+      'Combine with Uzbek suffixes: -kor (doer), -zor (place of), -chi (worker), -lik (quality), -bon (keeper). ' +
+      'Examples of valid combinations: nurkor, baxtzor, tondchi, oltinlik.',
+    turkic:
+      'Use Turkic roots: yol (road/path), kuch (strength/power), bek (leader/strong), ' +
+      'ay (moon), el (nation/people). ' +
+      'Blend them creatively: yolbek, kuchay, elbek, ayol, kucher.',
+  };
+  const extraInstruction = styleExtra[style]
+    ? `\nStyle-specific rules: ${styleExtra[style]}`
+    : '';
+
+  const phoneticRule =
+    'Phonetic rules for ALL names: max 3 syllables, avoid complex consonant clusters ' +
+    '(no str/spr/spl/ght/etc at start), must be easy to pronounce in Uzbek.';
+
   const body = {
     model: 'claude-sonnet-4-20250514',
-    max_tokens: 1200,
-    system: 'You are a brand naming expert. CRITICAL: names must contain ONLY Latin letters (a-z) and digits (0-9). NO Cyrillic. NO Arabic. NO underscores. NO spaces. Length 3-12. Respond with ONLY raw JSON, no markdown.',
+    max_tokens: 1400,
+    system:
+      'You are a brand naming expert specialising in the Uzbek market. ' +
+      'CRITICAL: names must contain ONLY Latin letters (a-z) and digits (0-9). ' +
+      'NO Cyrillic. NO Arabic. NO underscores. NO spaces. Length 3-12 characters. ' +
+      'Respond with ONLY raw JSON, no markdown, no extra text.',
     messages: [{
       role: 'user',
       content:
         `Generate 10 brand names for: "${keywords.trim()}"\n` +
-        `Style: ${styleLabel}\n` +
-        `STRICT: only a-z and 0-9 in the "name" field. The tagline is in Russian (1 short sentence).\n` +
-        `Return ONLY: {"names":[{"name":"zuno","tagline":"тэглайн на русском"},...]} — 10 items.`
+        `Style: ${styleLabel}${extraInstruction}\n` +
+        `${phoneticRule}\n` +
+        `STRICT: only a-z and 0-9 in the "name" field.\n` +
+        `For each name provide TWO taglines: tagline_ru in Russian (1 short catchy sentence) ` +
+        `and tagline_uz in Uzbek (1 short catchy sentence in Latin Uzbek script).\n` +
+        `Return ONLY: {"names":[{"name":"nurtek","tagline_ru":"Свет технологий","tagline_uz":"Texnologiya nuri"},...]} — 10 items.`
     }]
   };
 
@@ -86,7 +114,13 @@ app.post('/api/generate', async (req, res) => {
         return res.status(500).json({ error: 'Невалидный JSON от API', raw: raw.slice(0, 200) });
       }
 
-      const names = (parsed.names || []).filter(r => r?.name && /^[a-z0-9]+$/i.test(r.name));
+      const names = (parsed.names || [])
+        .filter(r => r?.name && /^[a-z0-9]+$/i.test(r.name))
+        .map(r => ({
+          name:       r.name,
+          tagline_ru: r.tagline_ru || r.tagline || '',
+          tagline_uz: r.tagline_uz || '',
+        }));
       if (!names.length) return res.status(500).json({ error: 'Нет валидных имён в ответе' });
 
       return res.json({ names });
