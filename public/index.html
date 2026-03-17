@@ -101,6 +101,8 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .rh-count{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;color:var(--text)}
 .rh-sub{font-size:13px;color:var(--text3);margin-top:1px}
 .legend{display:flex;gap:14px}
+.check-row{display:flex;align-items:center;gap:8px}
+.check-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;width:62px;flex-shrink:0}
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-weight:500}
 .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
@@ -580,14 +582,23 @@ function renderGrid(){
       '<div class="ctag">'+esc(tru)+'</div>'+
       '<div class="ctag-uz">'+esc(tuz)+'</div>'+
       '<div class="checks">'+
-        '<div class="uz-row uz-checking" id="uz-'+dn+'">'+
-          '<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — проверяем...</span>'+
+        '<div class="check-row">'+
+          '<span class="check-label">Домен</span>'+
+          '<div class="uz-row uz-checking" id="uz-'+dn+'">'+
+            '<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — проверяем...</span>'+
+          '</div>'+
         '</div>'+
-        '<div class="soc-btn tg-checking" id="tg-'+un+'">'+
-          '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — проверяем...</span>'+
+        '<div class="check-row">'+
+          '<span class="check-label">Telegram</span>'+
+          '<div class="soc-btn tg-checking" id="tg-'+un+'">'+
+            '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — проверяем...</span>'+
+          '</div>'+
         '</div>'+
-        '<div class="soc-btn ig-checking" id="ig-'+un+'">'+
-          '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверяем...</span>'+
+        '<div class="check-row">'+
+          '<span class="check-label">Instagram</span>'+
+          '<div class="soc-btn ig-checking" id="ig-'+un+'">'+
+            '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверяем...</span>'+
+          '</div>'+
         '</div>'+
       '</div>'+
       '<div class="card-divider"></div>'+
