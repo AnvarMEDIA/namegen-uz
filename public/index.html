@@ -160,10 +160,18 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .soc-btn:hover{opacity:.8}
 .soc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .soc-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tg-btn{background:rgba(41,168,224,.07);color:#29a8e0;border-color:rgba(41,168,224,.2)}
+.tg-btn,.tg-taken{background:rgba(41,168,224,.07);color:#29a8e0;border-color:rgba(41,168,224,.2)}
 .tg-dot{background:#29a8e0}
-.ig-btn{background:rgba(225,48,108,.07);color:#e1306c;border-color:rgba(225,48,108,.2)}
+.tg-checking{background:rgba(41,168,224,.03);color:var(--text3);border-color:rgba(41,168,224,.1);cursor:default}
+.tg-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
+.tg-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
+.tg-free .soc-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
+.ig-btn,.ig-taken{background:rgba(225,48,108,.07);color:#e1306c;border-color:rgba(225,48,108,.2)}
 .ig-dot{background:#e1306c}
+.ig-checking{background:rgba(225,48,108,.03);color:var(--text3);border-color:rgba(225,48,108,.1);cursor:default}
+.ig-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
+.ig-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
+.ig-free .soc-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
 
 /* ── Loader ──────────────────────────────────────────── */
 .loader-wrap{display:flex;flex-direction:column;align-items:center;padding:72px 0;gap:16px}
@@ -407,7 +415,7 @@ var ST=[
   {id:'short',l:'До 6 букв'},{id:'abstract',l:'Абстрактные'},
   {id:'uzbek_roots',l:'🇺🇿 Узбекские корни'},
 ];
-var cs='brandable', favs=[], res=[], dcache={};
+var cs='brandable', favs=[], res=[], dcache={}, tgcache={}, igcache={};
 try{favs=JSON.parse(localStorage.getItem('ng_f')||'[]')}catch(e){}
 
 ST.forEach(function(s){
@@ -440,6 +448,62 @@ function checkUz(name){
     .then(function(r){return r.json();})
     .then(function(d){dcache[name]=d;return d;})
     .catch(function(e){return{status:'error',msg:e.message};});
+}
+
+// ── Telegram check ─────────────────────────────────────
+function checkTg(un){
+  if(!un||un.length<3)return Promise.resolve({status:'error'});
+  if(tgcache[un])return Promise.resolve(tgcache[un]);
+  return fetch('/api/check-tg/'+encodeURIComponent(un))
+    .then(function(r){return r.json();})
+    .then(function(d){tgcache[un]=d;return d;})
+    .catch(function(e){return{status:'error',msg:e.message};});
+}
+function updateTg(un,result){
+  var el=document.getElementById('tg-'+un); if(!el)return;
+  if(result.status==='free'){
+    el.className='soc-btn tg-free';
+    el.innerHTML='<div class="soc-dot"></div><span class="soc-label">t.me/'+un+' — свободен ✓</span>';
+    el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
+  } else if(result.status==='taken'){
+    el.className='soc-btn tg-taken';
+    el.innerHTML='<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — занят</span>';
+    el.style.cursor='pointer';
+    el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
+  } else {
+    el.className='soc-btn tg-taken';
+    el.innerHTML='<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+'</span>';
+    el.style.cursor='pointer';
+    el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
+  }
+}
+
+// ── Instagram check ────────────────────────────────────
+function checkIg(un){
+  if(!un||un.length<1)return Promise.resolve({status:'error'});
+  if(igcache[un])return Promise.resolve(igcache[un]);
+  return fetch('/api/check-ig/'+encodeURIComponent(un))
+    .then(function(r){return r.json();})
+    .then(function(d){igcache[un]=d;return d;})
+    .catch(function(e){return{status:'error',msg:e.message};});
+}
+function updateIg(un,result){
+  var el=document.getElementById('ig-'+un); if(!el)return;
+  if(result.status==='free'){
+    el.className='soc-btn ig-free';
+    el.innerHTML='<div class="soc-dot"></div><span class="soc-label">@'+un+' — свободен ✓</span>';
+    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
+  } else if(result.status==='taken'){
+    el.className='soc-btn ig-taken';
+    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — занят</span>';
+    el.style.cursor='pointer';
+    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
+  } else {
+    el.className='soc-btn ig-taken';
+    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' Instagram</span>';
+    el.style.cursor='pointer';
+    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
+  }
 }
 
 // ── Generate ───────────────────────────────────────────
@@ -475,7 +539,10 @@ function gen(){
     renderGrid();
     res.forEach(function(r){
       var dn=cleanDomain(r.name);
+      var un=cleanUser(r.name);
       if(dn)checkUz(dn).then(function(result){updateUz(dn,result);});
+      if(un)checkTg(un).then(function(result){updateTg(un,result);});
+      if(un)checkIg(un).then(function(result){updateIg(un,result);});
     });
   })
   .catch(function(e){
@@ -520,12 +587,12 @@ function renderGrid(){
         '<div class="uz-row uz-checking" id="uz-'+dn+'">'+
           '<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — проверяем...</span>'+
         '</div>'+
-        '<a class="soc-btn tg-btn" href="https://t.me/'+un+'" target="_blank" rel="noopener">'+
-          '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+'</span>'+
-        '</a>'+
-        '<a class="soc-btn ig-btn" href="https://www.instagram.com/'+un+'/" target="_blank" rel="noopener">'+
-          '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' Instagram</span>'+
-        '</a>'+
+        '<div class="soc-btn tg-checking" id="tg-'+un+'">'+
+          '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — проверяем...</span>'+
+        '</div>'+
+        '<div class="soc-btn ig-checking" id="ig-'+un+'">'+
+          '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверяем...</span>'+
+        '</div>'+
       '</div>'+
       '<div class="card-divider"></div>'+
       '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+r.name+'\',event)">'+
