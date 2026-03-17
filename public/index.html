@@ -355,7 +355,7 @@ var ICON_MOON='<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/200
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
   var btn = document.getElementById('theme-btn');
-  if(btn) btn.innerHTML = t==='dark' ? ICON_SUN : ICON_MOON;
+  if(btn) btn.innerHTML = t==='dark' ? ICON_MOON : ICON_SUN;
   try{localStorage.setItem('ng_theme',t)}catch(e){}
 }
 function toggleTheme(){
