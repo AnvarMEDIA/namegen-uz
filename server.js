@@ -23,51 +23,92 @@ app.post('/api/generate', async (req, res) => {
   }
 
   const styleMap = {
-    brandable:   'Брендовые (придуманные слова типа Spotify, Kodak)',
-    wordmix:     'Словослияние (Facebook = face+book)',
-    foreign:     'Иностранные слова (латынь, итальянский, японский)',
-    spelling:    'Нестандартное написание (Fiverr, Tumblr)',
-    short:       'Максимально короткие (до 6 букв)',
-    abstract:    'Абстрактные (без прямой связи с ключевым словом)',
-    uzbek_roots: 'Узбекские и тюркские корни',
+    brandable:   'Invented/coined words — sounds real but means nothing (Spotify, Kodak, Zillow, Canva)',
+    wordmix:     'Portmanteau / word blend — two meaningful words fused (Facebook=face+book, Pinterest=pin+interest)',
+    foreign:     'Foreign-language roots — Latin, Italian, Japanese, Arabic, Persian loanwords that sound premium',
+    spelling:    'Intentional misspelling — drop vowels, double consonants, swap letters (Fiverr, Tumblr, Lyft, Flickr)',
+    short:       'Ultra-short — 3-6 characters only, punchy like a domain hack (Ola, Bolt, Uber, Grab)',
+    abstract:    'Abstract — no direct semantic link to the niche, purely aesthetic sound (Acura, Aion, Veed)',
+    uzbek_roots: 'Uzbek & Turkic roots — authentic roots with modern feel',
   };
   const styleLabel = styleMap[style] || style;
 
   const styleExtra = {
+    brandable:
+      'Rules: invent phonetically pleasing non-words. Combine consonant+vowel patterns freely. ' +
+      'Good: Zova, Nuvo, Tekra, Velix, Qobo. Bad: random letter strings that are hard to read.',
+    wordmix:
+      'Rules: pick 2 semantically relevant words, blend smoothly — keep beginning of word1 + end of word2, ' +
+      'or overlap shared sounds. Examples: tech+era=techera, market+link=marklink, fast+route=fastrout.',
+    foreign:
+      'Rules: use recognisable roots from Latin (vita, nova, lux, vox, apex, nexus), Italian (bella, forte, presto, vivo), ' +
+      'Japanese (ki, zen, kaze, hana), Persian/Arabic (noor, mehr, zafar, aman). ' +
+      'Adapt spelling to pure a-z. Avoid clichés like "maximus" alone.',
+    spelling:
+      'Rules: start from a real English or Uzbek word related to the niche, then mutate it: ' +
+      'drop silent vowels, double a consonant for punch, replace "ph" with "f", "ck" with "k", "er" with "r". ' +
+      'Result must still look intentional, not like a typo.',
+    short:
+      'HARD LIMIT: max 6 characters. Prefer 3-5. Every character counts. ' +
+      'Consonant clusters are ok if pronounceable (Bolt, Grab). Can end in vowel for softness (Zova, Kova).',
+    abstract:
+      'Rules: choose a vowel-heavy or rhythmic structure that sounds appealing regardless of meaning. ' +
+      'Target patterns: CVC, CVCV, CVCCV (C=consonant, V=vowel). ' +
+      'Avoid names that accidentally spell a word in Russian or Uzbek with a bad meaning.',
     uzbek_roots:
-      'Use Uzbek morphological roots: nur (light), baxt (happiness), zafar (victory), yulduz (star), ' +
-      'gulzor (flower garden), tong (dawn), oltin (gold). ' +
-      'Combine with Uzbek suffixes: -kor (doer), -zor (place of), -chi (worker), -lik (quality), -bon (keeper). ' +
-      'Also draw from Turkic roots: yol (road/path), kuch (strength/power), bek (leader/strong), ' +
-      'ay (moon), el (nation/people). ' +
-      'Mix both sets freely: nurkor, baxtzor, tondchi, yolbek, kuchay, elbek.',
+      'Core Uzbek roots: nur (light), baxt (happiness), zafar (victory), yulduz (star), ' +
+      'tong (dawn), oltin (gold), daryo (river), tog (mountain), gul (flower), bog (garden), ' +
+      'ilm (knowledge), mehr (love/warmth), umid (hope), hayot (life), quyosh (sun). ' +
+      'Turkic roots: yol (path), kuch (power), bek (strong/leader), ay (moon), el (nation), ' +
+      'yer (land), su (water), ot (fire/horse), qara (black/strong), aq (white/pure). ' +
+      'Suffixes: -kor (doer), -zor (place of), -chi (worker), -li (with), -on (augmentative). ' +
+      'Blend rules: combine 1-2 roots + optional suffix, keep total 4-9 chars. ' +
+      'Examples: Nurli, Baxtzor, Tondchi, Yolbek, Kuchay, Elbek, Mehron, Umidkor.',
   };
   const extraInstruction = styleExtra[style]
     ? `\nStyle-specific rules: ${styleExtra[style]}`
     : '';
 
   const phoneticRule =
-    'Phonetic rules for ALL names: max 3 syllables, avoid complex consonant clusters ' +
-    '(no str/spr/spl/ght/etc at start), must be easy to pronounce in Uzbek.';
+    'Universal phonetic rules: ' +
+    '(1) max 3 syllables, ' +
+    '(2) no consonant clusters of 3+ at word start (no str/spr/spl/ght/thr), ' +
+    '(3) must be easy to pronounce for an Uzbek speaker, ' +
+    '(4) avoid endings in -ck, -tch, -dge which are awkward in Uzbek, ' +
+    '(5) prefer open syllables (ending in vowel) for smoothness.';
+
+  const qualityCriteria =
+    'Quality criteria for EVERY name: ' +
+    '(A) memorable after hearing once, ' +
+    '(B) easy to spell when heard aloud, ' +
+    '(C) no unintended negative meaning in Uzbek, Russian, or English, ' +
+    '(D) visually balanced — not too many ascenders/descenders, ' +
+    '(E) 4-9 characters is the sweet spot (exception: style=short allows 3-6). ' +
+    'Reject any name that fails two or more criteria.';
 
   const body = {
     model: 'claude-sonnet-4-20250514',
-    max_tokens: 1400,
+    max_tokens: 2000,
     system:
-      'You are a brand naming expert specialising in the Uzbek market. ' +
-      'CRITICAL: names must contain ONLY Latin letters (a-z) and digits (0-9). ' +
-      'NO Cyrillic. NO Arabic. NO underscores. NO spaces. Length 3-12 characters. ' +
-      'Respond with ONLY raw JSON, no markdown, no extra text.',
+      'You are a world-class brand naming consultant specialising in the Uzbek and Central Asian market. ' +
+      'You have named 500+ successful brands. Your names are creative, distinctive, and market-ready. ' +
+      'CRITICAL FORMAT RULES: names must contain ONLY Latin letters (a-z) and digits (0-9). ' +
+      'NO Cyrillic. NO Arabic. NO underscores. NO hyphens. NO spaces. Length 3-12 characters. ' +
+      'Respond with ONLY raw JSON — no markdown fences, no comments, no extra text whatsoever.',
     messages: [{
       role: 'user',
       content:
-        `Generate 10 brand names for: "${keywords.trim()}"\n` +
-        `Style: ${styleLabel}${extraInstruction}\n` +
-        `${phoneticRule}\n` +
-        `STRICT: only a-z and 0-9 in the "name" field.\n` +
-        `For each name provide TWO taglines: tagline_ru in Russian (1 short catchy sentence) ` +
-        `and tagline_uz in Uzbek (1 short catchy sentence in Latin Uzbek script).\n` +
-        `Return ONLY: {"names":[{"name":"nurtek","tagline_ru":"Свет технологий","tagline_uz":"Texnologiya nuri"},...]} — 10 items.`
+        `Generate 12 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Style: ${styleLabel}${extraInstruction}\n\n` +
+        `${phoneticRule}\n\n` +
+        `${qualityCriteria}\n\n` +
+        `STRICT: the "name" field must match /^[a-z0-9]+$/ — all lowercase.\n` +
+        `For each name write:\n` +
+        `- tagline_ru: punchy 3-7 word Russian slogan (no full-stop), evokes emotion or value\n` +
+        `- tagline_uz: same idea in Latin-script Uzbek (3-7 words, no full-stop)\n\n` +
+        `Return ONLY valid JSON:\n` +
+        `{"names":[{"name":"nurli","tagline_ru":"Свет в каждом шаге","tagline_uz":"Har qadamda nur"},...]}\n` +
+        `Exactly 12 items. All names must be DIFFERENT from each other.`
     }]
   };
 
@@ -111,13 +152,27 @@ app.post('/api/generate', async (req, res) => {
         return res.status(500).json({ error: 'Невалидный JSON от API', raw: raw.slice(0, 200) });
       }
 
+      const isShortStyle = style === 'short';
       const names = (parsed.names || [])
-        .filter(r => r?.name && /^[a-z0-9]+$/i.test(r.name))
+        .filter(r => {
+          if (!r?.name) return false;
+          const n = r.name.toLowerCase();
+          if (!/^[a-z0-9]+$/.test(n)) return false;
+          if (n.length < 3 || n.length > 12) return false;
+          // prefer sweet-spot length; for short style allow 3+, others prefer 4+
+          if (!isShortStyle && n.length < 4) return false;
+          // reject 3+ consecutive same letters (aaab, bbb)
+          if (/(.)\1\1/.test(n)) return false;
+          return true;
+        })
         .map(r => ({
-          name:       r.name,
-          tagline_ru: r.tagline_ru || r.tagline || '',
-          tagline_uz: r.tagline_uz || '',
-        }));
+          name:       r.name.toLowerCase(),
+          tagline_ru: (r.tagline_ru || r.tagline || '').replace(/[.!?]+$/, '').trim(),
+          tagline_uz: (r.tagline_uz || '').replace(/[.!?]+$/, '').trim(),
+        }))
+        // deduplicate by name
+        .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
+        .slice(0, 10);
       if (!names.length) return res.status(500).json({ error: 'Нет валидных имён в ответе' });
 
       return res.json({ names });
