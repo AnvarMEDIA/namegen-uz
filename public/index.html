@@ -95,11 +95,29 @@ main{max-width:900px;margin:0 auto;padding:56px 24px 80px}
 .copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
 .copy-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
 .copy-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
-.hrt{background:none;border:none;cursor:pointer;font-size:14px;color:var(--text4);line-height:1;transition:color .15s,transform .2s;padding:4px;border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.hrt:hover{color:var(--text2);transform:scale(1.15)}
-.hrt.on{color:var(--accent);animation:heartpop .3s cubic-bezier(.36,.07,.19,.97)}
-@keyframes heartpop{0%{transform:scale(1)}40%{transform:scale(1.35)}70%{transform:scale(.9)}100%{transform:scale(1)}}
 .ctag{font-size:12px;color:var(--text3);margin:6px 0 14px;line-height:1.5;min-height:36px}
+
+/* ── Favourite button ────────────────────────────────── */
+.card-divider{height:1px;background:var(--border);margin:14px 0}
+.fav-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
+  background:transparent;color:var(--text3);font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;
+  transition:color .2s,background .2s,border-color .2s,box-shadow .2s,transform .1s;
+  user-select:none;
+}
+.fav-btn svg{transition:transform .25s,fill .2s;flex-shrink:0}
+.fav-btn:hover{color:var(--text2);border-color:var(--border3);background:var(--bg3);transform:translateY(-1px)}
+.fav-btn:active{transform:translateY(0)}
+.fav-btn.on{
+  background:var(--accent);border-color:var(--accent);color:#060606;
+  box-shadow:0 4px 16px rgba(127,255,110,.25);
+}
+.fav-btn.on svg{fill:#060606;transform:scale(1.1)}
+.fav-btn.on:hover{background:var(--accent2);border-color:var(--accent2);box-shadow:0 6px 22px rgba(127,255,110,.35)}
+@keyframes heartpop{0%{transform:scale(1)}30%{transform:scale(1.4)}65%{transform:scale(.85)}100%{transform:scale(1)}}
+.fav-btn.pop svg{animation:heartpop .4s cubic-bezier(.36,.07,.19,.97)}
 
 /* ── Domain & social ─────────────────────────────────── */
 .checks{display:flex;flex-direction:column;gap:5px}
@@ -383,6 +401,8 @@ function renderGrid(){
     c.className='card'+(isFv?' fv':'');
     c.id='card-'+dn;
     c.style.animationDelay=(i*45)+'ms';
+    var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+    var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
     c.innerHTML=
       '<div class="card-top">'+
         '<div class="cname">'+r.name+'</div>'+
@@ -390,7 +410,6 @@ function renderGrid(){
           '<button class="copy-btn" title="Копировать" onclick="copyName(\''+r.name+'\',this)">'+
             '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'+
           '</button>'+
-          '<button class="hrt'+(isFv?' on':'')+'" onclick="tf(\''+r.name+'\',\''+st+'\',event)" title="В избранное">♥</button>'+
         '</div>'+
       '</div>'+
       '<div class="ctag">'+(r.tagline||'')+'</div>'+
@@ -404,7 +423,12 @@ function renderGrid(){
         '<a class="soc-btn ig-btn" href="https://www.instagram.com/'+un+'/" target="_blank" rel="noopener">'+
           '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' Instagram</span>'+
         '</a>'+
-      '</div>';
+      '</div>'+
+      '<div class="card-divider"></div>'+
+      '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+r.name+'\',\''+st+'\',event)">'+
+        (isFv?favIconFill:favIcon)+
+        '<span>'+(isFv?'Сохранено':'В избранное')+'</span>'+
+      '</button>';
     g.appendChild(c);
   });
 }
@@ -438,6 +462,9 @@ function updateUz(dn,result){
 }
 
 // ── Favourites ─────────────────────────────────────────
+var FAV_ICON='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+var FAV_ICON_FILL='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
+
 function tf(name,tagline,e){
   e.stopPropagation();
   var i=favs.findIndex(function(f){return f.name===name;});
@@ -449,7 +476,12 @@ function tf(name,tagline,e){
   var card=document.getElementById('card-'+dn);
   if(card){
     card.className='card'+(isFv?' fv':'');
-    card.querySelector('.hrt').className='hrt'+(isFv?' on':'');
+    var btn=document.getElementById('fav-'+dn);
+    if(btn){
+      btn.className='fav-btn pop'+(isFv?' on':'');
+      btn.innerHTML=(isFv?FAV_ICON_FILL:FAV_ICON)+'<span>'+(isFv?'Сохранено':'В избранное')+'</span>';
+      setTimeout(function(){btn.classList.remove('pop');},400);
+    }
   }
 }
 function ufb(){
