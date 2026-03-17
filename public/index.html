@@ -258,7 +258,7 @@ function renderGrid() {
 function updateUz(dn, result) {
   var el = document.getElementById('uz-'+dn);
   if (!el) return;
-  var src = result.source ? ' <span class="uz-source">via '+result.source+'</span>' : '';
+  var src = '';
   if (result.status === 'free') {
     el.className = 'uz-row uz-free';
     el.innerHTML = '✓ '+dn+'.uz — свободен' + src;
