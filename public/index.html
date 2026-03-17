@@ -531,10 +531,6 @@ function gen(){
     document.getElementById('rh').innerHTML=
       '<div class="rh">'+
         '<div><div class="rh-count">'+res.length+' вариантов</div><div class="rh-sub">Проверяем домены в реальном времени</div></div>'+
-        '<div class="legend">'+
-          '<div class="li"><div class="ld" style="background:#7fff6e"></div>Свободен</div>'+
-          '<div class="li"><div class="ld" style="background:#d96060"></div>Занят</div>'+
-        '</div>'+
       '</div>';
     renderGrid();
     res.forEach(function(r){
