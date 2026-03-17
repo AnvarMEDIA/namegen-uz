@@ -131,8 +131,6 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .uz-free .uz-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
 .uz-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
 .uz-taken .uz-dot{background:var(--red)}
-.uz-reg-link{margin-left:auto;font-size:9px;font-weight:400;text-decoration:none;opacity:.7;text-transform:uppercase;letter-spacing:.5px;color:inherit;flex-shrink:0;transition:opacity .15s}
-.uz-free .uz-reg-link:hover{opacity:1}
 .soc-btn{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;width:100%;min-height:30px}
 .soc-btn:hover{opacity:.8}
 .soc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -500,7 +498,7 @@ function updateUz(dn,result){
   var el=document.getElementById('uz-'+dn); if(!el)return;
   if(result.status==='free'){
     el.className='uz-row uz-free';
-    el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — свободен</span><a class="uz-reg-link" href="https://nreg.uz" target="_blank" rel="noopener">Зарег →</a>';
+    el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — свободен</span>';
   } else if(result.status==='taken'){
     el.className='uz-row uz-taken';
     el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — занят</span>';
