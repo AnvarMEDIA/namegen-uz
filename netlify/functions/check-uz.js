@@ -1,57 +1,49 @@
 const fetch = require('node-fetch');
 
+const H = { 'Content-Type': 'application/json' };
+const ok = (body) => ({ statusCode: 200, headers: H, body: JSON.stringify(body) });
+
 exports.handler = async (event) => {
-  // URL pattern: /api/check-uz/:name  →  /netlify/functions/check-uz?name=xxx
-  // But via redirect it comes as path segment, so we extract from path or querystring
   const pathParts = (event.path || '').split('/');
   const nameRaw = event.queryStringParameters?.name || pathParts[pathParts.length - 1] || '';
   const name = nameRaw.toLowerCase().replace(/[^a-z0-9-]/g, '');
 
   if (!name || name.length < 2) {
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'error', msg: 'слишком короткое имя' }),
-    };
+    return ok({ status: 'error', msg: 'слишком короткое имя' });
   }
 
+  // 1. RDAP — источник истины (реестр .uz)
   try {
-    const r = await fetch(`https://dns.google/resolve?name=${name}.uz&type=NS`, {
-      headers: { 'Accept': 'application/json' }
+    const r = await fetch(`https://rdap.cctld.uz/domain/${name}.uz`, {
+      headers: { 'Accept': 'application/rdap+json' },
+      timeout: 6000,
+    });
+    if (r.status === 200) return ok({ status: 'taken', source: 'RDAP' });
+    if (r.status === 404) return ok({ status: 'free',  source: 'RDAP' });
+    // другой код — падаем на DNS
+  } catch (_) { /* сеть — падаем на DNS */ }
+
+  // 2. Google DNS — запасной вариант
+  try {
+    const r = await fetch(`https://dns.google/resolve?name=${name}.uz&type=A`, {
+      headers: { 'Accept': 'application/json' },
     });
     if (!r.ok) throw new Error(`dns.google HTTP ${r.status}`);
     const j = await r.json();
 
-    let status;
+    // Status 3 = NXDOMAIN. Дополнительно проверяем NS
     if (j.Status === 3) {
-      status = 'free';
-    } else if (j.Answer && j.Answer.length > 0) {
-      status = 'taken';
-    } else if (j.Status === 0) {
-      status = 'taken';
-    } else {
-      status = 'free';
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status, source: 'Google DNS' }),
-    };
-  } catch (e1) {
-    try {
-      const r2 = await fetch(`https://rdap.cctld.uz/domain/${name}.uz`, {
-        headers: { 'Accept': 'application/rdap+json' }
+      // NXDOMAIN по A — проверим NS на случай делегирования
+      const rns = await fetch(`https://dns.google/resolve?name=${name}.uz&type=NS`, {
+        headers: { 'Accept': 'application/json' },
       });
-      if (r2.status === 200) return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'taken', source: 'RDAP' }) };
-      if (r2.status === 404) return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'free', source: 'RDAP' }) };
-      throw new Error(`RDAP HTTP ${r2.status}`);
-    } catch (e2) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'error', msg: `DNS: ${e1.message} | RDAP: ${e2.message}` }),
-      };
+      const jns = await rns.json();
+      if (jns.Status === 3) return ok({ status: 'free', source: 'DNS' });
+      return ok({ status: 'taken', source: 'DNS' });
     }
+    // Status 0 с ответом или без — домен существует в DNS → занят
+    return ok({ status: 'taken', source: 'DNS' });
+  } catch (e) {
+    return ok({ status: 'error', msg: e.message.slice(0, 120) });
   }
 };
