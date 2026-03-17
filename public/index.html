@@ -101,31 +101,33 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .rh-count{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;color:var(--text)}
 .rh-sub{font-size:13px;color:var(--text3);margin-top:1px}
 .legend{display:flex;gap:14px}
-.check-row{display:flex;align-items:center;gap:8px}
-.check-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;width:62px;flex-shrink:0}
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-weight:500}
 .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
 /* ── Grid — full width, fluid columns ────────────────── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 
 /* ── Card ────────────────────────────────────────────── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both}
 @keyframes fi{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.card:hover{border-color:var(--border3);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(-2px)}
+.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(135deg,rgba(255,255,255,.025) 0%,transparent 60%);pointer-events:none}
+.card:hover{border-color:var(--border3);box-shadow:0 10px 40px rgba(0,0,0,.45);transform:translateY(-2px)}
 .card.fv{border-color:var(--card-fv-border);background:var(--card-fv-bg)}
-.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 8px 32px var(--card-fv-hover-shadow)}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:2px}
-.cname{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text);line-height:1.2;letter-spacing:-.2px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card-actions{display:flex;align-items:center;gap:3px;flex-shrink:0}
-.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
+.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 10px 40px var(--card-fv-hover-shadow)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cname-wrap{display:flex;align-items:baseline;gap:6px;flex:1;min-width:0;overflow:hidden}
+.cname{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--text);line-height:1.1;letter-spacing:-.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cname-ext{font-family:'DM Mono',monospace;font-size:12px;font-weight:400;color:var(--text4);white-space:nowrap;flex-shrink:0}
+.card-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text4);flex-shrink:0;min-width:18px;text-align:right}
+.card-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
 .copy-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
 .copy-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
-.ctag{font-size:12px;color:var(--text2);margin:6px 0 2px;line-height:1.5}
-.ctag-uz{font-size:11px;color:var(--text3);margin:0 0 14px;line-height:1.4;font-style:italic;min-height:14px}
+.ctag{font-size:13px;color:var(--text2);margin:0 0 3px;line-height:1.5}
+.ctag-uz{font-size:11px;color:var(--text3);margin:0 0 16px;line-height:1.4;font-style:italic;min-height:14px}
 
 /* ── Favourite button ────────────────────────────────── */
-.card-divider{height:1px;background:var(--border);margin:14px 0}
+.card-divider{height:1px;background:var(--border);margin:16px 0}
 .fav-btn{
   width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
   padding:9px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
@@ -147,33 +149,36 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .fav-btn.pop svg{animation:heartpop .4s cubic-bezier(.36,.07,.19,.97)}
 
 /* ── Domain & social ─────────────────────────────────── */
-.checks{display:flex;flex-direction:column;gap:5px}
-.uz-row{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid;font-weight:500;min-height:30px;cursor:default;transition:border-color .2s,background .2s}
-.uz-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.checks{display:flex;flex-direction:column;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.check-row{display:flex;align-items:center;gap:8px}
+.check-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;width:80px;flex-shrink:0}
+.check-label svg{flex-shrink:0;opacity:.6}
+.uz-row{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:5px 9px;border-radius:6px;border:1px solid;font-weight:500;min-height:28px;cursor:default;transition:border-color .2s,background .2s;flex:1}
+.uz-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .uz-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.uz-checking{background:#101010;color:var(--text3);border-color:var(--border)}
+.uz-checking{background:transparent;color:var(--text3);border-color:var(--border)}
 .uz-checking .uz-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
 .uz-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border)}
-.uz-free .uz-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
+.uz-free .uz-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
 .uz-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
 .uz-taken .uz-dot{background:var(--red)}
-.soc-btn{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;width:100%;min-height:30px}
+.soc-btn{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:5px 9px;border-radius:6px;border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;flex:1;min-height:28px}
 .soc-btn:hover{opacity:.8}
-.soc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.soc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .soc-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tg-btn,.tg-taken{background:rgba(41,168,224,.07);color:#29a8e0;border-color:rgba(41,168,224,.2)}
+.tg-btn,.tg-taken{background:rgba(41,168,224,.08);color:#29a8e0;border-color:rgba(41,168,224,.22)}
 .tg-dot{background:#29a8e0}
-.tg-checking{background:rgba(41,168,224,.03);color:var(--text3);border-color:rgba(41,168,224,.1);cursor:default}
+.tg-checking{background:transparent;color:var(--text3);border-color:rgba(41,168,224,.12);cursor:default}
 .tg-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 .tg-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
-.tg-free .soc-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
-.ig-btn,.ig-taken{background:rgba(225,48,108,.07);color:#e1306c;border-color:rgba(225,48,108,.2)}
+.tg-free .soc-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
+.ig-btn,.ig-taken{background:rgba(225,48,108,.08);color:#e1306c;border-color:rgba(225,48,108,.22)}
 .ig-dot{background:#e1306c}
-.ig-checking{background:rgba(225,48,108,.03);color:var(--text3);border-color:rgba(225,48,108,.1);cursor:default}
+.ig-checking{background:transparent;color:var(--text3);border-color:rgba(225,48,108,.12);cursor:default}
 .ig-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 .ig-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
-.ig-free .soc-dot{background:var(--accent);box-shadow:0 0 4px var(--accent)}
+.ig-free .soc-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
 
 /* ── Loader ──────────────────────────────────────────── */
 .loader-wrap{display:flex;flex-direction:column;align-items:center;padding:72px 0;gap:16px}
@@ -570,10 +575,17 @@ function renderGrid(){
     c.setAttribute('data-tuz', tuz);
     var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
     var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
+    var icoDomain='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+    var icoTg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+    var icoIg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
     c.innerHTML=
       '<div class="card-top">'+
-        '<div class="cname">'+r.name+'</div>'+
+        '<div class="cname-wrap">'+
+          '<span class="cname">'+r.name+'</span>'+
+          '<span class="cname-ext">.uz</span>'+
+        '</div>'+
         '<div class="card-actions">'+
+          '<span class="card-num">'+String(i+1).padStart(2,'0')+'</span>'+
           '<button class="copy-btn" title="Копировать" onclick="copyName(\''+r.name+'\',this)">'+
             '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'+
           '</button>'+
@@ -583,19 +595,19 @@ function renderGrid(){
       '<div class="ctag-uz">'+esc(tuz)+'</div>'+
       '<div class="checks">'+
         '<div class="check-row">'+
-          '<span class="check-label">Домен</span>'+
+          '<span class="check-label">'+icoDomain+'Домен</span>'+
           '<div class="uz-row uz-checking" id="uz-'+dn+'">'+
             '<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — проверяем...</span>'+
           '</div>'+
         '</div>'+
         '<div class="check-row">'+
-          '<span class="check-label">Telegram</span>'+
+          '<span class="check-label">'+icoTg+'Telegram</span>'+
           '<div class="soc-btn tg-checking" id="tg-'+un+'">'+
             '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — проверяем...</span>'+
           '</div>'+
         '</div>'+
         '<div class="check-row">'+
-          '<span class="check-label">Instagram</span>'+
+          '<span class="check-label">'+icoIg+'Instagram</span>'+
           '<div class="soc-btn ig-checking" id="ig-'+un+'">'+
             '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверяем...</span>'+
           '</div>'+
