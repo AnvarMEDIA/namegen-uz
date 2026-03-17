@@ -13,6 +13,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/check-tg/:name"
+  to = "/.netlify/functions/check-tg/:name"
+  status = 200
+
+[[redirects]]
+  from = "/api/check-ig/:name"
+  to = "/.netlify/functions/check-ig/:name"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
