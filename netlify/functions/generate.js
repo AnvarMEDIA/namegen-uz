@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 const styleMap = {

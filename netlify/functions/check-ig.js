@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const H = { 'Content-Type': 'application/json' };
 const ok = (body) => ({ statusCode: 200, headers: H, body: JSON.stringify(body) });
 

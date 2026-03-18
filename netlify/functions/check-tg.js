@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event) => {
   const pathParts = (event.path || '').split('/');
   const nameRaw = event.queryStringParameters?.name || pathParts[pathParts.length - 1] || '';
