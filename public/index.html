@@ -238,6 +238,28 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .fn{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;margin-bottom:3px;color:var(--text)}
 .ft{font-size:12px;color:var(--text3);line-height:1.4}
 
+/* ── Modal ───────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-overlay.open .modal-card{animation:modalIn .22s cubic-bezier(.16,1,.3,1) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-card{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative;max-height:88vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:30px;height:30px;border-radius:7px;cursor:pointer;color:var(--text3);font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.modal-close:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
+.modal-hero{display:flex;align-items:baseline;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.modal-name{font-family:'DM Mono',monospace;font-size:38px;font-weight:500;color:var(--text);letter-spacing:-1px;line-height:1.1}
+.modal-ext{font-family:'DM Mono',monospace;font-size:17px;color:var(--text3);line-height:1}
+.modal-tru{font-size:15px;color:var(--text2);line-height:1.5;margin-bottom:3px}
+.modal-tuz{font-size:13px;color:var(--text3);font-style:italic;margin-bottom:20px}
+.modal-chips{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.modal-copy{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex:1}
+.modal-copy:hover{border-color:var(--border3);color:var(--text);background:var(--bg4)}
+.modal-copy.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.modal-detail{background:var(--accent);color:#060606;border-radius:var(--radius-sm);padding:11px 18px;font-size:13px;font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:background .15s,box-shadow .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.modal-detail:hover{background:var(--accent2);box-shadow:0 4px 18px var(--aglow)}
+/* card clickable */
+.card{cursor:pointer}
+
 /* ── Footer ──────────────────────────────────────────── */
 footer{text-align:center;padding:48px 24px;color:var(--text4);font-size:12px;border-top:1px solid var(--border);letter-spacing:.03em}
 footer a{color:var(--text3);text-decoration:none;transition:color .15s}
@@ -424,6 +446,30 @@ footer a:hover{color:var(--text)}
     </div>
     <div class="fl" id="fl"></div>
   </div>
+<!-- ── Modal ─────────────────────────────────────────── -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-hero">
+      <span class="modal-name" id="m-name"></span>
+      <span class="modal-ext">.uz</span>
+    </div>
+    <div class="modal-tru" id="m-tru"></div>
+    <div class="modal-tuz" id="m-tuz"></div>
+    <div class="modal-chips" id="m-chips"></div>
+    <div class="modal-actions">
+      <button class="modal-copy" id="m-copy" onclick="copyModalName()">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style="display:inline;vertical-align:middle;margin-right:5px"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Копировать
+      </button>
+      <a class="modal-detail" id="m-detail" href="#" target="_blank">
+        Подробнее
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <footer>
@@ -431,6 +477,83 @@ footer a:hover{color:var(--text)}
 </footer>
 
 <script>
+// ── Name store (localStorage) ──────────────────────────
+var nameStore={}; // name → {id, tagline_ru, tagline_uz, uz_status, ...}
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function saveNameEntry(name,tru,tuz){
+  var id=genId(),now=Date.now();
+  var entry={id:id,name:name,tagline_ru:tru,tagline_uz:tuz,uz_status:null,created_at:now,expires_at:now+7*24*60*60*1000};
+  nameStore[name]=entry;
+  try{localStorage.setItem('ng_name_'+id,JSON.stringify(entry));}catch(e){}
+  return id;
+}
+function updateNameEntry(name,updates){
+  var e=nameStore[name];if(!e)return;
+  Object.assign(e,updates);
+  try{localStorage.setItem('ng_name_'+e.id,JSON.stringify(e));}catch(x){}
+}
+
+// ── Modal ───────────────────────────────────────────────
+var _mIcoDomain='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+var _mIcoTg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+var _mIcoIg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+
+function _modalChipHtml(cls,ico,label,href){
+  var h='<div class="chip '+cls+'"'+(href?' onclick="window.open(\''+href+'\',\'_blank\')" style="cursor:pointer"':'')+'>';
+  h+='<div class="chip-icon">'+ico+'</div><div class="chip-dot"></div><span class="chip-label">'+label+'</span></div>';
+  return h;
+}
+function buildModalChips(dn,un,uzR,tgR,igR){
+  var h='';
+  // Domain
+  if(!uzR)      h+=_modalChipHtml('uz-checking',_mIcoDomain,dn+'.uz — проверяем...','');
+  else if(uzR.status==='free') h+=_modalChipHtml('uz-free',_mIcoDomain,dn+'.uz — свободен ✓','');
+  else          h+=_modalChipHtml('uz-taken',_mIcoDomain,dn+'.uz — занят','');
+  // Telegram
+  if(!tgR)      h+=_modalChipHtml('tg-checking',_mIcoTg,'t.me/'+un,'https://t.me/'+un);
+  else if(tgR.status==='free')  h+=_modalChipHtml('tg-free',_mIcoTg,'t.me/'+un+' — свободен ✓','https://t.me/'+un);
+  else          h+=_modalChipHtml('tg-taken',_mIcoTg,'t.me/'+un+(tgR.status==='taken'?' — занят':''),'https://t.me/'+un);
+  // Instagram
+  if(!igR)      h+=_modalChipHtml('ig-checking',_mIcoIg,'@'+un,'https://www.instagram.com/'+un+'/');
+  else if(igR.status==='free')  h+=_modalChipHtml('ig-free',_mIcoIg,'@'+un+' — свободен ✓','https://www.instagram.com/'+un+'/');
+  else if(igR.status==='taken') h+=_modalChipHtml('ig-taken',_mIcoIg,'@'+un+' — занят','https://www.instagram.com/'+un+'/');
+  else          h+=_modalChipHtml('ig-btn',_mIcoIg,'@'+un,'https://www.instagram.com/'+un+'/');
+  return h;
+}
+
+function openModal(name){
+  var e=nameStore[name]||{};
+  var dn=cleanDomain(name),un=cleanUser(name);
+  document.getElementById('m-name').textContent=name;
+  document.getElementById('m-tru').textContent=e.tagline_ru||'';
+  var tuzEl=document.getElementById('m-tuz');
+  tuzEl.textContent=e.tagline_uz||'';
+  tuzEl.style.display=e.tagline_uz?'':'none';
+  document.getElementById('m-chips').innerHTML=buildModalChips(dn,un,dcache[dn],tgcache[un],igcache[un]);
+  var dl=document.getElementById('m-detail');
+  if(e.id){dl.href='/name.html?id='+e.id;dl.style.display='';}
+  else dl.style.display='none';
+  var ov=document.getElementById('modal-overlay');
+  ov.style.display='flex';
+  requestAnimationFrame(function(){ov.classList.add('open');});
+}
+function closeModal(){
+  var ov=document.getElementById('modal-overlay');
+  ov.classList.remove('open');
+  setTimeout(function(){ov.style.display='none';},220);
+}
+function copyModalName(){
+  var name=document.getElementById('m-name').textContent;
+  var btn=document.getElementById('m-copy');
+  navigator.clipboard.writeText(name).then(function(){
+    btn.classList.add('copied');
+    var orig=btn.innerHTML;
+    btn.innerHTML='✓ Скопировано';
+    setTimeout(function(){btn.classList.remove('copied');btn.innerHTML=orig;},1800);
+  }).catch(function(){});
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
 // ── Theme ──────────────────────────────────────────────
 var ICON_SUN='<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 var ICON_MOON='<svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>';
@@ -655,9 +778,9 @@ function gen(){
     res.forEach(function(r){
       var dn=cleanDomain(r.name);
       var un=cleanUser(r.name);
-      if(dn)checkUz(dn).then(function(result){updateUz(dn,result);});
-      if(un)checkTg(un).then(function(result){updateTg(un,result);});
-      if(un)checkIg(un).then(function(result){updateIg(un,result);});
+      if(dn)(function(rr,d){checkUz(d).then(function(result){updateUz(d,result);updateNameEntry(rr.name,{uz_status:result.status});});})(r,dn);
+      if(un)(function(u){checkTg(u).then(function(result){updateTg(u,result);});})(un);
+      if(un)(function(u){checkIg(u).then(function(result){updateIg(u,result);});})(un);
     });
   })
   .catch(function(e){
@@ -679,12 +802,21 @@ function renderGrid(){
     var isFv=favs.some(function(f){return f.name===r.name;});
     var tru=r.tagline_ru||r.tagline||'';
     var tuz=r.tagline_uz||'';
+    // save to localStorage for detail page
+    saveNameEntry(r.name,tru,tuz);
     var c=document.createElement('div');
     c.className='card'+(isFv?' fv':'');
     c.id='card-'+dn;
     c.style.animationDelay=(i*45)+'ms';
     c.setAttribute('data-tru',tru);
     c.setAttribute('data-tuz',tuz);
+    // open modal on card click (not on buttons/chips)
+    (function(rname){
+      c.addEventListener('click',function(ev){
+        if(ev.target.closest('.fav-btn,.copy-btn,.chip'))return;
+        openModal(rname);
+      });
+    })(r.name);
     var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
     var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
     var icoDomain='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';

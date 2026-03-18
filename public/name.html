@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Детальный анализ — NameGen.uz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#101010;--bg3:#141414;--bg4:#1a1a1a;
+  --border:#1c1c1c;--border2:#272727;--border3:#333;
+  --text:#ece8e0;--text2:#999;--text3:#4a4a4a;--text4:#2a2a2a;
+  --accent:#7fff6e;--accent2:#a8ffb0;--adim:rgba(127,255,110,.07);--aglow:rgba(127,255,110,.18);
+  --red:#d96060;--redbg:#180e0e;--redbr:#2e1515;
+  --blue:#29a8e0;--pink:#e1306c;
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+  --uz-free-bg:rgba(8,30,8,.7);--uz-free-color:#7fff6e;--uz-free-border:rgba(127,255,110,.2);
+}
+[data-theme="light"]{
+  --bg:#f5f4f0;--bg2:#ffffff;--bg3:#eeede9;--bg4:#e5e4e0;
+  --border:#e2e1dc;--border2:#d0cfc9;--border3:#b8b7b2;
+  --text:#1a1a18;--text2:#65635e;--text3:#a09e99;--text4:#c8c6c1;
+  --accent:#2db81a;--accent2:#36d423;--adim:rgba(45,184,26,.08);--aglow:rgba(45,184,26,.16);
+  --red:#c04040;--redbg:#fff4f4;--redbr:#f5c0c0;
+  --uz-free-bg:rgba(45,184,26,.07);--uz-free-color:#1e8a0e;--uz-free-border:rgba(45,184,26,.25);
+}
+html{height:100%;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4}
+
+/* ── Header ─────────────────────────────────────────── */
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,8,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:100}
+[data-theme="light"] header{background:rgba(245,244,240,.94)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.5px;display:flex;align-items:center;gap:2px;text-decoration:none;color:inherit}
+.logo-dot{color:var(--accent);font-size:16px;line-height:1}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-decoration:none}
+.back-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
+
+/* ── Main ───────────────────────────────────────────── */
+main{flex:1;width:100%;max-width:720px;margin:0 auto;padding:48px clamp(16px,5vw,48px) 80px}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero{margin-bottom:40px;animation:fadeUp .4s cubic-bezier(.16,1,.3,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero-name{font-family:'DM Mono',monospace;font-size:clamp(44px,10vw,72px);font-weight:500;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:14px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.hero-ext{font-family:'DM Mono',monospace;font-size:clamp(18px,4vw,28px);color:var(--text3);font-weight:400;letter-spacing:-0.5px}
+.hero-tagline-ru{font-size:18px;color:var(--text2);line-height:1.5;margin-bottom:4px}
+.hero-tagline-uz{font-size:14px;color:var(--text3);font-style:italic;margin-bottom:20px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;font-family:'DM Mono',monospace;border:1px solid}
+.badge-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border)}
+.badge-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
+.badge-unknown{background:var(--bg3);color:var(--text3);border-color:var(--border2)}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── Section ────────────────────────────────────────── */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:16px;animation:fadeUp .4s cubic-bezier(.16,1,.3,1) both}
+.section:nth-child(2){animation-delay:.06s}
+.section:nth-child(3){animation-delay:.12s}
+.section:nth-child(4){animation-delay:.18s}
+.section-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-family:'DM Sans',sans-serif;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+
+/* ── AI analysis ────────────────────────────────────── */
+.ai-trigger-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:#060606;border:none;border-radius:var(--radius-sm);padding:14px 24px;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s,box-shadow .15s;letter-spacing:.01em}
+.ai-trigger-btn:hover{background:var(--accent2);box-shadow:0 4px 20px var(--aglow)}
+.ai-trigger-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.ai-loader{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:13px;padding:4px 0}
+.ai-dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);animation:dot .9s infinite}
+.ai-dots span:nth-child(2){animation-delay:.15s}
+.ai-dots span:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.ai-results{display:none;flex-direction:column;gap:16px}
+.ai-results.visible{display:flex}
+.ai-field{display:flex;flex-direction:column;gap:4px}
+.ai-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-family:'DM Sans',sans-serif}
+.ai-value{font-size:14px;color:var(--text2);line-height:1.55}
+.ai-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.ai-tag{background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:4px 12px;font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.ai-tip{background:var(--adim);border:1px solid rgba(127,255,110,.12);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;color:var(--text);line-height:1.6}
+
+/* ── Social chips ───────────────────────────────────── */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500;padding:7px 11px;border-radius:9px;border:1px solid;transition:border-color .2s,background .2s;width:100%;min-height:30px;text-decoration:none;cursor:default}
+.chip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.chip-icon{flex-shrink:0;opacity:.7;display:flex;align-items:center}
+.chip-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips-col{display:flex;flex-direction:column;gap:7px}
+.uz-free{background:rgba(8,30,8,.6);color:#7fff6e;border-color:rgba(127,255,110,.2)}.uz-free .chip-dot{background:#7fff6e}
+.uz-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}.uz-taken .chip-dot{background:var(--red)}
+.uz-checking{background:var(--bg3);color:var(--text3);border-color:var(--border)}.uz-checking .chip-dot{background:var(--text4)}
+.tg-free{background:rgba(0,136,204,.08);color:#29a8e0;border-color:rgba(41,168,224,.2);cursor:pointer}.tg-free .chip-dot{background:#29a8e0}
+.tg-taken{background:var(--bg3);color:var(--text3);border-color:var(--border);cursor:pointer}.tg-taken .chip-dot{background:var(--text3)}
+.tg-checking{background:var(--bg3);color:var(--text3);border-color:var(--border)}.tg-checking .chip-dot{background:var(--text4)}
+.ig-free{background:rgba(225,48,108,.06);color:#e1306c;border-color:rgba(225,48,108,.2);cursor:pointer}.ig-free .chip-dot{background:#e1306c}
+.ig-taken{background:var(--bg3);color:var(--text3);border-color:var(--border);cursor:pointer}.ig-taken .chip-dot{background:var(--text3)}
+.ig-btn,.ig-checking{background:var(--bg3);color:var(--text3);border-color:var(--border);cursor:pointer}.ig-btn .chip-dot,.ig-checking .chip-dot{background:var(--text4)}
+
+/* ── Share ───────────────────────────────────────────── */
+.share-row{display:flex;gap:8px;flex-wrap:wrap}
+.share-btn{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 16px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;text-decoration:none;flex:1;justify-content:center}
+.share-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg4)}
+.share-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.share-tg{background:rgba(41,168,224,.07);border-color:rgba(41,168,224,.2);color:#29a8e0}
+.share-tg:hover{background:rgba(41,168,224,.14);border-color:rgba(41,168,224,.4);color:#29a8e0}
+
+/* ── Error / expired ────────────────────────────────── */
+.error-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:16px;text-align:center}
+.error-icon{width:64px;height:64px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text4)}
+.error-title{font-size:18px;font-weight:700;color:var(--text);font-family:'Syne',sans-serif;margin:0}
+.error-sub{font-size:13px;color:var(--text3);max-width:300px;line-height:1.6;margin:0}
+.error-link{background:var(--accent);color:#060606;border:none;border-radius:var(--radius-sm);padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block;margin-top:4px}
+
+/* ── Footer ─────────────────────────────────────────── */
+footer{text-align:center;padding:40px 24px;color:var(--text4);font-size:12px;border-top:1px solid var(--border);letter-spacing:.03em}
+footer a{color:inherit;text-decoration:none}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media(max-width:479px){
+  header{padding:12px 16px}
+  main{padding:32px 16px 60px}
+  .section{padding:20px}
+  .share-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">NameGen<span class="logo-dot">.</span>uz</a>
+  <a class="back-btn" href="/" id="back-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Назад
+  </a>
+</header>
+
+<main id="main-content">
+  <div id="page-body"></div>
+</main>
+
+<footer>NameGen.uz — Разработано в <a href="/">MAZE</a> &nbsp;·&nbsp; 2026</footer>
+
+<script>
+// ── Theme (inherit from main page via localStorage) ────
+(function(){
+  var t=null;try{t=localStorage.getItem('ng_theme');}catch(e){}
+  if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches)t='light';
+  document.documentElement.setAttribute('data-theme',t||'dark');
+})();
+
+var ICO_DOMAIN='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+var ICO_TG='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+var ICO_IG='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function cleanDomain(n){return(n||'').toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/^-+|-+$/g,'');}
+function cleanUser(n){return(n||'').toLowerCase().replace(/[^a-z0-9_.]/g,'');}
+
+// ── Read entry from localStorage ───────────────────────
+var urlId=(new URLSearchParams(window.location.search)).get('id')||'';
+var entry=null;
+if(urlId){
+  try{entry=JSON.parse(localStorage.getItem('ng_name_'+urlId)||'null');}catch(e){}
+}
+
+// ── Render page ────────────────────────────────────────
+var pb=document.getElementById('page-body');
+
+if(!entry){
+  pb.innerHTML=
+    '<div class="error-wrap">'+
+      '<div class="error-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>'+
+      '<p class="error-title">Данные не найдены</p>'+
+      '<p class="error-sub">Ссылка устарела или введена неправильно. Данные хранятся 7 дней в браузере, где было сгенерировано название.</p>'+
+      '<a class="error-link" href="/">← Вернуться на главную</a>'+
+    '</div>';
+} else if(Date.now()>entry.expires_at){
+  pb.innerHTML=
+    '<div class="error-wrap">'+
+      '<div class="error-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'+
+      '<p class="error-title">Ссылка устарела</p>'+
+      '<p class="error-sub">Данные хранятся 7 дней. Сгенерируйте название снова, чтобы получить новую ссылку.</p>'+
+      '<a class="error-link" href="/">Сгенерировать снова</a>'+
+    '</div>';
+} else {
+  renderPage(entry);
+}
+
+function renderPage(e){
+  var name=e.name||'';
+  var tru=e.tagline_ru||'';
+  var tuz=e.tagline_uz||'';
+  var uzStatus=e.uz_status; // null | 'free' | 'taken'
+  var dn=cleanDomain(name);
+  var un=cleanUser(name);
+
+  document.title=name+'.uz — NameGen.uz';
+
+  // domain badge
+  var badgeHtml;
+  if(uzStatus==='free')
+    badgeHtml='<span class="hero-badge badge-free"><span class="badge-dot"></span>'+dn+'.uz — свободен</span>';
+  else if(uzStatus==='taken')
+    badgeHtml='<span class="hero-badge badge-taken"><span class="badge-dot"></span>'+dn+'.uz — занят</span>';
+  else
+    badgeHtml='<span class="hero-badge badge-unknown" id="badge-el"><span class="badge-dot"></span>'+dn+'.uz — проверяем...</span>';
+
+  pb.innerHTML=
+    // ── Hero ─────────────────────────────────────────
+    '<div class="hero">'+
+      '<div class="hero-name">'+esc(name)+'<span class="hero-ext">.uz</span></div>'+
+      (tru?'<div class="hero-tagline-ru">'+esc(tru)+'</div>':'')+
+      (tuz?'<div class="hero-tagline-uz">'+esc(tuz)+'</div>':'')+
+      badgeHtml+
+    '</div>'+
+
+    // ── AI Analysis ──────────────────────────────────
+    '<div class="section" id="sec-ai">'+
+      '<div class="section-title">'+
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>'+
+        'AI-анализ названия'+
+      '</div>'+
+      '<div id="ai-content">'+
+        '<button class="ai-trigger-btn" id="ai-btn" onclick="runAnalysis()">'+
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>'+
+          'Получить анализ от AI'+
+        '</button>'+
+      '</div>'+
+    '</div>'+
+
+    // ── Domain & Social ───────────────────────────────
+    '<div class="section">'+
+      '<div class="section-title">'+
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'+
+        'Домен и соцсети'+
+      '</div>'+
+      '<div class="chips-col" id="chips-col">'+
+        '<div class="chip uz-checking" id="chip-uz"><div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — проверяем...</span></div>'+
+        '<div class="chip tg-checking" id="chip-tg"><div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span></div>'+
+        '<div class="chip ig-checking" id="chip-ig"><div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+'</span></div>'+
+      '</div>'+
+    '</div>'+
+
+    // ── Share ─────────────────────────────────────────
+    '<div class="section">'+
+      '<div class="section-title">'+
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'+
+        'Поделиться'+
+      '</div>'+
+      '<div class="share-row">'+
+        '<button class="share-btn" id="share-copy" onclick="shareCopy()">'+
+          '<svg width="13" height="13" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'+
+          'Скопировать ссылку'+
+        '</button>'+
+        '<a class="share-btn share-tg" id="share-tg" href="#" target="_blank" rel="noopener">'+
+          ICO_TG+' Открыть в Telegram'+
+        '</a>'+
+      '</div>'+
+    '</div>';
+
+  // set up share TG link
+  var shareUrl=window.location.href;
+  var tgShareHref='https://t.me/share/url?url='+encodeURIComponent(shareUrl)+'&text='+encodeURIComponent('Посмотри название: '+name+'.uz — '+tru);
+  document.getElementById('share-tg').href=tgShareHref;
+
+  // trigger domain checks if not cached from main page
+  if(uzStatus===null || uzStatus===undefined){
+    checkPageUz(dn);
+  } else {
+    // uz already known from saved entry — show result in chips
+    updateChipUz(dn, {status: uzStatus});
+  }
+  checkPageTg(un);
+  checkPageIg(un);
+}
+
+// ── Domain checks ──────────────────────────────────────
+function checkPageUz(dn){
+  fetch('/api/check-uz/'+encodeURIComponent(dn))
+    .then(function(r){return r.json();})
+    .then(function(d){updateChipUz(dn,d);updateBadge(dn,d);})
+    .catch(function(){});
+}
+function checkPageTg(un){
+  fetch('/api/check-tg/'+encodeURIComponent(un))
+    .then(function(r){return r.json();})
+    .then(function(d){updateChipTg(un,d);})
+    .catch(function(){});
+}
+function checkPageIg(un){
+  fetch('/api/check-ig/'+encodeURIComponent(un))
+    .then(function(r){return r.json();})
+    .then(function(d){updateChipIg(un,d);})
+    .catch(function(){});
+}
+
+function updateBadge(dn,r){
+  var el=document.getElementById('badge-el');if(!el)return;
+  if(r.status==='free'){el.className='hero-badge badge-free';el.innerHTML='<span class="badge-dot"></span>'+dn+'.uz — свободен';}
+  else if(r.status==='taken'){el.className='hero-badge badge-taken';el.innerHTML='<span class="badge-dot"></span>'+dn+'.uz — занят';}
+}
+
+function updateChipUz(dn,r){
+  var el=document.getElementById('chip-uz');if(!el)return;
+  if(r.status==='free'){el.className='chip uz-free';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — свободен ✓</span>';}
+  else if(r.status==='taken'){el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — занят</span>';}
+  else{el.className='chip uz-checking';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — ошибка</span>';}
+}
+function updateChipTg(un,r){
+  var el=document.getElementById('chip-tg');if(!el)return;
+  if(r.status==='free'){el.className='chip tg-free';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — свободен ✓</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
+  else if(r.status==='taken'){el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
+  else{el.className='chip tg-checking';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
+}
+function updateChipIg(un,r){
+  var el=document.getElementById('chip-ig');if(!el)return;
+  if(r.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
+  else if(r.status==='taken'){el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
+  else{el.className='chip ig-btn';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — проверьте вручную</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
+}
+
+// ── AI Analysis ────────────────────────────────────────
+function runAnalysis(){
+  var btn=document.getElementById('ai-btn');
+  var cont=document.getElementById('ai-content');
+  var name=entry&&entry.name||'';
+  if(!name||!btn)return;
+  btn.disabled=true;
+  cont.innerHTML=
+    '<div class="ai-loader">'+
+      '<div class="ai-dots"><span></span><span></span><span></span></div>'+
+      'AI анализирует название…'+
+    '</div>';
+  fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({mode:'analyse',name:name})
+  })
+  .then(function(r){if(!r.ok)throw new Error('Ошибка API '+r.status);return r.json();})
+  .then(function(d){renderAnalysis(d);})
+  .catch(function(e){
+    cont.innerHTML='<div style="color:var(--red);font-size:13px;padding:4px 0">Ошибка: '+esc(e.message)+'. Попробуйте ещё раз.</div>'+
+      '<button class="ai-trigger-btn" onclick="runAnalysis()" style="margin-top:12px">Повторить</button>';
+  });
+}
+
+function renderAnalysis(d){
+  var cont=document.getElementById('ai-content');
+  if(!cont)return;
+  var meaning=d.meaning||'';
+  var assoc=d.associations||[];
+  var audience=d.target_audience||'';
+  var strengths=d.strengths||[];
+  var tip=d.brand_tip||'';
+  var similar=d.similar_brands||[];
+
+  var html='<div class="ai-results visible">';
+
+  if(meaning) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Значение и ассоциации</div>'+
+      '<div class="ai-value">'+esc(meaning)+'</div>'+
+    '</div>';
+
+  if(assoc.length) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Образы</div>'+
+      '<div class="ai-tags">'+assoc.map(function(a){return '<span class="ai-tag">'+esc(a)+'</span>';}).join('')+'</div>'+
+    '</div>';
+
+  if(audience) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Целевая аудитория</div>'+
+      '<div class="ai-value">'+esc(audience)+'</div>'+
+    '</div>';
+
+  if(strengths.length) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Сильные стороны</div>'+
+      '<div class="ai-tags">'+strengths.map(function(s){return '<span class="ai-tag">'+esc(s)+'</span>';}).join('')+'</div>'+
+    '</div>';
+
+  if(similar.length) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Похожие бренды</div>'+
+      '<div class="ai-tags">'+similar.map(function(s){return '<span class="ai-tag">'+esc(s)+'</span>';}).join('')+'</div>'+
+    '</div>';
+
+  if(tip) html+=
+    '<div class="ai-field">'+
+      '<div class="ai-label">Совет по развитию</div>'+
+      '<div class="ai-tip">'+esc(tip)+'</div>'+
+    '</div>';
+
+  html+='</div>';
+  cont.innerHTML=html;
+}
+
+// ── Share ──────────────────────────────────────────────
+function shareCopy(){
+  var btn=document.getElementById('share-copy');
+  navigator.clipboard.writeText(window.location.href).then(function(){
+    btn.classList.add('copied');
+    var orig=btn.innerHTML;
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Скопировано!';
+    setTimeout(function(){btn.classList.remove('copied');btn.innerHTML=orig;},2000);
+  }).catch(function(){});
+}
+</script>
+</body>
+</html>
