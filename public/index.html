@@ -150,6 +150,9 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
+.card-btns{display:flex;flex-direction:column;gap:7px}
+.detail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;transition:color .2s,background .2s,border-color .2s,box-shadow .2s;text-decoration:none}
+.detail-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim);box-shadow:0 0 0 1px var(--accent) inset}
 .fav-btn{
   width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
   padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
@@ -803,7 +806,7 @@ function renderGrid(){
     var tru=r.tagline_ru||r.tagline||'';
     var tuz=r.tagline_uz||'';
     // save to localStorage for detail page
-    saveNameEntry(r.name,tru,tuz);
+    var nid=saveNameEntry(r.name,tru,tuz);
     var c=document.createElement('div');
     c.className='card'+(isFv?' fv':'');
     c.id='card-'+dn;
@@ -855,11 +858,20 @@ function renderGrid(){
         '</div>'+
       '</div>'+
       '<div class="card-divider"></div>'+
-      '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+esc(r.name)+'\',event)">'+
-        (isFv?favIconFill:favIcon)+
-        '<span>'+(isFv?'Сохранено':'В избранное')+'</span>'+
-      '</button>';
+      '<div class="card-btns">'+
+        '<a class="detail-btn" id="det-'+dn+'" href="#" target="_blank" onclick="event.stopPropagation()" style="pointer-events:none;opacity:.4">'+
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'+
+          'Подробнее'+
+        '</a>'+
+        '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+esc(r.name)+'\',event)">'+
+          (isFv?favIconFill:favIcon)+
+          '<span>'+(isFv?'Сохранено':'В избранное')+'</span>'+
+        '</button>'+
+      '</div>';
     g.appendChild(c);
+    // activate "Подробнее" link now that we have the id
+    var detEl=document.getElementById('det-'+dn);
+    if(detEl&&nid){detEl.href='/name.html?id='+nid;detEl.style.pointerEvents='';detEl.style.opacity='';}
   });
 }
 
