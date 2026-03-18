@@ -3,37 +3,62 @@ const fetch = require('node-fetch');
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 const styleMap = {
-  brandable:   'Invented/coined words — sounds real but means nothing (Spotify, Kodak, Zillow, Canva)',
-  wordmix:     'Portmanteau / word blend — two meaningful words fused (Facebook=face+book, Pinterest=pin+interest)',
-  foreign:     'Foreign-language roots — Latin, Italian, Japanese, Arabic, Persian loanwords that sound premium',
-  spelling:    'Intentional misspelling — drop vowels, double consonants, swap letters (Fiverr, Tumblr, Lyft, Flickr)',
-  short:       'Ultra-short — 3-6 characters only, punchy like a domain hack (Ola, Bolt, Uber, Grab)',
-  abstract:    'Abstract — no direct semantic link to the niche, purely aesthetic sound (Acura, Aion, Veed)',
-  uzbek_roots: 'Uzbek & Turkic roots — authentic roots with modern feel',
+  auto:        'Best style chosen automatically — mix of all approaches for maximum creativity',
+  brandable:   'Invented/coined words — sounds real but means nothing (Spotify, Kodak, Zillow, Canva, Google)',
+  evocative:   'Evocative names — strong emotional or conceptual association (RedBull, Amazon, Patagonia, Forever21)',
+  compound:    'Compound words — two meaningful words fused or blended (FedEx, Microsoft, Facebook, Snapchat)',
+  alternate:   'Alternate spelling — intentional creative misspelling (Lyft, Fiverr, Tumblr, Flickr, Dribbble)',
+  nonEnglish:  'Non-English words — foreign language roots sounding premium and global (Toyota, Audi, Volvo, Zara)',
+  real_words:  'Real words — common English words used unexpectedly as brand names (Apple, Amazon, Stripe, Notion)',
+  uzbek_roots: 'Uzbek & Turkic roots — authentic Central Asian roots with modern feel (Nurli, Baxtzor)',
 };
 
 const styleExtra = {
+  auto:
+    'IMPORTANT: You have FULL creative freedom. Choose the best approach for these specific keywords. ' +
+    'Produce a VARIETY across the 8 names — use at least 3 different style techniques. ' +
+    'Mix invented words, compound blends, real words, foreign roots as you see fit. ' +
+    'Prioritise what feels most natural, memorable, and brandable for this niche.',
   brandable:
-    'Rules: invent phonetically pleasing non-words. Combine consonant+vowel patterns freely. ' +
-    'Good: Zova, Nuvo, Tekra, Velix, Qobo. Bad: random letter strings that are hard to read.',
-  wordmix:
-    'Rules: pick 2 semantically relevant words, blend smoothly — keep beginning of word1 + end of word2, ' +
-    'or overlap shared sounds. Examples: tech+era=techera, market+link=marklink, fast+route=fastrout.',
-  foreign:
-    'Rules: use recognisable roots from Latin (vita, nova, lux, vox, apex, nexus), Italian (bella, forte, presto, vivo), ' +
-    'Japanese (ki, zen, kaze, hana), Persian/Arabic (noor, mehr, zafar, aman). ' +
-    'Adapt spelling to pure a-z. Avoid clichés like "maximus" alone.',
-  spelling:
-    'Rules: start from a real English or Uzbek word related to the niche, then mutate it: ' +
-    'drop silent vowels, double a consonant for punch, replace "ph" with "f", "ck" with "k", "er" with "r". ' +
-    'Result must still look intentional, not like a typo.',
-  short:
-    'HARD LIMIT: max 6 characters. Prefer 3-5. Every character counts. ' +
-    'Consonant clusters are ok if pronounceable (Bolt, Grab). Can end in vowel for softness (Zova, Kova).',
-  abstract:
-    'Rules: choose a vowel-heavy or rhythmic structure that sounds appealing regardless of meaning. ' +
-    'Target patterns: CVC, CVCV, CVCCV (C=consonant, V=vowel). ' +
-    'Avoid names that accidentally spell a word in Russian or Uzbek with a bad meaning.',
+    'Rules: invent phonetically pleasing non-words that FEEL like they could be a real global brand. ' +
+    'Use consonant+vowel patterns (CV, CVC, CVCV, CVCCV). ' +
+    'Good examples: Zova, Nuvo, Tekra, Velix, Qobo, Canva, Asana, Vevox. ' +
+    'Bad: random letter strings that are hard to pronounce or read. ' +
+    'The invented word should sound confident and professional.',
+  evocative:
+    'Rules: the name evokes a strong emotion, image, or concept — NOT the literal product/niche. ' +
+    'Think metaphors, nature, strength, speed, light, movement, growth, infinity. ' +
+    'Examples: Amazon (vast rainforest = huge selection), RedBull (energy/power), Patagonia (wild remote place). ' +
+    'The name must FEEL right and create an instant mental image even without knowing the business. ' +
+    'Avoid literal descriptions. Embrace poetic and unexpected connections.',
+  compound:
+    'Rules: fuse 2 meaningful words into one smooth compound brand name. ' +
+    'Method 1 — direct concat: keep both words mostly whole (Snapchat, Facebook, Mailchimp). ' +
+    'Method 2 — blend/portmanteau: overlap shared sounds or cut word endings (Pinterest=pin+interest, Microsoft=micro+soft). ' +
+    'Method 3 — prefix+root: use a descriptive prefix with a root word (DropBox, SoundCloud). ' +
+    'Both word parts should add meaning. Result must be one clean word, easy to say.',
+  alternate:
+    'Rules: start from a real English or Uzbek word connected to the niche, then mutate creatively: ' +
+    'drop silent vowels (Tumblr=tumbler−e), double a consonant for punch (Fiverr=fiver+r), ' +
+    'swap ph→f, ck→k, er→r, ou→u, replace -le with -l, add/drop letters for visual style. ' +
+    'Multiple mutations on one word are OK (Dribbble=dribble+extra b). ' +
+    'Result must look INTENTIONAL and stylish — not like a typo or typo-corrected word.',
+  nonEnglish:
+    'Rules: use actual words or recognisable roots from non-English languages that sound premium. ' +
+    'Latin: vita, nova, lux, vox, apex, nexus, pura, forte, cura, viva. ' +
+    'Italian: bella, corso, presto, vivo, uno, volta, faro, cento. ' +
+    'Japanese: ki, zen, kaze, hana, moto, yomi, nori, tora, koro. ' +
+    'Persian/Arabic: noor, mehr, zafar, aman, sabr, raha, yar, asal. ' +
+    'Scandinavian: fjord, vik, berg, stark, nord, sol, dal. ' +
+    'Use the word as-is OR adapt to pure a-z Latin spelling. ' +
+    'The result must sound globally appealing and work as a brand name.',
+  real_words:
+    'Rules: choose a REAL, common English word used in an unexpected or metaphorical way for the niche. ' +
+    'The connection should be indirect, surprising, or poetic — creating curiosity (Apple is not a tech word). ' +
+    'Good qualities: short (3-7 chars), well-known, positive connotation, visually clean. ' +
+    'Examples of the approach: Stripe (clean/structured), Notion (idea/concept), Slack (casual communication), ' +
+    'Oracle (wisdom), Elastic (flexible), Prism (spectrum/multi), Spring (fresh start). ' +
+    'Avoid industry jargon or generic words everyone uses. Pick something surprising.',
   uzbek_roots:
     'Core Uzbek roots: nur (light), baxt (happiness), zafar (victory), yulduz (star), ' +
     'tong (dawn), oltin (gold), daryo (river), tog (mountain), gul (flower), bog (garden), ' +
@@ -42,7 +67,7 @@ const styleExtra = {
     'yer (land), su (water), ot (fire/horse), qara (black/strong), aq (white/pure). ' +
     'Suffixes: -kor (doer), -zor (place of), -chi (worker), -li (with), -on (augmentative). ' +
     'Blend rules: combine 1-2 roots + optional suffix, keep total 4-9 chars. ' +
-    'Examples: Nurli, Baxtzor, Tondchi, Yolbek, Kuchay, Elbek, Mehron, Umidkor.',
+    'Examples: Nurli, Baxtzor, Tondchi, Yolbek, Kuchay, Elbek, Mehron, Umidkor, Zafaron.',
 };
 
 const phoneticRule =
@@ -59,7 +84,7 @@ const qualityCriteria =
   '(B) easy to spell when heard aloud, ' +
   '(C) no unintended negative meaning in Uzbek, Russian, or English, ' +
   '(D) visually balanced — not too many ascenders/descenders, ' +
-  '(E) 4-9 characters is the sweet spot (exception: style=short allows 3-6). ' +
+  '(E) 4-10 characters is the sweet spot. ' +
   'Reject any name that fails two or more criteria.';
 
 exports.handler = async (event) => {
@@ -82,10 +107,10 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'keywords обязателен' }) };
   }
 
-  const styleLabel = styleMap[style] || style;
+  const styleLabel = styleMap[style] || styleMap['auto'];
   const extraInstruction = styleExtra[style]
     ? `\nStyle-specific rules: ${styleExtra[style]}`
-    : '';
+    : `\nStyle-specific rules: ${styleExtra['auto']}`;
 
   const body = {
     model: 'claude-sonnet-4-20250514',
@@ -152,14 +177,13 @@ exports.handler = async (event) => {
       return { statusCode: 500, body: JSON.stringify({ error: 'Невалидный JSON от API', raw: raw.slice(0, 200) }) };
     }
 
-    const isShortStyle = style === 'short';
     const names = (parsed.names || [])
       .filter(r => {
         if (!r?.name) return false;
         const n = r.name.toLowerCase();
         if (!/^[a-z0-9]+$/.test(n)) return false;
         if (n.length < 3 || n.length > 12) return false;
-        if (!isShortStyle && n.length < 4) return false;
+        if (n.length < 4) return false;
         if (/(.)\1\1/.test(n)) return false;
         return true;
       })

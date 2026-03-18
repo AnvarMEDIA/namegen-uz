@@ -22,6 +22,7 @@
   --card-fv-hover-border:rgba(127,255,110,.35);--card-fv-hover-shadow:rgba(127,255,110,.08);
   --eyebrow-border:rgba(127,255,110,.15);
   --scr-shadow:rgba(127,255,110,.3);
+  --sc-border:rgba(255,255,255,.06);--sc-hover:rgba(255,255,255,.04);--sc-on-bg:rgba(127,255,110,.08);
 }
 [data-theme="light"]{
   --bg:#f5f4f0;--bg2:#ffffff;--bg3:#eeede9;--bg4:#e5e4e0;
@@ -35,6 +36,7 @@
   --card-fv-hover-border:rgba(45,184,26,.35);--card-fv-hover-shadow:rgba(45,184,26,.08);
   --eyebrow-border:rgba(45,184,26,.2);
   --scr-shadow:rgba(45,184,26,.25);
+  --sc-border:rgba(0,0,0,.09);--sc-hover:rgba(0,0,0,.03);--sc-on-bg:rgba(45,184,26,.07);
 }
 html{scroll-behavior:smooth;height:100%}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;display:flex;flex-direction:column}
@@ -57,22 +59,22 @@ nav{display:flex;gap:2px}
 .theme-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg4);transform:rotate(15deg)}
 .theme-btn svg{width:16px;height:16px;transition:opacity .2s}
 
-/* ── Main layout — fluid, full viewport width ────────── */
+/* ── Main layout ─────────────────────────────────────── */
 main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 
 /* ── Hero ────────────────────────────────────────────── */
-.hero{text-align:center;margin-bottom:48px;max-width:580px;margin-left:auto;margin-right:auto}
+.hero{text-align:center;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid var(--eyebrow-border);padding:7px 18px;border-radius:100px;margin-bottom:22px;font-family:'DM Mono',monospace}
 .hero-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:blink 2s ease infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(32px,5vw,52px);line-height:1.1;letter-spacing:-1.5px;color:var(--text);margin-bottom:14px}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(32px,5vw,54px);line-height:1.08;letter-spacing:-1.5px;color:var(--text);margin-bottom:14px}
 .hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{font-size:16px;color:var(--text2);font-weight:400;max-width:420px;margin:0 auto}
+.hero p{font-size:16px;color:var(--text2);font-weight:400;max-width:440px;margin:0 auto}
 
 /* ── Search box ──────────────────────────────────────── */
-.sbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;margin:0 auto 12px;max-width:860px;transition:border-color .25s}
-.sbox:focus-within{border-color:rgba(127,255,110,.25)}
-.irow{display:flex;gap:10px;margin-bottom:18px}
+.sbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;margin:0 auto 12px;max-width:900px;transition:border-color .25s}
+.sbox:focus-within{border-color:rgba(127,255,110,.2)}
+.irow{display:flex;gap:10px;margin-bottom:0}
 .inp-wrap{position:relative;flex:1}
 .inp-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none;transition:color .2s}
 .inp-wrap:focus-within .inp-icon{color:var(--accent)}
@@ -89,23 +91,34 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .gbtn:active{transform:translateY(0)}
 .gbtn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── Style filters ───────────────────────────────────── */
-.filters-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
-.filter-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-right:2px;font-family:'DM Sans',sans-serif}
-.sbtn{background:none;border:1px solid var(--border2);border-radius:100px;padding:7px 18px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text2);cursor:pointer;transition:all .15s;font-weight:500}
-.sbtn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
-.sbtn.on{border-color:var(--accent);color:var(--accent);background:var(--adim);box-shadow:0 0 0 3px var(--aglow)}
+/* ── Style section ───────────────────────────────────── */
+.style-section{margin:0 auto 12px;max-width:900px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
+.style-section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;cursor:pointer;user-select:none;gap:10px}
+.style-section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px}
+.style-selected-pill{background:var(--adim);border:1px solid rgba(127,255,110,.2);color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;letter-spacing:0;text-transform:none;white-space:nowrap;font-family:'DM Mono',monospace}
+.style-chevron{width:16px;height:16px;color:var(--text3);transition:transform .25s;flex-shrink:0}
+.style-section.open .style-chevron{transform:rotate(180deg)}
+.style-body{display:none;padding:4px 14px 14px}
+.style-section.open .style-body{display:block}
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1.5px solid var(--sc-border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:transparent;text-align:left;width:100%}
+.sc:hover{border-color:var(--border3);background:var(--sc-hover)}
+.sc.on{border-color:var(--accent);background:var(--sc-on-bg)}
+.sc-radio{width:17px;height:17px;border-radius:50%;border:2px solid var(--border3);flex-shrink:0;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center;position:relative}
+.sc.on .sc-radio{border-color:var(--accent);background:var(--accent)}
+.sc.on .sc-radio::after{content:'';width:5px;height:5px;border-radius:50%;background:#060606;position:absolute}
+.sc-text{flex:1;min-width:0}
+.sc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sc-desc{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.35}
+.sc-badge{background:var(--accent);color:#000;font-size:8px;font-weight:800;padding:2px 6px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase;font-family:'DM Mono',monospace;line-height:1.4}
 
 /* ── Results header ──────────────────────────────────── */
-.rh{display:flex;align-items:center;justify-content:space-between;margin:32px 0 16px;flex-wrap:wrap;gap:10px}
+.rh{display:flex;align-items:center;justify-content:space-between;margin:32px 0 16px;flex-wrap:wrap;gap:10px;max-width:900px;margin-left:auto;margin-right:auto}
 .rh-count{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;color:var(--text)}
 .rh-sub{font-size:13px;color:var(--text3);margin-top:1px}
-.legend{display:flex;gap:14px}
-.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-weight:500}
-.ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
-/* ── Grid — full width, fluid columns ────────────────── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+/* ── Grid ────────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:16px;max-width:900px;margin:0 auto}
 
 /* ── Card ────────────────────────────────────────────── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px 20px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both;container-type:inline-size}
@@ -139,10 +152,7 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .fav-btn svg{transition:transform .25s,fill .2s;flex-shrink:0}
 .fav-btn:hover{color:var(--text2);border-color:var(--border3);background:var(--bg3);transform:translateY(-1px)}
 .fav-btn:active{transform:translateY(0)}
-.fav-btn.on{
-  background:var(--accent);border-color:var(--accent);color:#060606;
-  box-shadow:0 4px 16px rgba(127,255,110,.25);
-}
+.fav-btn.on{background:var(--accent);border-color:var(--accent);color:#060606;box-shadow:0 4px 16px rgba(127,255,110,.25)}
 .fav-btn.on svg{fill:#060606;transform:scale(1.1)}
 .fav-btn.on:hover{background:var(--accent2);border-color:var(--accent2);box-shadow:0 6px 22px rgba(127,255,110,.35)}
 @keyframes heartpop{0%{transform:scale(1)}30%{transform:scale(1.4)}65%{transform:scale(.85)}100%{transform:scale(1)}}
@@ -213,9 +223,7 @@ footer{text-align:center;padding:48px 24px;color:var(--text4);font-size:12px;bor
 footer a{color:var(--text3);text-decoration:none;transition:color .15s}
 footer a:hover{color:var(--text)}
 
-/* ── Card container queries (card adapts to its own width) ── */
-
-/* Icon-only labels when card is very narrow (2-col on small phones) */
+/* ── Card container queries ──────────────────────────── */
 @container (max-width:230px){
   .cname{font-size:18px;letter-spacing:-.2px}
   .cname-ext,.card-num{display:none}
@@ -227,8 +235,6 @@ footer a:hover{color:var(--text)}
   .checks{padding:8px 8px;gap:4px}
   .uz-row,.soc-btn{padding:4px 8px;font-size:10px;min-height:26px}
 }
-
-/* Compact labels when card is narrow */
 @container (min-width:231px) and (max-width:300px){
   .cname{font-size:21px;letter-spacing:-.3px}
   .cname-ext{display:none}
@@ -238,15 +244,9 @@ footer a:hover{color:var(--text)}
   .checks{padding:8px 10px}
   .uz-row,.soc-btn{font-size:11px}
 }
-
-/* Full labels when card is comfortably wide */
-@container (min-width:301px){
-  .cl-text{display:inline}
-}
+@container (min-width:301px){.cl-text{display:inline}}
 
 /* ── Responsive ──────────────────────────────────────── */
-
-/* ── Mobile portrait  < 480px ── */
 @media(max-width:479px){
   header{padding:12px 16px}
   .logo{font-size:17px}
@@ -255,45 +255,33 @@ footer a:hover{color:var(--text)}
   .hero{margin-bottom:28px}
   .hero h1{font-size:26px;letter-spacing:-1px}
   .hero p{font-size:13px}
-  .sbox{border-radius:14px;padding:16px}
   .irow{flex-direction:column;gap:8px}
   .gbtn{width:100%;justify-content:center;padding:13px}
-  .filters-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .filters-row::-webkit-scrollbar{display:none}
-  .filter-label{display:none}
+  .style-grid{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr;gap:10px}
   .rh{flex-direction:column;align-items:flex-start;gap:4px}
   .rh-count{font-size:18px}
   .fi2{flex-direction:column;align-items:flex-start;gap:10px}
   .rmbtn{width:100%}
 }
-
-/* ── Mobile landscape / small tablet  480–767px ── */
 @media(min-width:480px) and (max-width:767px){
   header{padding:14px 24px}
   main{padding:36px 20px 64px}
   .hero h1{font-size:30px}
   .irow{flex-direction:column;gap:8px}
   .gbtn{width:100%;justify-content:center}
-  .filters-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .filters-row::-webkit-scrollbar{display:none}
+  .style-grid{grid-template-columns:1fr 1fr}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
 }
-
-/* ── Tablet  768–1023px ── */
 @media(min-width:768px) and (max-width:1023px){
   header{padding:16px 32px}
   main{padding:44px 32px 72px}
   .grid{grid-template-columns:repeat(2,1fr);gap:12px}
 }
-
-/* ── Desktop  1024px+ ── */
 @media(min-width:1024px){
   main{padding:52px clamp(28px,3vw,64px) 80px}
-  .grid{grid-template-columns:repeat(4,1fr);gap:12px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:12px}
 }
-
-/* ── Wide / 4K  1800px+ ── */
 @media(min-width:1800px){
   main{padding:60px clamp(64px,6vw,140px) 80px}
   .card{padding:24px}
@@ -312,9 +300,7 @@ footer a:hover{color:var(--text)}
         <span class="badge" id="fb" style="display:none">0</span>
       </button>
     </nav>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Сменить тему">
-      <!-- icon injected by JS -->
-    </button>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Сменить тему"></button>
   </div>
 </header>
 
@@ -327,6 +313,7 @@ footer a:hover{color:var(--text)}
       <p>Опишите идею — получите уникальные названия с проверкой домена .uz</p>
     </div>
 
+    <!-- Search input -->
     <div class="sbox">
       <div class="irow">
         <div class="inp-wrap">
@@ -346,9 +333,22 @@ footer a:hover{color:var(--text)}
           </svg>
         </button>
       </div>
-      <div class="filters-row">
-        <span class="filter-label">Стиль</span>
-        <div id="sc"></div>
+    </div>
+
+    <!-- Style picker -->
+    <div class="style-section" id="style-section">
+      <div class="style-section-header" onclick="toggleStyleSection()">
+        <div class="style-section-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Стиль нейминга
+          <span class="style-selected-pill" id="style-pill">Авто</span>
+        </div>
+        <svg class="style-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="style-body">
+        <div class="style-grid" id="sc"></div>
       </div>
     </div>
 
@@ -386,52 +386,52 @@ footer a:hover{color:var(--text)}
 </footer>
 
 <script>
-// ── Theme ───────────────────────────────────────────────
+// ── Theme ──────────────────────────────────────────────
 var ICON_SUN='<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 var ICON_MOON='<svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>';
 
 function applyTheme(t){
-  document.documentElement.setAttribute('data-theme', t);
-  var btn = document.getElementById('theme-btn');
-  if(btn) btn.innerHTML = t==='dark' ? ICON_MOON : ICON_SUN;
+  document.documentElement.setAttribute('data-theme',t);
+  var btn=document.getElementById('theme-btn');
+  if(btn)btn.innerHTML=t==='dark'?ICON_MOON:ICON_SUN;
   try{localStorage.setItem('ng_theme',t)}catch(e){}
 }
 function toggleTheme(){
-  var cur = document.documentElement.getAttribute('data-theme')||'dark';
+  var cur=document.documentElement.getAttribute('data-theme')||'dark';
   applyTheme(cur==='dark'?'light':'dark');
 }
 (function(){
-  var saved = null;
+  var saved=null;
   try{saved=localStorage.getItem('ng_theme')}catch(e){}
-  if(!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) saved='light';
+  if(!saved&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches)saved='light';
   applyTheme(saved||'dark');
 })();
 
 // ── Utils ──────────────────────────────────────────────
-function cleanDomain(n){ return (n||'').toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/^-+|-+$/g,''); }
-function cleanUser(n){ return (n||'').toLowerCase().replace(/[^a-z0-9_.]/g,''); }
-
+function cleanDomain(n){return (n||'').toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/^-+|-+$/g,'');}
+function cleanUser(n){return (n||'').toLowerCase().replace(/[^a-z0-9_.]/g,'');}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toggleClear(){
-  var v = document.getElementById('kw').value;
-  document.getElementById('clr-btn').classList.toggle('vis', !!v);
+  var v=document.getElementById('kw').value;
+  document.getElementById('clr-btn').classList.toggle('vis',!!v);
 }
 function clearKw(){
-  document.getElementById('kw').value = '';
+  document.getElementById('kw').value='';
   document.getElementById('clr-btn').classList.remove('vis');
   document.getElementById('kw').focus();
 }
 
-// ── Scramble loader ────────────────────────────────────
+// ── Scramble loader ─────────────────────────────────────
 var SCR_CHARS='abcdefghijklmnopqrstuvwxyz';
 var SCR_WORDS=['namegen','branding','startup','creative','bizname','ideabot','venture','product'];
 var scrTimer=null;
 function startScramble(){
-  var el=document.getElementById('scr-word'); if(!el)return;
+  var el=document.getElementById('scr-word');if(!el)return;
   var wi=0,frame=0;
   function tick(){
-    var target=SCR_WORDS[wi%SCR_WORDS.length], out='';
-    for(var i=0;i<target.length;i++) out+=frame>i*4?target[i]:SCR_CHARS[Math.floor(Math.random()*SCR_CHARS.length)];
-    el.textContent=out; frame++;
+    var target=SCR_WORDS[wi%SCR_WORDS.length],out='';
+    for(var i=0;i<target.length;i++)out+=frame>i*4?target[i]:SCR_CHARS[Math.floor(Math.random()*SCR_CHARS.length)];
+    el.textContent=out;frame++;
     if(frame>=target.length*4+12){frame=0;wi++;}
     scrTimer=setTimeout(tick,55);
   }
@@ -441,26 +441,46 @@ function stopScramble(){if(scrTimer){clearTimeout(scrTimer);scrTimer=null;}}
 
 // ── Styles ─────────────────────────────────────────────
 var ST=[
-  {id:'brandable',l:'Брендовые'},{id:'wordmix',l:'Словослияние'},
-  {id:'foreign',l:'Иностранные'},
-  {id:'abstract',l:'Абстрактные'},
-  {id:'uzbek_roots',l:'🇺🇿 Узбекские корни'},
+  {id:'auto',       l:'Авто',                   badge:'new', desc:'Все стили — ИИ выбирает лучший'},
+  {id:'brandable',  l:'Брендовые',                           desc:'как Google и Rolex'},
+  {id:'evocative',  l:'Ассоциативные',                       desc:'как RedBull и Forever21'},
+  {id:'compound',   l:'Составные слова',                     desc:'как FedEx и Microsoft'},
+  {id:'alternate',  l:'Изменённое написание',                 desc:'как Lyft и Fiverr'},
+  {id:'nonEnglish', l:'Нейтральные слова',                   desc:'как Toyota и Audi'},
+  {id:'real_words', l:'Реальные слова',                      desc:'как Apple и Amazon'},
+  {id:'uzbek_roots',l:'🇺🇿 Узбекские корни',                  desc:'как Nurli и Baxtzor'},
 ];
-var cs='brandable', favs=[], res=[], dcache={}, tgcache={}, igcache={};
+var cs='auto', favs=[], res=[], dcache={}, tgcache={}, igcache={};
 try{favs=JSON.parse(localStorage.getItem('ng_f')||'[]')}catch(e){}
 
 ST.forEach(function(s){
   var b=document.createElement('button');
-  b.className='sbtn'+(s.id===cs?' on':'');
-  b.textContent=s.l;
+  b.className='sc'+(s.id===cs?' on':'');
+  b.setAttribute('data-id',s.id);
+  var badgeHtml=s.badge?'<span class="sc-badge">'+s.badge+'</span>':'';
+  b.innerHTML=
+    '<div class="sc-radio"></div>'+
+    '<div class="sc-text">'+
+      '<div class="sc-name">'+s.l+badgeHtml+'</div>'+
+      '<div class="sc-desc">'+s.desc+'</div>'+
+    '</div>';
   b.onclick=function(){
     cs=s.id;
-    document.querySelectorAll('.sbtn').forEach(function(x){x.classList.remove('on')});
+    document.querySelectorAll('.sc').forEach(function(x){x.classList.remove('on');});
     b.classList.add('on');
+    document.getElementById('style-pill').textContent=s.l;
   };
   document.getElementById('sc').appendChild(b);
 });
 ufb();
+
+// ── Style section toggle ───────────────────────────────
+function toggleStyleSection(){
+  var sec=document.getElementById('style-section');
+  sec.classList.toggle('open');
+}
+// Open by default
+document.getElementById('style-section').classList.add('open');
 
 // ── Views ──────────────────────────────────────────────
 function sv(v){
@@ -491,7 +511,7 @@ function checkTg(un){
     .catch(function(e){return{status:'error',msg:e.message};});
 }
 function updateTg(un,result){
-  var el=document.getElementById('tg-'+un); if(!el)return;
+  var el=document.getElementById('tg-'+un);if(!el)return;
   if(result.status==='free'){
     el.className='soc-btn tg-free';
     el.innerHTML='<div class="soc-dot"></div><span class="soc-label">t.me/'+un+' — свободен ✓</span>';
@@ -519,7 +539,7 @@ function checkIg(un){
     .catch(function(e){return{status:'error',msg:e.message};});
 }
 function updateIg(un,result){
-  var el=document.getElementById('ig-'+un); if(!el)return;
+  var el=document.getElementById('ig-'+un);if(!el)return;
   if(result.status==='free'){
     el.className='soc-btn ig-free';
     el.innerHTML='<div class="soc-dot"></div><span class="soc-label">@'+un+' — свободен ✓</span>';
@@ -539,13 +559,15 @@ function updateIg(un,result){
 
 // ── Generate ───────────────────────────────────────────
 function gen(){
-  var kw=document.getElementById('kw').value.trim(); if(!kw)return;
-  var btn=document.getElementById('gb'); btn.disabled=true;
+  var kw=document.getElementById('kw').value.trim();if(!kw)return;
+  var btn=document.getElementById('gb');btn.disabled=true;
   document.getElementById('ea').innerHTML='';
   document.getElementById('em').style.display='none';
   document.getElementById('rh').innerHTML='';
   document.getElementById('gr').innerHTML='';
-  document.getElementById('la').style.display='block'; startScramble();
+  document.getElementById('la').style.display='block';startScramble();
+  // Close style section when generating
+  document.getElementById('style-section').classList.remove('open');
 
   fetch('/api/generate',{
     method:'POST',
@@ -578,13 +600,13 @@ function gen(){
     document.getElementById('em').innerHTML='<div class="empty-icon">⚠</div><p>Что-то пошло не так.<br><strong>Детали выше ↑</strong></p>';
   })
   .finally(function(){
-    stopScramble(); document.getElementById('la').style.display='none'; btn.disabled=false;
+    stopScramble();document.getElementById('la').style.display='none';btn.disabled=false;
   });
 }
 
 // ── Render grid ────────────────────────────────────────
 function renderGrid(){
-  var g=document.getElementById('gr'); g.innerHTML='';
+  var g=document.getElementById('gr');g.innerHTML='';
   res.forEach(function(r,i){
     var dn=cleanDomain(r.name);
     var un=cleanUser(r.name);
@@ -595,22 +617,22 @@ function renderGrid(){
     c.className='card'+(isFv?' fv':'');
     c.id='card-'+dn;
     c.style.animationDelay=(i*45)+'ms';
-    c.setAttribute('data-tru', tru);
-    c.setAttribute('data-tuz', tuz);
-    var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
-    var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
+    c.setAttribute('data-tru',tru);
+    c.setAttribute('data-tuz',tuz);
+    var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+    var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
     var icoDomain='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
     var icoTg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
     var icoIg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
     c.innerHTML=
       '<div class="card-top">'+
         '<div class="cname-wrap">'+
-          '<span class="cname">'+r.name+'</span>'+
+          '<span class="cname">'+esc(r.name)+'</span>'+
           '<span class="cname-ext">.uz</span>'+
         '</div>'+
         '<div class="card-actions">'+
           '<span class="card-num">'+String(i+1).padStart(2,'0')+'</span>'+
-          '<button class="copy-btn" title="Копировать" onclick="copyName(\''+r.name+'\',this)">'+
+          '<button class="copy-btn" title="Копировать" onclick="copyName(\''+esc(r.name)+'\',this)">'+
             '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'+
           '</button>'+
         '</div>'+
@@ -638,7 +660,7 @@ function renderGrid(){
         '</div>'+
       '</div>'+
       '<div class="card-divider"></div>'+
-      '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+r.name+'\',event)">'+
+      '<button class="fav-btn'+(isFv?' on':'')+'" id="fav-'+dn+'" onclick="tf(\''+esc(r.name)+'\',event)">'+
         (isFv?favIconFill:favIcon)+
         '<span>'+(isFv?'Сохранено':'В избранное')+'</span>'+
       '</button>';
@@ -646,24 +668,21 @@ function renderGrid(){
   });
 }
 
-// ── HTML escape helper ──────────────────────────────────
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
 // ── Copy name ──────────────────────────────────────────
-function copyName(name, btn){
+function copyName(name,btn){
   navigator.clipboard.writeText(name).then(function(){
     btn.classList.add('copied');
     btn.innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     setTimeout(function(){
       btn.classList.remove('copied');
       btn.innerHTML='<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
-    }, 1800);
+    },1800);
   }).catch(function(){});
 }
 
 // ── Update domain status ───────────────────────────────
 function updateUz(dn,result){
-  var el=document.getElementById('uz-'+dn); if(!el)return;
+  var el=document.getElementById('uz-'+dn);if(!el)return;
   if(result.status==='free'){
     el.className='uz-row uz-free';
     el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — свободен</span>';
@@ -678,8 +697,8 @@ function updateUz(dn,result){
 }
 
 // ── Favourites ─────────────────────────────────────────
-var FAV_ICON='<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
-var FAV_ICON_FILL='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
+var FAV_ICON='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+var FAV_ICON_FILL='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
 
 function tf(name,e){
   e.stopPropagation();
@@ -688,7 +707,7 @@ function tf(name,e){
   var tru=card?card.getAttribute('data-tru'):'';
   var tuz=card?card.getAttribute('data-tuz'):'';
   var i=favs.findIndex(function(f){return f.name===name;});
-  if(i>-1)favs.splice(i,1); else favs.push({name:name,tagline_ru:tru,tagline_uz:tuz});
+  if(i>-1)favs.splice(i,1);else favs.push({name:name,tagline_ru:tru,tagline_uz:tuz});
   try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
   ufb();
   var isFv=favs.some(function(f){return f.name===name;});
@@ -717,21 +736,21 @@ function rfl(){
   favs.forEach(function(f){
     var tru=f.tagline_ru||f.tagline||'';
     var tuz=f.tagline_uz||'';
-    var d=document.createElement('div'); d.className='fi2';
+    var d=document.createElement('div');d.className='fi2';
     d.innerHTML=
       '<div>'+
         '<div class="fn">'+esc(f.name)+'</div>'+
         '<div class="ft">'+esc(tru)+'</div>'+
         (tuz?'<div class="ft" style="font-style:italic;margin-top:1px">'+esc(tuz)+'</div>':'')+
       '</div>'+
-      '<button class="rmbtn" onclick="rf(\''+f.name+'\')">Удалить</button>';
+      '<button class="rmbtn" onclick="rf(\''+esc(f.name)+'\')">Удалить</button>';
     l.appendChild(d);
   });
 }
 function rf(name){
   favs=favs.filter(function(f){return f.name!==name;});
   try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
-  ufb(); rfl();
+  ufb();rfl();
 }
 </script>
 </body>
