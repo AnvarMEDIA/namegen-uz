@@ -1020,6 +1020,30 @@ function rfl(){
         chipHtmlUz()+
         chipHtmlTg()+
         chipHtmlIg()+
+      '</div>'+
+      '<div class="card-divider"></div>'+
+      '<div class="card-btns">'+
+        (function(){
+          var ns=nameStore[f.name];
+          var nid=ns&&ns.id||'';
+          if(!nid){
+            // try to find in localStorage by name
+            try{
+              for(var k in localStorage){
+                if(k.indexOf('ng_name_')===0){
+                  var tmp=JSON.parse(localStorage.getItem(k)||'null');
+                  if(tmp&&tmp.name===f.name&&Date.now()<tmp.expires_at){nid=tmp.id;break;}
+                }
+              }
+            }catch(e){}
+          }
+          return nid
+            ? '<a class="detail-btn" href="/name.html?id='+nid+'" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Подробнее</a>'
+            : '<a class="detail-btn" style="pointer-events:none;opacity:.35" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Подробнее</a>';
+        })()+
+        '<button class="fav-btn on" onclick="event.stopPropagation();rf(\''+esc(f.name)+'\')">'+
+          FAV_ICON_FILL+'<span>Сохранено</span>'+
+        '</button>'+
       '</div>';
     g.appendChild(c);
 
