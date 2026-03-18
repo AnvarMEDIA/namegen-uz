@@ -217,15 +217,26 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .errbox{background:var(--redbg);border:1px solid var(--redbr);border-radius:var(--radius-sm);padding:14px 16px;font-size:12px;color:var(--red);font-family:'DM Mono',monospace;word-break:break-all;white-space:pre-wrap;margin-bottom:16px}
 
 /* ── Favourites view ─────────────────────────────────── */
-.fav-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.fav-title{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.5px}
-.fl{display:flex;flex-direction:column;gap:8px}
-.fi2{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color .2s}
-.fi2:hover{border-color:var(--border2)}
+/* ── Favourites section ──────────────────────────────── */
+.fav-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;gap:16px;flex-wrap:wrap}
+.fav-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;letter-spacing:-.7px;display:flex;align-items:center;gap:10px;line-height:1.1}
+.fav-cnt-pill{background:var(--accent);color:#060606;font-size:12px;font-weight:800;font-family:'DM Mono',monospace;padding:3px 9px;border-radius:100px;letter-spacing:0;line-height:1.4}
+.fav-sub{font-size:13px;color:var(--text3);margin-top:5px}
+.fav-header-acts{display:flex;gap:8px;align-items:center;padding-top:4px}
+.fav-hact{display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.fav-hact:hover{border-color:var(--border3);background:var(--bg3);color:var(--text)}
+.fav-hact-del:hover{border-color:var(--redbr);color:var(--red);background:var(--redbg)}
+.fav-hact.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.fav-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:14px;text-align:center}
+.fav-empty-icon{width:68px;height:68px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text4);margin-bottom:4px}
+.fav-empty-title{font-size:18px;font-weight:700;color:var(--text);font-family:'Syne',sans-serif;letter-spacing:-.3px;margin:0}
+.fav-empty-sub{font-size:13px;color:var(--text3);margin:0;max-width:300px;line-height:1.6}
+.fav-rm-btn{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fav-rm-btn:hover{border-color:var(--redbr);color:var(--red);background:var(--redbg)}
+.card-removing{opacity:0;transform:scale(.95);pointer-events:none;transition:opacity .22s,transform .22s}
+.fl .grid{width:100%}
 .fn{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;margin-bottom:3px;color:var(--text)}
 .ft{font-size:12px;color:var(--text3);line-height:1.4}
-.rmbtn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 14px;font-size:12px;color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500;white-space:nowrap}
-.rmbtn:hover{border-color:var(--redbr);color:var(--red);background:var(--redbg)}
 
 /* ── Footer ──────────────────────────────────────────── */
 footer{text-align:center;padding:48px 24px;color:var(--text4);font-size:12px;border-top:1px solid var(--border);letter-spacing:.03em}
@@ -263,8 +274,9 @@ footer a:hover{color:var(--text)}
   .grid{grid-template-columns:1fr;gap:10px}
   .rh{flex-direction:column;align-items:flex-start;gap:4px}
   .rh-count{font-size:18px}
-  .fi2{flex-direction:column;align-items:flex-start;gap:10px}
-  .rmbtn{width:100%}
+  .fav-header{flex-direction:column;gap:12px}
+  .fav-header-acts{width:100%}
+  .fav-hact{flex:1;justify-content:center}
 }
 @media(min-width:480px) and (max-width:767px){
   header{padding:14px 20px}
@@ -392,11 +404,25 @@ footer a:hover{color:var(--text)}
   <!-- Favourites view -->
   <div id="v-fav" style="display:none">
     <div class="fav-header">
-      <div class="fav-title">Избранное</div>
+      <div class="fav-header-left">
+        <div class="fav-title">
+          Избранное
+          <span class="fav-cnt-pill" id="fav-cnt" style="display:none">0</span>
+        </div>
+        <div class="fav-sub">Ваши сохранённые названия</div>
+      </div>
+      <div class="fav-header-acts" id="fav-act" style="display:none">
+        <button class="fav-hact" onclick="copyAllFavs(this)" title="Скопировать все названия">
+          <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Скопировать все
+        </button>
+        <button class="fav-hact fav-hact-del" onclick="clearAllFavs()" title="Очистить список">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Очистить
+        </button>
+      </div>
     </div>
-    <div class="fl" id="fl">
-      <div class="empty"><div class="empty-icon">♥</div><p>Пока пусто — жмите ♥ на карточках</p></div>
-    </div>
+    <div class="fl" id="fl"></div>
   </div>
 </main>
 
@@ -737,6 +763,7 @@ function updateUz(dn,result){
 // ── Favourites ─────────────────────────────────────────
 var FAV_ICON='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 var FAV_ICON_FILL='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
+var ICO_TRASH='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>';
 
 function tf(name,e){
   e.stopPropagation();
@@ -759,34 +786,157 @@ function tf(name,e){
     }
   }
 }
+
 function ufb(){
   var b=document.getElementById('fb');
   b.textContent=favs.length;
   b.style.display=favs.length>0?'block':'none';
+  // also update count pill in fav header
+  var pill=document.getElementById('fav-cnt');
+  if(pill){pill.textContent=favs.length;pill.style.display=favs.length>0?'inline-flex':'none';}
 }
+
 function rfl(){
   var l=document.getElementById('fl');
+  var actEl=document.getElementById('fav-act');
   if(!favs.length){
-    l.innerHTML='<div class="empty"><div class="empty-icon">♥</div><p>Пока пусто — жмите ♥ на карточках</p></div>';
+    if(actEl)actEl.style.display='none';
+    l.innerHTML=
+      '<div class="fav-empty">'+
+        '<div class="fav-empty-icon">'+
+          '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'+
+            '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>'+
+          '</svg>'+
+        '</div>'+
+        '<p class="fav-empty-title">Список избранного пуст</p>'+
+        '<p class="fav-empty-sub">Нажимайте <strong>В избранное</strong> на карточках, чтобы сохранять понравившиеся названия</p>'+
+      '</div>';
     return;
   }
+  if(actEl)actEl.style.display='flex';
   l.innerHTML='';
-  favs.forEach(function(f){
+  var g=document.createElement('div');
+  g.className='grid';
+  l.appendChild(g);
+
+  var icoDomain='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  var icoTg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+  var icoIg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+
+  favs.forEach(function(f,i){
+    var dn=cleanDomain(f.name);
+    var un=cleanUser(f.name);
     var tru=f.tagline_ru||f.tagline||'';
     var tuz=f.tagline_uz||'';
-    var d=document.createElement('div');d.className='fi2';
-    d.innerHTML=
-      '<div>'+
-        '<div class="fn">'+esc(f.name)+'</div>'+
-        '<div class="ft">'+esc(tru)+'</div>'+
-        (tuz?'<div class="ft" style="font-style:italic;margin-top:1px">'+esc(tuz)+'</div>':'')+
+    var c=document.createElement('div');
+    c.className='card fv';
+    c.id='fcard-'+dn;
+    c.style.animationDelay=(i*40)+'ms';
+
+    // show cached domain results if available, otherwise show check chips
+    var uzCached=dcache[dn];
+    var tgCached=tgcache[un];
+    var igCached=igcache[un];
+
+    function chipHtmlUz(){
+      if(!uzCached)return '<div class="chip uz-checking" id="fuz-'+dn+'"><div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — проверяем...</span></div>';
+      if(uzCached.status==='free')return '<div class="chip uz-free" id="fuz-'+dn+'" style="cursor:default"><div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — свободен</span></div>';
+      if(uzCached.status==='taken')return '<div class="chip uz-taken" id="fuz-'+dn+'" style="cursor:default"><div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — занят</span></div>';
+      return '<div class="chip uz-taken" id="fuz-'+dn+'" style="cursor:default"><div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz</span></div>';
+    }
+    function chipHtmlTg(){
+      if(!tgCached)return '<div class="chip tg-checking" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span></div>';
+      if(tgCached.status==='free')return '<div class="chip tg-free" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — свободен ✓</span></div>';
+      return '<div class="chip tg-taken" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+(tgCached.status==='taken'?' — занят':'')+'</span></div>';
+    }
+    function chipHtmlIg(){
+      if(!igCached)return '<div class="chip ig-checking" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+'</span></div>';
+      if(igCached.status==='free')return '<div class="chip ig-free" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span></div>';
+      if(igCached.status==='taken')return '<div class="chip ig-taken" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span></div>';
+      return '<div class="chip ig-btn" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+'</span></div>';
+    }
+
+    c.innerHTML=
+      '<div class="card-top">'+
+        '<div class="cname-wrap">'+
+          '<span class="cname">'+esc(f.name)+'</span>'+
+          '<span class="cname-ext">.uz</span>'+
+        '</div>'+
+        '<div class="card-actions">'+
+          '<span class="card-num">'+String(i+1).padStart(2,'0')+'</span>'+
+          '<button class="copy-btn" title="Копировать" onclick="copyName(\''+esc(f.name)+'\',this)">'+
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3 8H2a1 1 0 01-1-1V2a1 1 0 011-1h5a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'+
+          '</button>'+
+          '<button class="fav-rm-btn" title="Удалить из избранного" onclick="rf(\''+esc(f.name)+'\')">'+ICO_TRASH+'</button>'+
+        '</div>'+
       '</div>'+
-      '<button class="rmbtn" onclick="rf(\''+esc(f.name)+'\')">Удалить</button>';
-    l.appendChild(d);
+      '<div class="ctag">'+esc(tru)+'</div>'+
+      (tuz?'<div class="ctag-uz">'+esc(tuz)+'</div>':'')+
+      '<div class="checks">'+
+        chipHtmlUz()+
+        chipHtmlTg()+
+        chipHtmlIg()+
+      '</div>';
+    g.appendChild(c);
+
+    // trigger checks only for uncached names
+    if(!uzCached)(function(d2){checkUz(d2).then(function(r){updateFavChip('fuz-'+d2,r,'uz',d2)});})(dn);
+    if(!tgCached)(function(u2){checkTg(u2).then(function(r){updateFavChip('ftg-'+u2,r,'tg',u2)});})(un);
+    if(!igCached)(function(u2){checkIg(u2).then(function(r){updateFavChip('fig-'+u2,r,'ig',u2)});})(un);
   });
 }
+
+function updateFavChip(elId,result,type,handle){
+  var el=document.getElementById(elId);if(!el)return;
+  var icoDomain='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  var icoTg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+  var icoIg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+  if(type==='uz'){
+    if(result.status==='free'){el.className='chip uz-free';el.innerHTML='<div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+handle+'.uz — свободен</span>';}
+    else if(result.status==='taken'){el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+handle+'.uz — занят</span>';}
+    else{el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+handle+'.uz</span>';}
+  } else if(type==='tg'){
+    if(result.status==='free'){el.className='chip tg-free';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+' — свободен ✓</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
+    else{el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+(result.status==='taken'?' — занят':'')+'</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
+  } else {
+    if(result.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — свободен ✓</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
+    else if(result.status==='taken'){el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — занят</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
+    else{el.className='chip ig-btn';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — проверьте вручную</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
+  }
+}
+
 function rf(name){
-  favs=favs.filter(function(f){return f.name!==name;});
+  // animate out then remove
+  var dn=cleanDomain(name);
+  var card=document.getElementById('fcard-'+dn);
+  if(card){
+    card.classList.add('card-removing');
+    setTimeout(function(){
+      favs=favs.filter(function(f){return f.name!==name;});
+      try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
+      ufb();rfl();
+    },230);
+  } else {
+    favs=favs.filter(function(f){return f.name!==name;});
+    try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
+    ufb();rfl();
+  }
+}
+
+function copyAllFavs(btn){
+  if(!favs.length)return;
+  var names=favs.map(function(f){return f.name;}).join(', ');
+  navigator.clipboard.writeText(names).then(function(){
+    var orig=btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Скопировано!';
+    setTimeout(function(){btn.classList.remove('copied');btn.innerHTML=orig;},2000);
+  }).catch(function(){});
+}
+
+function clearAllFavs(){
+  if(!favs.length)return;
+  favs=[];
   try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
   ufb();rfl();
 }
