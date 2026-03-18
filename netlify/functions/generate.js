@@ -99,7 +99,7 @@ exports.handler = async (event) => {
     messages: [{
       role: 'user',
       content:
-        `Generate 12 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Generate 8 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
         `Style: ${styleLabel}${extraInstruction}\n\n` +
         `${phoneticRule}\n\n` +
         `${qualityCriteria}\n\n` +
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
         `- tagline_uz: same idea in Latin-script Uzbek (3-7 words, no full-stop)\n\n` +
         `Return ONLY valid JSON:\n` +
         `{"names":[{"name":"nurli","tagline_ru":"Свет в каждом шаге","tagline_uz":"Har qadamda nur"},...]}\n` +
-        `Exactly 12 items. All names must be DIFFERENT from each other.`
+        `Exactly 8 items. All names must be DIFFERENT from each other.`
     }]
   };
 
@@ -169,7 +169,7 @@ exports.handler = async (event) => {
         tagline_uz: (r.tagline_uz || '').replace(/[.!?]+$/, '').trim(),
       }))
       .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
-      .slice(0, 10);
+      .slice(0, 8);
 
     if (!names.length) {
       return { statusCode: 500, body: JSON.stringify({ error: 'Нет валидных имён в ответе' }) };
