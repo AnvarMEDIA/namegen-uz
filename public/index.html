@@ -151,11 +151,18 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
 .card-btns{display:flex;flex-direction:column;gap:7px}
-.detail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid rgba(127,255,110,.25);background:var(--adim);color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;transition:color .2s,background .2s,border-color .2s,box-shadow .2s,transform .1s;text-decoration:none}
-.detail-btn:hover{border-color:var(--accent);background:rgba(127,255,110,.13);box-shadow:0 0 0 1px var(--accent) inset;transform:translateY(-1px)}
+.detail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.01em;transition:color .2s,background .2s,border-color .2s,box-shadow .2s,transform .15s;text-decoration:none}
+.detail-btn:hover{border-color:var(--accent);background:var(--adim);color:var(--accent);box-shadow:0 0 12px var(--aglow);transform:translateY(-1px)}
 .detail-btn:active{transform:translateY(0)}
-[data-theme="light"] .detail-btn{border-color:rgba(45,184,26,.3);background:rgba(45,184,26,.07);color:var(--accent)}
-[data-theme="light"] .detail-btn:hover{background:rgba(45,184,26,.14);border-color:var(--accent)}
+.detail-btn svg{transition:transform .2s}
+.detail-btn:hover svg{transform:translateX(3px)}
+/* Fav tab detail-btn — more prominent */
+.fav-card .detail-btn{border-color:rgba(127,255,110,.22);background:linear-gradient(135deg,rgba(127,255,110,.06) 0%,rgba(127,255,110,.02) 100%);color:var(--accent);font-weight:600;font-size:13.5px}
+.fav-card .detail-btn:hover{border-color:var(--accent);background:rgba(127,255,110,.14);box-shadow:0 0 16px rgba(127,255,110,.15),0 0 0 1px rgba(127,255,110,.2) inset;transform:translateY(-2px)}
+[data-theme="light"] .detail-btn{border-color:var(--border2);background:var(--bg3);color:var(--text2)}
+[data-theme="light"] .detail-btn:hover{border-color:var(--accent);background:rgba(45,184,26,.07);color:var(--accent);box-shadow:0 0 10px rgba(45,184,26,.12)}
+[data-theme="light"] .fav-card .detail-btn{border-color:rgba(45,184,26,.3);background:linear-gradient(135deg,rgba(45,184,26,.07) 0%,rgba(45,184,26,.02) 100%);color:var(--accent)}
+[data-theme="light"] .fav-card .detail-btn:hover{background:rgba(45,184,26,.14);border-color:var(--accent);box-shadow:0 0 12px rgba(45,184,26,.15)}
 .fav-btn{
   width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
   padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
@@ -976,7 +983,7 @@ function rfl(){
     var tru=f.tagline_ru||f.tagline||'';
     var tuz=f.tagline_uz||'';
     var c=document.createElement('div');
-    c.className='card fv';
+    c.className='card fv fav-card';
     c.id='fcard-'+dn;
     c.style.animationDelay=(i*40)+'ms';
 
@@ -1041,8 +1048,9 @@ function rfl(){
             }catch(e){}
           }
           if(!nid) nid=saveNameEntry(f.name,f.tagline_ru||'',f.tagline_uz||'');
-          var icoArrow='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-          return '<a class="detail-btn" href="/name.html?id='+nid+'" target="_blank" onclick="event.stopPropagation()">'+icoArrow+'Подробнее</a>';
+          var icoArrow='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+          var icoExt='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px;opacity:.6"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+          return '<a class="detail-btn" href="/name.html?id='+nid+'" target="_blank" onclick="event.stopPropagation()">'+icoArrow+'Подробнее'+icoExt+'</a>';
         })()+
         '<button class="fav-btn on" onclick="event.stopPropagation();rf(\''+esc(f.name)+'\')">'+
           FAV_ICON_FILL+'<span>Сохранено</span>'+
