@@ -96,9 +96,9 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: 'ANTHROPIC_API_KEY не задан' }) };
   }
 
-  let keywords, style;
+  let keywords, style, randomness;
   try {
-    ({ keywords, style } = JSON.parse(event.body || '{}'));
+    ({ keywords, style, randomness } = JSON.parse(event.body || '{}'));
   } catch {
     return { statusCode: 400, body: JSON.stringify({ error: 'Невалидный JSON' }) };
   }
@@ -112,9 +112,18 @@ exports.handler = async (event) => {
     ? `\nStyle-specific rules: ${styleExtra[style]}`
     : `\nStyle-specific rules: ${styleExtra['auto']}`;
 
+  // Randomness controls Claude temperature + prompt tone
+  const randMap = {
+    low:    { temperature: 0.3, hint: 'Be CONSERVATIVE and direct. Favour obvious, safe, highly recognisable names that are immediately understood. Minimal creative leaps.' },
+    medium: { temperature: 0.8, hint: 'Be BALANCED. Mix familiar patterns with moderate creativity. Some names should surprise, others should feel natural.' },
+    high:   { temperature: 1.0, hint: 'Be BOLD and experimental. Unexpected associations, unusual combinations, high creative risk. Surprise the user — avoid the obvious.' },
+  };
+  const rand = randMap[randomness] || randMap['medium'];
+
   const body = {
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2000,
+    temperature: rand.temperature,
     system:
       'You are a world-class brand naming consultant specialising in the Uzbek and Central Asian market. ' +
       'You have named 500+ successful brands. Your names are creative, distinctive, and market-ready. ' +
@@ -125,6 +134,7 @@ exports.handler = async (event) => {
       role: 'user',
       content:
         `Generate 8 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Creativity level: ${rand.hint}\n\n` +
         `Style: ${styleLabel}${extraInstruction}\n\n` +
         `${phoneticRule}\n\n` +
         `${qualityCriteria}\n\n` +

@@ -91,26 +91,33 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .gbtn:active{transform:translateY(0)}
 .gbtn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── Style section ───────────────────────────────────── */
-.style-section{margin:0 auto 12px;max-width:900px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden}
-.style-section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;cursor:pointer;user-select:none;gap:10px}
-.style-section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px}
-.style-selected-pill{background:var(--adim);border:1px solid rgba(127,255,110,.2);color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;letter-spacing:0;text-transform:none;white-space:nowrap;font-family:'DM Mono',monospace}
-.style-chevron{width:16px;height:16px;color:var(--text3);transition:transform .25s;flex-shrink:0}
-.style-section.open .style-chevron{transform:rotate(180deg)}
-.style-body{display:none;padding:4px 14px 14px}
-.style-section.open .style-body{display:block}
-.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sc{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border:1.5px solid var(--sc-border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:transparent;text-align:left;width:100%}
+/* ── Filter panels (Style + Randomness) ──────────────── */
+.filter-panels{display:flex;gap:12px;margin:0 auto 12px;max-width:none;width:100%}
+.fp{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;flex:1}
+.fp-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px 10px;cursor:pointer;user-select:none;gap:10px}
+.fp-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px}
+.fp-pill{background:var(--adim);border:1px solid rgba(127,255,110,.2);color:var(--accent);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;letter-spacing:0;text-transform:none;white-space:nowrap;font-family:'DM Mono',monospace}
+.fp-chevron{width:15px;height:15px;color:var(--text3);transition:transform .25s;flex-shrink:0}
+.fp.open .fp-chevron{transform:rotate(180deg)}
+.fp-body{display:none;padding:4px 12px 12px}
+.fp.open .fp-body{display:block}
+/* Style grid — 2 cols */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+/* Randomness list — 1 col */
+.rand-list{display:flex;flex-direction:column;gap:7px}
+/* shared option card */
+.sc{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border:1.5px solid var(--sc-border);border-radius:var(--radius);cursor:pointer;transition:all .15s;background:transparent;text-align:left;width:100%}
 .sc:hover{border-color:var(--border3);background:var(--sc-hover)}
 .sc.on{border-color:var(--accent);background:var(--sc-on-bg)}
 .sc-radio{width:17px;height:17px;border-radius:50%;border:2px solid var(--border3);flex-shrink:0;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center;position:relative}
 .sc.on .sc-radio{border-color:var(--accent);background:var(--accent)}
-.sc.on .sc-radio::after{content:'';width:5px;height:5px;border-radius:50%;background:#060606;position:absolute}
+.sc.on .sc-radio::after{content:'✓';font-size:9px;font-weight:800;color:#000;line-height:1;position:absolute}
 .sc-text{flex:1;min-width:0}
 .sc-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sc-desc{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.35}
 .sc-badge{background:var(--accent);color:#000;font-size:8px;font-weight:800;padding:2px 6px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase;font-family:'DM Mono',monospace;line-height:1.4}
+/* Also keep old .style-section as alias for FP */
+.style-section{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;flex:1}
 
 /* ── Results header ──────────────────────────────────── */
 .rh{display:flex;align-items:center;justify-content:space-between;margin:32px 0 16px;flex-wrap:wrap;gap:10px;width:100%}
@@ -251,6 +258,7 @@ footer a:hover{color:var(--text)}
   .hero p{font-size:13px}
   .irow{flex-direction:column;gap:8px}
   .gbtn{width:100%;justify-content:center;padding:13px}
+  .filter-panels{flex-direction:column}
   .style-grid{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr;gap:10px}
   .rh{flex-direction:column;align-items:flex-start;gap:4px}
@@ -330,20 +338,36 @@ footer a:hover{color:var(--text)}
       </div>
     </div>
 
-    <!-- Style picker -->
-    <div class="style-section" id="style-section">
-      <div class="style-section-header" onclick="toggleStyleSection()">
-        <div class="style-section-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-          Стиль нейминга
-          <span class="style-selected-pill" id="style-pill">Авто</span>
+    <!-- Filter panels: Style + Randomness -->
+    <div class="filter-panels">
+      <!-- Style picker -->
+      <div class="fp open" id="fp-style">
+        <div class="fp-header" onclick="toggleFp('fp-style')">
+          <div class="fp-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            Стиль нейминга
+            <span class="fp-pill" id="style-pill">Авто</span>
+          </div>
+          <svg class="fp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <svg class="style-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+        <div class="fp-body">
+          <div class="style-grid" id="sc"></div>
+        </div>
       </div>
-      <div class="style-body">
-        <div class="style-grid" id="sc"></div>
+
+      <!-- Randomness picker -->
+      <div class="fp open" id="fp-rand">
+        <div class="fp-header" onclick="toggleFp('fp-rand')">
+          <div class="fp-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+            Случайность
+            <span class="fp-pill" id="rand-pill">Средняя</span>
+          </div>
+          <svg class="fp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="fp-body">
+          <div class="rand-list" id="rc"></div>
+        </div>
       </div>
     </div>
 
@@ -445,13 +469,18 @@ var ST=[
   {id:'real_words', l:'Реальные слова',                      desc:'как Apple и Amazon'},
   {id:'uzbek_roots',l:'🇺🇿 Узбекские корни',                  desc:'как Nurli и Baxtzor'},
 ];
-var cs='auto', favs=[], res=[], dcache={}, tgcache={}, igcache={};
+var RAND=[
+  {id:'low',    l:'Низкая',   desc:'Прямые и очевидные названия. Меньше неожиданностей'},
+  {id:'medium', l:'Средняя',  desc:'Сбалансировано. Более креативные результаты'},
+  {id:'high',   l:'Высокая',  desc:'Случайные идеи. Максимум разнообразия и риска'},
+];
+var cs='auto', cr='medium', favs=[], res=[], dcache={}, tgcache={}, igcache={};
 try{favs=JSON.parse(localStorage.getItem('ng_f')||'[]')}catch(e){}
 
+// Render style cards
 ST.forEach(function(s){
   var b=document.createElement('button');
   b.className='sc'+(s.id===cs?' on':'');
-  b.setAttribute('data-id',s.id);
   var badgeHtml=s.badge?'<span class="sc-badge">'+s.badge+'</span>':'';
   b.innerHTML=
     '<div class="sc-radio"></div>'+
@@ -461,21 +490,37 @@ ST.forEach(function(s){
     '</div>';
   b.onclick=function(){
     cs=s.id;
-    document.querySelectorAll('.sc').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('#sc .sc').forEach(function(x){x.classList.remove('on');});
     b.classList.add('on');
     document.getElementById('style-pill').textContent=s.l;
   };
   document.getElementById('sc').appendChild(b);
 });
+
+// Render randomness cards
+RAND.forEach(function(r){
+  var b=document.createElement('button');
+  b.className='sc'+(r.id===cr?' on':'');
+  b.innerHTML=
+    '<div class="sc-radio"></div>'+
+    '<div class="sc-text">'+
+      '<div class="sc-name">'+r.l+'</div>'+
+      '<div class="sc-desc">'+r.desc+'</div>'+
+    '</div>';
+  b.onclick=function(){
+    cr=r.id;
+    document.querySelectorAll('#rc .sc').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.getElementById('rand-pill').textContent=r.l;
+  };
+  document.getElementById('rc').appendChild(b);
+});
 ufb();
 
-// ── Style section toggle ───────────────────────────────
-function toggleStyleSection(){
-  var sec=document.getElementById('style-section');
-  sec.classList.toggle('open');
+// ── Filter panel toggle ────────────────────────────────
+function toggleFp(id){
+  document.getElementById(id).classList.toggle('open');
 }
-// Open by default
-document.getElementById('style-section').classList.add('open');
 
 // ── Views ──────────────────────────────────────────────
 function sv(v){
@@ -560,13 +605,14 @@ function gen(){
   document.getElementById('rh').innerHTML='';
   document.getElementById('gr').innerHTML='';
   document.getElementById('la').style.display='block';startScramble();
-  // Close style section when generating
-  document.getElementById('style-section').classList.remove('open');
+  // Collapse filter panels when generating
+  document.getElementById('fp-style').classList.remove('open');
+  document.getElementById('fp-rand').classList.remove('open');
 
   fetch('/api/generate',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({keywords:kw,style:cs})
+    body:JSON.stringify({keywords:kw,style:cs,randomness:cr})
   })
   .then(function(r){
     if(!r.ok)return r.json().then(function(d){throw new Error(d.error||'Ошибка сервера '+r.status);});

@@ -17,10 +17,17 @@ app.post('/api/generate', async (req, res) => {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY не задан в .env' });
   }
 
-  const { keywords, style } = req.body;
+  const { keywords, style, randomness } = req.body;
   if (!keywords || !keywords.trim()) {
     return res.status(400).json({ error: 'keywords обязателен' });
   }
+
+  const randMap = {
+    low:    { temperature: 0.3, hint: 'Be CONSERVATIVE and direct. Favour obvious, safe, highly recognisable names that are immediately understood. Minimal creative leaps.' },
+    medium: { temperature: 0.8, hint: 'Be BALANCED. Mix familiar patterns with moderate creativity. Some names should surprise, others should feel natural.' },
+    high:   { temperature: 1.0, hint: 'Be BOLD and experimental. Unexpected associations, unusual combinations, high creative risk. Surprise the user — avoid the obvious.' },
+  };
+  const rand = randMap[randomness] || randMap['medium'];
 
   const styleMap = {
     auto:        'Best style chosen automatically — mix of all approaches for maximum creativity',
@@ -114,6 +121,7 @@ app.post('/api/generate', async (req, res) => {
   const body = {
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2000,
+    temperature: rand.temperature,
     system:
       'You are a world-class brand naming consultant specialising in the Uzbek and Central Asian market. ' +
       'You have named 500+ successful brands. Your names are creative, distinctive, and market-ready. ' +
@@ -124,6 +132,7 @@ app.post('/api/generate', async (req, res) => {
       role: 'user',
       content:
         `Generate 8 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Creativity level: ${rand.hint}\n\n` +
         `Style: ${styleLabel}${extraInstruction}\n\n` +
         `${phoneticRule}\n\n` +
         `${qualityCriteria}\n\n` +
