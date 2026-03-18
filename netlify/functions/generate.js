@@ -133,15 +133,20 @@ exports.handler = async (event) => {
       }]
     };
 
-    const aResp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(analyseBody),
-    });
+    let aResp;
+    try {
+      aResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(analyseBody),
+      });
+    } catch (netErr) {
+      return { statusCode: 503, body: JSON.stringify({ error: 'Сеть недоступна: ' + netErr.message.slice(0, 100) }) };
+    }
 
     if (!aResp.ok) {
       const t = await aResp.text();
@@ -211,15 +216,20 @@ exports.handler = async (event) => {
   let attemptsLeft = 4;
 
   while (attemptsLeft > 0) {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(body),
-    });
+    let resp;
+    try {
+      resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (netErr) {
+      return { statusCode: 503, body: JSON.stringify({ error: 'Сеть недоступна: ' + netErr.message.slice(0, 100) }) };
+    }
 
     if (resp.status === 429 || resp.status === 529) {
       attemptsLeft--;
