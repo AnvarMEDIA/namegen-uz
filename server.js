@@ -17,7 +17,63 @@ app.post('/api/generate', async (req, res) => {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY не задан в .env' });
   }
 
-  const { keywords, style, randomness } = req.body;
+  const { keywords, style, randomness, mode, name } = req.body;
+
+  // ── Analyse mode ──────────────────────────────────────
+  if (mode === 'analyse') {
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'name обязателен' });
+    }
+    const safeName = name.trim().slice(0, 40);
+    const analyseBody = {
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1200,
+      temperature: 0.7,
+      system:
+        'You are an expert brand analyst specialising in the Uzbekistan and Central Asian market. ' +
+        'Return ONLY a raw JSON object — no markdown, no code fences, no extra text.',
+      messages: [{
+        role: 'user',
+        content:
+          `Analyse the brand name "${safeName}" for the Uzbekistan market.\n` +
+          `Return this exact JSON structure:\n` +
+          `{\n` +
+          `  "meaning": "what the name means, evokes, or sounds like (2-3 sentences)",\n` +
+          `  "associations": ["visual/emotional association 1", "association 2", "association 3"],\n` +
+          `  "target_audience": "specific target audience description (1-2 sentences)",\n` +
+          `  "strengths": ["brand strength 1", "strength 2", "strength 3"],\n` +
+          `  "brand_tip": "one concrete, actionable tip for brand development in Uzbekistan (1-2 sentences)",\n` +
+          `  "similar_brands": ["well-known brand with similar feel 1", "similar brand 2", "similar brand 3"]\n` +
+          `}\n` +
+          `All values must be in Russian language. Return ONLY the JSON object.`
+      }]
+    };
+    try {
+      const aResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(analyseBody),
+      });
+      if (!aResp.ok) {
+        const t = await aResp.text();
+        return res.status(aResp.status).json({ error: `API ${aResp.status}: ${t.slice(0, 200)}` });
+      }
+      const aData = await aResp.json();
+      const aRaw = (aData?.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
+      let analysis;
+      try { analysis = JSON.parse(aRaw); }
+      catch { return res.status(500).json({ error: 'Невалидный JSON от AI', raw: aRaw.slice(0, 200) }); }
+      return res.json(analysis);
+    } catch (err) {
+      return res.status(503).json({ error: 'Сеть недоступна: ' + err.message.slice(0, 100) });
+    }
+  }
+
+  // ── Generate mode ─────────────────────────────────────
   if (!keywords || !keywords.trim()) {
     return res.status(400).json({ error: 'keywords обязателен' });
   }
