@@ -98,7 +98,7 @@ app.post('/api/generate', async (req, res) => {
     messages: [{
       role: 'user',
       content:
-        `Generate 12 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Generate 8 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
         `Style: ${styleLabel}${extraInstruction}\n\n` +
         `${phoneticRule}\n\n` +
         `${qualityCriteria}\n\n` +
@@ -108,7 +108,7 @@ app.post('/api/generate', async (req, res) => {
         `- tagline_uz: same idea in Latin-script Uzbek (3-7 words, no full-stop)\n\n` +
         `Return ONLY valid JSON:\n` +
         `{"names":[{"name":"nurli","tagline_ru":"Свет в каждом шаге","tagline_uz":"Har qadamda nur"},...]}\n` +
-        `Exactly 12 items. All names must be DIFFERENT from each other.`
+        `Exactly 8 items. All names must be DIFFERENT from each other.`
     }]
   };
 
@@ -172,7 +172,7 @@ app.post('/api/generate', async (req, res) => {
         }))
         // deduplicate by name
         .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
-        .slice(0, 12);
+        .slice(0, 8);
       if (!names.length) return res.status(500).json({ error: 'Нет валидных имён в ответе' });
 
       return res.json({ names });
