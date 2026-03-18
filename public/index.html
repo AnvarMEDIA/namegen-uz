@@ -287,8 +287,8 @@ footer a:hover{color:var(--text)}
   .grid{grid-template-columns:repeat(2,1fr);gap:12px}
 }
 
-/* ── Desktop  1024–1799px ── */
-@media(min-width:1024px) and (max-width:1799px){
+/* ── Desktop  1024px+ ── */
+@media(min-width:1024px){
   main{padding:52px clamp(28px,3vw,64px) 80px}
   .grid{grid-template-columns:repeat(4,1fr);gap:12px}
 }
@@ -296,7 +296,6 @@ footer a:hover{color:var(--text)}
 /* ── Wide / 4K  1800px+ ── */
 @media(min-width:1800px){
   main{padding:60px clamp(64px,6vw,140px) 80px}
-  .grid{grid-template-columns:repeat(6,1fr);gap:16px}
   .card{padding:24px}
 }
 </style>
