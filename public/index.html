@@ -113,31 +113,33 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .sc-badge{background:var(--accent);color:#000;font-size:8px;font-weight:800;padding:2px 6px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase;font-family:'DM Mono',monospace;line-height:1.4}
 
 /* ── Results header ──────────────────────────────────── */
-.rh{display:flex;align-items:center;justify-content:space-between;margin:32px 0 16px;flex-wrap:wrap;gap:10px;max-width:900px;margin-left:auto;margin-right:auto}
+.rh{display:flex;align-items:center;justify-content:space-between;margin:32px 0 16px;flex-wrap:wrap;gap:10px;width:100%}
 .rh-count{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;color:var(--text)}
 .rh-sub{font-size:13px;color:var(--text3);margin-top:1px}
 
-/* ── Grid ────────────────────────────────────────────── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:16px;max-width:900px;margin:0 auto}
+/* ── Grid — 4 cols desktop, responsive ───────────────── */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%}
 
 /* ── Card ────────────────────────────────────────────── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px 20px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both;container-type:inline-size}
-@keyframes fi{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
-.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(140deg,rgba(255,255,255,.03) 0%,transparent 55%);pointer-events:none}
-.card:hover{border-color:var(--border3);box-shadow:0 12px 48px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.2);transform:translateY(-3px)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 18px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .18s;animation:fi .45s cubic-bezier(.16,1,.3,1) both;container-type:inline-size;display:flex;flex-direction:column}
+@keyframes fi{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .25s}
+.card:hover{border-color:var(--border3);box-shadow:0 20px 60px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.25);transform:translateY(-4px)}
+.card:hover::after{opacity:.6}
 .card.fv{border-color:var(--card-fv-border);background:var(--card-fv-bg)}
-.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 12px 48px var(--card-fv-hover-shadow)}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
-.cname-wrap{display:flex;align-items:baseline;gap:5px;flex:1;min-width:0;overflow:hidden}
-.cname{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--text);line-height:1.05;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cname-ext{font-family:'DM Mono',monospace;font-size:13px;font-weight:400;color:var(--text3);white-space:nowrap;flex-shrink:0;margin-top:2px}
-.card-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text4);flex-shrink:0;min-width:18px;text-align:right;padding-top:4px}
-.card-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-top:2px}
-.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
+.card.fv::after{opacity:.35}
+.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 20px 60px var(--card-fv-hover-shadow)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cname-wrap{display:flex;align-items:baseline;gap:4px;flex:1;min-width:0;overflow:hidden}
+.cname{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--text);line-height:1.1;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cname-ext{font-family:'DM Mono',monospace;font-size:12px;font-weight:400;color:var(--text3);white-space:nowrap;flex-shrink:0}
+.card-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-top:3px}
+.card-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text4);flex-shrink:0;line-height:1;padding-top:1px}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center}
 .copy-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
 .copy-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
-.ctag{font-size:16px;color:var(--text2);margin:0 0 4px;line-height:1.5;font-weight:400}
-.ctag-uz{font-size:14px;color:var(--text3);margin:0 0 16px;line-height:1.4;font-style:italic;min-height:18px}
+.ctag{font-size:14px;color:var(--text2);margin:0 0 3px;line-height:1.5;font-weight:400;flex-grow:1}
+.ctag-uz{font-size:12px;color:var(--text3);margin:0 0 14px;line-height:1.4;font-style:italic}
 
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
@@ -158,37 +160,37 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 @keyframes heartpop{0%{transform:scale(1)}30%{transform:scale(1.4)}65%{transform:scale(.85)}100%{transform:scale(1)}}
 .fav-btn.pop svg{animation:heartpop .4s cubic-bezier(.36,.07,.19,.97)}
 
-/* ── Domain & social ─────────────────────────────────── */
-.checks{display:flex;flex-direction:column;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:0}
-.check-row{display:flex;align-items:center;gap:8px}
-.check-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;width:82px;flex-shrink:0}
-.check-label svg{flex-shrink:0;opacity:.55}
-.uz-row{display:flex;align-items:center;gap:7px;font-size:12px;font-family:'DM Mono',monospace;padding:5px 10px;border-radius:6px;border:1px solid;font-weight:500;min-height:30px;cursor:default;transition:border-color .2s,background .2s;flex:1}
-.uz-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.uz-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.uz-checking{background:transparent;color:var(--text3);border-color:var(--border)}
-.uz-checking .uz-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
+/* ── Domain & social — compact chips ─────────────────── */
 @keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+.checks{display:flex;flex-direction:column;gap:4px;margin-bottom:0;margin-top:auto}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500;padding:6px 10px;border-radius:8px;border:1px solid;cursor:default;transition:border-color .2s,background .2s,opacity .15s;width:100%;min-height:28px;text-decoration:none}
+.chip:hover{opacity:.85}
+.chip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.chip-icon{flex-shrink:0;opacity:.7;display:flex;align-items:center}
+.chip-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* domain states */
+.uz-checking{background:transparent;color:var(--text3);border-color:var(--border)}
+.uz-checking .chip-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 .uz-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border)}
-.uz-free .uz-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
+.uz-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
 .uz-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
-.uz-taken .uz-dot{background:var(--red)}
-.soc-btn{display:flex;align-items:center;gap:7px;font-size:12px;font-family:'DM Mono',monospace;padding:5px 10px;border-radius:6px;border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;flex:1;min-height:30px}
-.soc-btn:hover{opacity:.8}
-.soc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.soc-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tg-btn,.tg-taken{background:rgba(41,168,224,.08);color:#29a8e0;border-color:rgba(41,168,224,.22)}
-.tg-dot{background:#29a8e0}
-.tg-checking{background:transparent;color:var(--text3);border-color:rgba(41,168,224,.12);cursor:default}
-.tg-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
+.uz-taken .chip-dot{background:var(--red)}
+/* telegram states */
+.tg-checking{background:transparent;color:var(--text3);border-color:rgba(41,168,224,.12)}
+.tg-checking .chip-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 .tg-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
-.tg-free .soc-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
-.ig-btn,.ig-taken{background:rgba(225,48,108,.08);color:#e1306c;border-color:rgba(225,48,108,.22)}
-.ig-dot{background:#e1306c}
-.ig-checking{background:transparent;color:var(--text3);border-color:rgba(225,48,108,.12);cursor:default}
-.ig-checking .soc-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
+.tg-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.tg-taken{background:rgba(41,168,224,.07);color:#29a8e0;border-color:rgba(41,168,224,.2);cursor:pointer}
+.tg-taken .chip-dot{background:#29a8e0}
+/* instagram states */
+.ig-checking{background:transparent;color:var(--text3);border-color:rgba(225,48,108,.12)}
+.ig-checking .chip-dot{background:var(--text3);animation:pulse 1.2s ease infinite}
 .ig-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border);cursor:pointer}
-.ig-free .soc-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
+.ig-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+.ig-taken{background:rgba(225,48,108,.07);color:#e1306c;border-color:rgba(225,48,108,.2);cursor:pointer}
+.ig-taken .chip-dot{background:#e1306c}
+.ig-btn{background:rgba(225,48,108,.07);color:#e1306c;border-color:rgba(225,48,108,.2);cursor:pointer}
+.ig-btn .chip-dot{background:#e1306c}
 
 /* ── Loader ──────────────────────────────────────────── */
 .loader-wrap{display:flex;flex-direction:column;align-items:center;padding:72px 0;gap:16px}
@@ -224,35 +226,27 @@ footer a{color:var(--text3);text-decoration:none;transition:color .15s}
 footer a:hover{color:var(--text)}
 
 /* ── Card container queries ──────────────────────────── */
-@container (max-width:230px){
-  .cname{font-size:18px;letter-spacing:-.2px}
+@container (max-width:200px){
+  .cname{font-size:17px;letter-spacing:-.2px}
   .cname-ext,.card-num{display:none}
-  .card-top{margin-bottom:8px}
   .ctag{font-size:12px}
-  .ctag-uz{margin-bottom:12px;font-size:11px}
-  .check-label{width:22px;justify-content:center;gap:0}
-  .cl-text{display:none}
-  .checks{padding:8px 8px;gap:4px}
-  .uz-row,.soc-btn{padding:4px 8px;font-size:10px;min-height:26px}
+  .ctag-uz{font-size:11px;margin-bottom:10px}
+  .chip{font-size:10px;padding:4px 7px}
 }
-@container (min-width:231px) and (max-width:300px){
-  .cname{font-size:21px;letter-spacing:-.3px}
+@container (min-width:201px) and (max-width:270px){
+  .cname{font-size:20px}
   .cname-ext{display:none}
   .card-num{display:none}
-  .check-label{width:54px}
-  .cl-text{font-size:9px;letter-spacing:0}
-  .checks{padding:8px 10px}
-  .uz-row,.soc-btn{font-size:11px}
+  .chip{font-size:10px;padding:5px 8px}
 }
-@container (min-width:301px){.cl-text{display:inline}}
 
 /* ── Responsive ──────────────────────────────────────── */
 @media(max-width:479px){
   header{padding:12px 16px}
   .logo{font-size:17px}
   .nbtn{padding:6px 10px;font-size:12px}
-  main{padding:28px 14px 56px}
-  .hero{margin-bottom:28px}
+  main{padding:24px 12px 48px}
+  .hero{margin-bottom:24px}
   .hero h1{font-size:26px;letter-spacing:-1px}
   .hero p{font-size:13px}
   .irow{flex-direction:column;gap:8px}
@@ -265,26 +259,27 @@ footer a:hover{color:var(--text)}
   .rmbtn{width:100%}
 }
 @media(min-width:480px) and (max-width:767px){
-  header{padding:14px 24px}
-  main{padding:36px 20px 64px}
-  .hero h1{font-size:30px}
+  header{padding:14px 20px}
+  main{padding:28px 16px 56px}
+  .hero h1{font-size:28px}
   .irow{flex-direction:column;gap:8px}
   .gbtn{width:100%;justify-content:center}
   .style-grid{grid-template-columns:1fr 1fr}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
 }
-@media(min-width:768px) and (max-width:1023px){
-  header{padding:16px 32px}
-  main{padding:44px 32px 72px}
+@media(min-width:768px) and (max-width:1199px){
+  header{padding:16px 28px}
+  main{padding:36px 24px 64px}
   .grid{grid-template-columns:repeat(2,1fr);gap:12px}
 }
-@media(min-width:1024px){
-  main{padding:52px clamp(28px,3vw,64px) 80px}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:12px}
+@media(min-width:1200px){
+  main{padding:48px 32px 80px}
+  .grid{grid-template-columns:repeat(4,1fr);gap:14px}
 }
-@media(min-width:1800px){
-  main{padding:60px clamp(64px,6vw,140px) 80px}
-  .card{padding:24px}
+@media(min-width:1600px){
+  main{padding:56px 48px 80px}
+  .grid{gap:16px}
+  .card{padding:22px 22px 20px}
 }
 </style>
 </head>
@@ -510,21 +505,22 @@ function checkTg(un){
     .then(function(d){tgcache[un]=d;return d;})
     .catch(function(e){return{status:'error',msg:e.message};});
 }
+var ICO_TG='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+var ICO_IG='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+
 function updateTg(un,result){
   var el=document.getElementById('tg-'+un);if(!el)return;
   if(result.status==='free'){
-    el.className='soc-btn tg-free';
-    el.innerHTML='<div class="soc-dot"></div><span class="soc-label">t.me/'+un+' — свободен ✓</span>';
+    el.className='chip tg-free';
+    el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — свободен ✓</span>';
     el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
   } else if(result.status==='taken'){
-    el.className='soc-btn tg-taken';
-    el.innerHTML='<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — занят</span>';
-    el.style.cursor='pointer';
+    el.className='chip tg-taken';
+    el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят</span>';
     el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
   } else {
-    el.className='soc-btn tg-taken';
-    el.innerHTML='<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+'</span>';
-    el.style.cursor='pointer';
+    el.className='chip tg-taken';
+    el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span>';
     el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
   }
 }
@@ -541,18 +537,16 @@ function checkIg(un){
 function updateIg(un,result){
   var el=document.getElementById('ig-'+un);if(!el)return;
   if(result.status==='free'){
-    el.className='soc-btn ig-free';
-    el.innerHTML='<div class="soc-dot"></div><span class="soc-label">@'+un+' — свободен ✓</span>';
+    el.className='chip ig-free';
+    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span>';
     el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   } else if(result.status==='taken'){
-    el.className='soc-btn ig-taken';
-    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — занят</span>';
-    el.style.cursor='pointer';
+    el.className='chip ig-taken';
+    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span>';
     el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   } else {
-    el.className='soc-btn ig-btn';
-    el.innerHTML='<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверьте вручную</span>';
-    el.style.cursor='pointer';
+    el.className='chip ig-btn';
+    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — проверьте вручную</span>';
     el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   }
 }
@@ -621,9 +615,9 @@ function renderGrid(){
     c.setAttribute('data-tuz',tuz);
     var favIcon='<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
     var favIconFill='<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 12.25S1.75 9.188 1.75 5.25a3.5 3.5 0 016.72-1.366A3.5 3.5 0 0112.25 5.25c0 3.938-5.25 7-5.25 7z"/></svg>';
-    var icoDomain='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
-    var icoTg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
-    var icoIg='<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
+    var icoDomain='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+    var icoTg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22.26 2.03 1.16 10.26c-1.41.57-1.4 1.36-.26 1.71l5.35 1.67 12.38-7.8c.58-.35 1.11-.16.67.22L7.79 16.2l-.4 5.68c.58 0 .84-.27 1.16-.58l2.79-2.71 5.8 4.28c1.07.59 1.84.29 2.1-.99l3.8-17.91c.4-1.58-.6-2.3-1.78-1.94z"/></svg>';
+    var icoIg='<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>';
     c.innerHTML=
       '<div class="card-top">'+
         '<div class="cname-wrap">'+
@@ -640,23 +634,20 @@ function renderGrid(){
       '<div class="ctag">'+esc(tru)+'</div>'+
       '<div class="ctag-uz">'+esc(tuz)+'</div>'+
       '<div class="checks">'+
-        '<div class="check-row">'+
-          '<span class="check-label">'+icoDomain+'<span class="cl-text">Домен</span></span>'+
-          '<div class="uz-row uz-checking" id="uz-'+dn+'">'+
-            '<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — проверяем...</span>'+
-          '</div>'+
+        '<div class="chip uz-checking" id="uz-'+dn+'">'+
+          '<div class="chip-icon">'+icoDomain+'</div>'+
+          '<div class="chip-dot"></div>'+
+          '<span class="chip-label">'+dn+'.uz — проверяем...</span>'+
         '</div>'+
-        '<div class="check-row">'+
-          '<span class="check-label">'+icoTg+'<span class="cl-text">Telegram</span></span>'+
-          '<div class="soc-btn tg-checking" id="tg-'+un+'">'+
-            '<div class="soc-dot tg-dot"></div><span class="soc-label">t.me/'+un+' — проверяем...</span>'+
-          '</div>'+
+        '<div class="chip tg-checking" id="tg-'+un+'">'+
+          '<div class="chip-icon">'+icoTg+'</div>'+
+          '<div class="chip-dot"></div>'+
+          '<span class="chip-label">t.me/'+un+'</span>'+
         '</div>'+
-        '<div class="check-row">'+
-          '<span class="check-label">'+icoIg+'<span class="cl-text">Instagram</span></span>'+
-          '<div class="soc-btn ig-checking" id="ig-'+un+'">'+
-            '<div class="soc-dot ig-dot"></div><span class="soc-label">@'+un+' — проверяем...</span>'+
-          '</div>'+
+        '<div class="chip ig-checking" id="ig-'+un+'">'+
+          '<div class="chip-icon">'+icoIg+'</div>'+
+          '<div class="chip-dot"></div>'+
+          '<span class="chip-label">@'+un+'</span>'+
         '</div>'+
       '</div>'+
       '<div class="card-divider"></div>'+
@@ -681,18 +672,19 @@ function copyName(name,btn){
 }
 
 // ── Update domain status ───────────────────────────────
+var ICO_DOMAIN='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+
 function updateUz(dn,result){
   var el=document.getElementById('uz-'+dn);if(!el)return;
   if(result.status==='free'){
-    el.className='uz-row uz-free';
-    el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — свободен</span>';
+    el.className='chip uz-free';
+    el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — свободен</span>';
   } else if(result.status==='taken'){
-    el.className='uz-row uz-taken';
-    el.innerHTML='<div class="uz-dot"></div><span class="uz-label">'+dn+'.uz — занят</span>';
+    el.className='chip uz-taken';
+    el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — занят</span>';
   } else {
-    el.className='uz-row uz-taken';
-    el.style.animation='none';
-    el.innerHTML='<div class="uz-dot"></div><span class="uz-label" style="font-size:10px">ошибка проверки</span>';
+    el.className='chip uz-taken';
+    el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label" style="font-size:10px">ошибка проверки</span>';
   }
 }
 
