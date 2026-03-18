@@ -105,32 +105,32 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
 /* ── Grid — full width, fluid columns ────────────────── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 
 /* ── Card ────────────────────────────────────────────── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both;container-type:inline-size}
-@keyframes fi{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(135deg,rgba(255,255,255,.025) 0%,transparent 60%);pointer-events:none}
-.card:hover{border-color:var(--border3);box-shadow:0 10px 40px rgba(0,0,0,.45);transform:translateY(-2px)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px 20px;position:relative;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;animation:fi .4s cubic-bezier(.16,1,.3,1) both;container-type:inline-size}
+@keyframes fi{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(140deg,rgba(255,255,255,.03) 0%,transparent 55%);pointer-events:none}
+.card:hover{border-color:var(--border3);box-shadow:0 12px 48px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.2);transform:translateY(-3px)}
 .card.fv{border-color:var(--card-fv-border);background:var(--card-fv-bg)}
-.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 10px 40px var(--card-fv-hover-shadow)}
-.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.cname-wrap{display:flex;align-items:baseline;gap:6px;flex:1;min-width:0;overflow:hidden}
-.cname{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--text);line-height:1.1;letter-spacing:-.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cname-ext{font-family:'DM Mono',monospace;font-size:12px;font-weight:400;color:var(--text4);white-space:nowrap;flex-shrink:0}
-.card-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text4);flex-shrink:0;min-width:18px;text-align:right}
-.card-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
+.card.fv:hover{border-color:var(--card-fv-hover-border);box-shadow:0 12px 48px var(--card-fv-hover-shadow)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.cname-wrap{display:flex;align-items:baseline;gap:5px;flex:1;min-width:0;overflow:hidden}
+.cname{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--text);line-height:1.05;letter-spacing:-.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cname-ext{font-family:'DM Mono',monospace;font-size:13px;font-weight:400;color:var(--text3);white-space:nowrap;flex-shrink:0;margin-top:2px}
+.card-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--text4);flex-shrink:0;min-width:18px;text-align:right;padding-top:4px}
+.card-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-top:2px}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;width:30px;height:30px;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:12px}
 .copy-btn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
 .copy-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--adim)}
-.ctag{font-size:13px;color:var(--text2);margin:0 0 3px;line-height:1.5}
-.ctag-uz{font-size:11px;color:var(--text3);margin:0 0 16px;line-height:1.4;font-style:italic;min-height:14px}
+.ctag{font-size:14px;color:var(--text2);margin:0 0 4px;line-height:1.5;font-weight:400}
+.ctag-uz{font-size:12px;color:var(--text3);margin:0 0 16px;line-height:1.4;font-style:italic;min-height:16px}
 
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
 .fav-btn{
   width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
-  padding:9px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
+  padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
   background:transparent;color:var(--text3);font-family:'DM Sans',sans-serif;
   font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;
   transition:color .2s,background .2s,border-color .2s,box-shadow .2s,transform .1s;
@@ -149,11 +149,11 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .fav-btn.pop svg{animation:heartpop .4s cubic-bezier(.36,.07,.19,.97)}
 
 /* ── Domain & social ─────────────────────────────────── */
-.checks{display:flex;flex-direction:column;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.checks{display:flex;flex-direction:column;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:0}
 .check-row{display:flex;align-items:center;gap:8px}
-.check-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;width:80px;flex-shrink:0}
-.check-label svg{flex-shrink:0;opacity:.6}
-.uz-row{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:5px 9px;border-radius:6px;border:1px solid;font-weight:500;min-height:28px;cursor:default;transition:border-color .2s,background .2s;flex:1}
+.check-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;width:82px;flex-shrink:0}
+.check-label svg{flex-shrink:0;opacity:.55}
+.uz-row{display:flex;align-items:center;gap:7px;font-size:12px;font-family:'DM Mono',monospace;padding:5px 10px;border-radius:6px;border:1px solid;font-weight:500;min-height:30px;cursor:default;transition:border-color .2s,background .2s;flex:1}
 .uz-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .uz-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .uz-checking{background:transparent;color:var(--text3);border-color:var(--border)}
@@ -163,7 +163,7 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px}
 .uz-free .uz-dot{background:var(--accent);box-shadow:0 0 5px var(--accent)}
 .uz-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
 .uz-taken .uz-dot{background:var(--red)}
-.soc-btn{display:flex;align-items:center;gap:7px;font-size:11px;font-family:'DM Mono',monospace;padding:5px 9px;border-radius:6px;border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;flex:1;min-height:28px}
+.soc-btn{display:flex;align-items:center;gap:7px;font-size:12px;font-family:'DM Mono',monospace;padding:5px 10px;border-radius:6px;border:1px solid;font-weight:500;text-decoration:none;cursor:pointer;transition:opacity .15s,border-color .15s;flex:1;min-height:30px}
 .soc-btn:hover{opacity:.8}
 .soc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .soc-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -217,30 +217,30 @@ footer a:hover{color:var(--text)}
 
 /* Icon-only labels when card is very narrow (2-col on small phones) */
 @container (max-width:230px){
-  .cname{font-size:17px}
+  .cname{font-size:18px;letter-spacing:-.2px}
   .cname-ext,.card-num{display:none}
   .card-top{margin-bottom:8px}
   .ctag{font-size:12px}
-  .ctag-uz{margin-bottom:12px}
+  .ctag-uz{margin-bottom:12px;font-size:11px}
   .check-label{width:22px;justify-content:center;gap:0}
   .cl-text{display:none}
-  .checks{padding:8px 8px;gap:5px}
-  .uz-row,.soc-btn{padding:4px 8px;font-size:10px}
+  .checks{padding:8px 8px;gap:4px}
+  .uz-row,.soc-btn{padding:4px 8px;font-size:10px;min-height:26px}
 }
 
 /* Compact labels when card is narrow */
-@container (min-width:231px) and (max-width:295px){
-  .cname{font-size:19px}
+@container (min-width:231px) and (max-width:300px){
+  .cname{font-size:21px;letter-spacing:-.3px}
   .cname-ext{display:none}
   .card-num{display:none}
-  .check-label{width:52px}
+  .check-label{width:54px}
   .cl-text{font-size:9px;letter-spacing:0}
   .checks{padding:8px 10px}
-  .uz-row,.soc-btn{font-size:10px}
+  .uz-row,.soc-btn{font-size:11px}
 }
 
 /* Full labels when card is comfortably wide */
-@container (min-width:296px){
+@container (min-width:301px){
   .cl-text{display:inline}
 }
 
@@ -287,23 +287,23 @@ footer a:hover{color:var(--text)}
   .grid{grid-template-columns:repeat(2,1fr);gap:12px}
 }
 
-/* ── Small desktop  1024–1399px ── */
-@media(min-width:1024px) and (max-width:1399px){
-  main{padding:52px 48px 80px}
+/* ── Small desktop  1024–1279px ── */
+@media(min-width:1024px) and (max-width:1279px){
+  main{padding:52px 40px 80px}
   .grid{grid-template-columns:repeat(3,1fr);gap:14px}
 }
 
-/* ── Desktop  1400–1799px ── */
-@media(min-width:1400px){
-  main{padding:56px 64px 80px}
+/* ── Desktop  1280–1799px ── */
+@media(min-width:1280px) and (max-width:1799px){
+  main{padding:56px clamp(40px,4vw,72px) 80px}
   .grid{grid-template-columns:repeat(4,1fr);gap:14px}
 }
 
 /* ── Wide / 4K  1800px+ ── */
 @media(min-width:1800px){
   main{padding:60px clamp(64px,6vw,140px) 80px}
-  .grid{grid-template-columns:repeat(5,1fr);gap:16px}
-  .card{padding:22px}
+  .grid{grid-template-columns:repeat(6,1fr);gap:16px}
+  .card{padding:24px}
 }
 </style>
 </head>

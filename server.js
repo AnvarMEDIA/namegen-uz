@@ -172,7 +172,7 @@ app.post('/api/generate', async (req, res) => {
         }))
         // deduplicate by name
         .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
-        .slice(0, 10);
+        .slice(0, 12);
       if (!names.length) return res.status(500).json({ error: 'Нет валидных имён в ответе' });
 
       return res.json({ names });
