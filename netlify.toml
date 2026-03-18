@@ -2,10 +2,7 @@
   publish = "public"
   functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
-
-[context.production.environment]
+[build.environment]
   NODE_VERSION = "20"
 
 [[redirects]]

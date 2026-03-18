@@ -1,1 +1,5 @@
+/api/generate /.netlify/functions/generate 200
+/api/check-uz/:name /.netlify/functions/check-uz/:name 200
+/api/check-tg/:name /.netlify/functions/check-tg/:name 200
+/api/check-ig/:name /.netlify/functions/check-ig/:name 200
 /* /index.html 200
