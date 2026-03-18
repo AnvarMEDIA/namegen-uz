@@ -72,7 +72,7 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 /* ── Search box ──────────────────────────────────────── */
 .sbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;margin:0 auto 12px;max-width:860px;transition:border-color .25s}
 .sbox:focus-within{border-color:rgba(127,255,110,.25)}
-.irow{display:flex;gap:10px;margin-bottom:16px}
+.irow{display:flex;gap:10px;margin-bottom:18px}
 .inp-wrap{position:relative;flex:1}
 .inp-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none;transition:color .2s}
 .inp-wrap:focus-within .inp-icon{color:var(--accent)}
@@ -90,10 +90,10 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .gbtn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
 
 /* ── Style filters ───────────────────────────────────── */
-.filters-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
-.filter-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text4);margin-right:4px;font-family:'DM Mono',monospace}
-.sbtn{background:none;border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text3);cursor:pointer;transition:all .15s;font-weight:500}
-.sbtn:hover{border-color:var(--border3);color:var(--text2)}
+.filters-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
+.filter-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-right:2px;font-family:'DM Sans',sans-serif}
+.sbtn{background:none;border:1px solid var(--border2);border-radius:100px;padding:7px 18px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text2);cursor:pointer;transition:all .15s;font-weight:500}
+.sbtn:hover{border-color:var(--border3);color:var(--text);background:var(--bg3)}
 .sbtn.on{border-color:var(--accent);color:var(--accent);background:var(--adim);box-shadow:0 0 0 3px var(--aglow)}
 
 /* ── Results header ──────────────────────────────────── */
