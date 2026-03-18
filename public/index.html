@@ -151,8 +151,11 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
 .card-btns{display:flex;flex-direction:column;gap:7px}
-.detail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;transition:color .2s,background .2s,border-color .2s,box-shadow .2s;text-decoration:none}
-.detail-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim);box-shadow:0 0 0 1px var(--accent) inset}
+.detail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid rgba(127,255,110,.25);background:var(--adim);color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.01em;transition:color .2s,background .2s,border-color .2s,box-shadow .2s,transform .1s;text-decoration:none}
+.detail-btn:hover{border-color:var(--accent);background:rgba(127,255,110,.13);box-shadow:0 0 0 1px var(--accent) inset;transform:translateY(-1px)}
+.detail-btn:active{transform:translateY(0)}
+[data-theme="light"] .detail-btn{border-color:rgba(45,184,26,.3);background:rgba(45,184,26,.07);color:var(--accent)}
+[data-theme="light"] .detail-btn:hover{background:rgba(45,184,26,.14);border-color:var(--accent)}
 .fav-btn{
   width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
   padding:10px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);
@@ -1024,10 +1027,10 @@ function rfl(){
       '<div class="card-divider"></div>'+
       '<div class="card-btns">'+
         (function(){
+          // find existing ID or create a new entry so button is always active
           var ns=nameStore[f.name];
           var nid=ns&&ns.id||'';
           if(!nid){
-            // try to find in localStorage by name
             try{
               for(var k in localStorage){
                 if(k.indexOf('ng_name_')===0){
@@ -1037,9 +1040,9 @@ function rfl(){
               }
             }catch(e){}
           }
-          return nid
-            ? '<a class="detail-btn" href="/name.html?id='+nid+'" target="_blank" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Подробнее</a>'
-            : '<a class="detail-btn" style="pointer-events:none;opacity:.35" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Подробнее</a>';
+          if(!nid) nid=saveNameEntry(f.name,f.tagline_ru||'',f.tagline_uz||'');
+          var icoArrow='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+          return '<a class="detail-btn" href="/name.html?id='+nid+'" target="_blank" onclick="event.stopPropagation()">'+icoArrow+'Подробнее</a>';
         })()+
         '<button class="fav-btn on" onclick="event.stopPropagation();rf(\''+esc(f.name)+'\')">'+
           FAV_ICON_FILL+'<span>Сохранено</span>'+
