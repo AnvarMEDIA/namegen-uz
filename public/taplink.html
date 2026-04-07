@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AnvarMEDIA — Links</title>
+<meta name="description" content="Все ссылки в одном месте — AnvarMEDIA">
+<meta property="og:title" content="AnvarMEDIA — Links">
+<meta property="og:description" content="Все ссылки в одном месте">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#080808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset & Root ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07080a;
+  --card: rgba(255,255,255,0.04);
+  --card-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.07);
+  --border-hover: rgba(127,255,110,0.35);
+  --text: #eceae3;
+  --text2: #888;
+  --text3: #555;
+  --accent: #7fff6e;
+  --accent-dim: rgba(127,255,110,0.08);
+  --accent-glow: rgba(127,255,110,0.25);
+  --accent2: #6ee7ff;
+  --accent2-dim: rgba(110,231,255,0.08);
+  --pink: #ff6eb4;
+  --gold: #ffd166;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --transition: 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html { height: 100%; }
+
+body {
+  min-height: 100%;
+  background: var(--bg);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Aurora BG ────────────────────────────────────────────── */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before, .aurora::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.aurora::before {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #7fff6e 0%, transparent 70%);
+  top: -200px; left: -150px;
+  animation-duration: 22s;
+}
+
+.aurora::after {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #6ee7ff 0%, transparent 70%);
+  bottom: -150px; right: -100px;
+  animation-duration: 17s;
+  animation-delay: -8s;
+}
+
+.aurora-mid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-mid::before {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #ff6eb4 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.06;
+  top: 40%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: drift 25s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.08); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+  100% { transform: translate(30px, 40px) scale(1.05); }
+}
+
+/* ─── Grid noise overlay ───────────────────────────────────── */
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── Wrapper ──────────────────────────────────────────────── */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ─── Profile ──────────────────────────────────────────────── */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
+.avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #7fff6e, #6ee7ff, #ff6eb4, #ffd166, #7fff6e);
+  animation: spin 4s linear infinite;
+  opacity: 0.7;
+}
+
+.avatar-ring-blur {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #7fff6e, #6ee7ff, #ff6eb4, #ffd166, #7fff6e);
+  animation: spin 4s linear infinite;
+  filter: blur(8px);
+  opacity: 0.35;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.avatar {
+  position: relative;
+  z-index: 1;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a2a1a, #0d1a0d);
+  border: 3px solid var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  overflow: hidden;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -1px;
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  background: #7fff6e;
+  border-radius: 50%;
+  border: 2.5px solid var(--bg);
+  box-shadow: 0 0 8px rgba(127,255,110,0.8);
+  animation: pulse-dot 2s ease infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 6px rgba(127,255,110,0.8); }
+  50% { box-shadow: 0 0 16px rgba(127,255,110,1); }
+}
+
+.profile-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #c8c4bc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-handle {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.profile-bio {
+  font-size: 14px;
+  color: var(--text2);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.tag-green { background: var(--accent-dim); color: var(--accent); border-color: rgba(127,255,110,0.2); }
+.tag-blue { background: var(--accent2-dim); color: var(--accent2); border-color: rgba(110,231,255,0.2); }
+.tag-pink { background: rgba(255,110,180,0.08); color: var(--pink); border-color: rgba(255,110,180,0.2); }
+
+/* ─── Stats bar ────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  gap: 1px;
+  width: 100%;
+  background: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: fadeUp 0.6s 0.1s ease both;
+  border: 1px solid var(--border);
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  background: var(--card);
+  gap: 4px;
+  transition: background var(--transition);
+}
+
+.stat:hover { background: var(--card-hover); }
+
+.stat-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-value span {
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Section label ────────────────────────────────────────── */
+.section-label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  animation: fadeUp 0.6s 0.15s ease both;
+}
+
+.section-label::before, .section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-label span {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* ─── Link cards ───────────────────────────────────────────── */
+.link-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  transition: all var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.6s ease both;
+}
+
+.link-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.link-card:hover {
+  background: var(--card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(127,255,110,0.08), 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.link-card:hover::before { opacity: 1; }
+
+.link-card:active { transform: translateY(0) scale(0.99); }
+
+/* Icon */
+.link-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: transform var(--transition);
+}
+
+.link-card:hover .link-icon { transform: scale(1.1) rotate(-3deg); }
+
+.icon-green { background: var(--accent-dim); box-shadow: inset 0 0 0 1px rgba(127,255,110,0.12); }
+.icon-blue { background: var(--accent2-dim); box-shadow: inset 0 0 0 1px rgba(110,231,255,0.12); }
+.icon-pink { background: rgba(255,110,180,0.08); box-shadow: inset 0 0 0 1px rgba(255,110,180,0.12); }
+.icon-gold { background: rgba(255,209,102,0.08); box-shadow: inset 0 0 0 1px rgba(255,209,102,0.12); }
+.icon-purple { background: rgba(168,110,255,0.08); box-shadow: inset 0 0 0 1px rgba(168,110,255,0.12); }
+.icon-red { background: rgba(255,80,80,0.08); box-shadow: inset 0 0 0 1px rgba(255,80,80,0.12); }
+.icon-white { background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+
+/* Text */
+.link-text { flex: 1; min-width: 0; }
+.link-title { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.link-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Badge */
+.link-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.badge-new { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(127,255,110,0.2); }
+.badge-hot { background: rgba(255,80,80,0.1); color: #ff6060; border: 1px solid rgba(255,80,80,0.2); }
+.badge-free { background: var(--accent2-dim); color: var(--accent2); border: 1px solid rgba(110,231,255,0.2); }
+
+/* Arrow */
+.link-arrow {
+  font-size: 14px;
+  color: var(--text3);
+  transition: transform var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+
+.link-card:hover .link-arrow {
+  transform: translateX(3px);
+  color: var(--text2);
+}
+
+/* ─── Featured card ────────────────────────────────────────── */
+.link-card.featured {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(127,255,110,0.06) 0%, rgba(110,231,255,0.04) 100%);
+  border-color: rgba(127,255,110,0.18);
+}
+
+.link-card.featured:hover {
+  border-color: rgba(127,255,110,0.45);
+  box-shadow: 0 12px 48px rgba(127,255,110,0.12), 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.featured-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.featured-body {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+.featured-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #07120a;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.featured-cta:hover {
+  background: #9fffb0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(127,255,110,0.4);
+}
+
+/* ─── Social icons row ─────────────────────────────────────── */
+.socials {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.social-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  text-decoration: none;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.social-btn:hover {
+  background: var(--card-hover);
+  transform: translateY(-3px) scale(1.08);
+}
+
+.social-btn.tg:hover { border-color: rgba(33,150,243,0.5); box-shadow: 0 4px 20px rgba(33,150,243,0.2); }
+.social-btn.ig:hover { border-color: rgba(225,48,108,0.5); box-shadow: 0 4px 20px rgba(225,48,108,0.2); }
+.social-btn.yt:hover { border-color: rgba(255,0,0,0.5); box-shadow: 0 4px 20px rgba(255,0,0,0.2); }
+.social-btn.tw:hover { border-color: rgba(29,161,242,0.4); box-shadow: 0 4px 20px rgba(29,161,242,0.15); }
+.social-btn.gh:hover { border-color: rgba(255,255,255,0.3); box-shadow: 0 4px 20px rgba(255,255,255,0.1); }
+.social-btn.tiktok:hover { border-color: rgba(255,0,80,0.5); box-shadow: 0 4px 20px rgba(255,0,80,0.2); }
+
+/* ─── Footer ───────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.footer-made {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.footer-made a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-made a:hover { text-decoration: underline; }
+
+/* ─── Copy toast ───────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(30,40,30,0.95);
+  border: 1px solid rgba(127,255,110,0.3);
+  color: var(--accent);
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(20px);
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─── Animations ───────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* stagger for link cards */
+.link-card:nth-child(1) { animation-delay: 0.15s; }
+.link-card:nth-child(2) { animation-delay: 0.20s; }
+.link-card:nth-child(3) { animation-delay: 0.25s; }
+.link-card:nth-child(4) { animation-delay: 0.30s; }
+.link-card:nth-child(5) { animation-delay: 0.35s; }
+.link-card:nth-child(6) { animation-delay: 0.40s; }
+.link-card:nth-child(7) { animation-delay: 0.45s; }
+
+/* ─── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+
+/* ─── Mobile tweaks ────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .wrapper { padding: 32px 16px 60px; }
+  .profile-name { font-size: 22px; }
+  .link-title { font-size: 14px; }
+  .avatar { width: 86px; height: 86px; font-size: 32px; }
+  .avatar-wrap { width: 86px; height: 86px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Ambient light -->
+<div class="aurora"></div>
+<div class="aurora-mid"></div>
+<div class="noise"></div>
+
+<div class="wrapper">
+
+  <!-- ── Profile ── -->
+  <div class="profile">
+    <div class="avatar-wrap">
+      <div class="avatar-ring-blur"></div>
+      <div class="avatar-ring"></div>
+      <div class="avatar">
+        <!-- Replace src with your photo URL, or leave initials -->
+        AM
+      </div>
+      <div class="status-dot" title="Онлайн"></div>
+    </div>
+
+    <div class="profile-name">AnvarMEDIA</div>
+    <div class="profile-handle">@anvarmedia</div>
+
+    <div class="profile-bio">
+      Дизайнер · Разработчик · Создатель контента<br>
+      Строю продукты для Узбекистана 🇺🇿
+    </div>
+
+    <div class="profile-tags">
+      <span class="tag tag-green">✦ UX/UI</span>
+      <span class="tag tag-blue">⚡ Dev</span>
+      <span class="tag tag-pink">◈ AI</span>
+    </div>
+  </div>
+
+  <!-- ── Stats ── -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">12<span>K</span></div>
+      <div class="stat-label">Подписчиков</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">48</div>
+      <div class="stat-label">Проектов</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">5<span>★</span></div>
+      <div class="stat-label">Рейтинг</div>
+    </div>
+  </div>
+
+  <!-- ── Section: Featured ── -->
+  <div class="section-label" style="animation-delay:0.12s">
+    <span>⚡ Главное</span>
+  </div>
+
+  <!-- Featured card -->
+  <a href="#" class="link-card featured" style="animation-delay:0.15s">
+    <div class="featured-header">
+      <div class="link-icon icon-green" style="width:48px;height:48px;font-size:22px;">🤖</div>
+      <div class="link-text">
+        <div class="link-title">NameGen.uz — AI Генератор названий</div>
+        <div class="link-sub">namegen.uz</div>
+      </div>
+      <span class="link-badge badge-new">NEW</span>
+    </div>
+    <div class="featured-body">
+      Бесплатный AI-сервис для генерации уникальных названий бизнеса на русском, узбекском и английском языках.
+    </div>
+    <span class="featured-cta">
+      Попробовать бесплатно →
+    </span>
+  </a>
+
+  <!-- ── Section: Links ── -->
+  <div class="section-label" style="animation-delay:0.22s">
+    <span>🔗 Ссылки</span>
+  </div>
+
+  <a href="#" class="link-card">
+    <div class="link-icon icon-blue">💼</div>
+    <div class="link-text">
+      <div class="link-title">Портфолио / Portfolio</div>
+      <div class="link-sub">anvarmedia.uz · Мои работы и кейсы</div>
+    </div>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <a href="#" class="link-card">
+    <div class="link-icon icon-gold">🎓</div>
+    <div class="link-text">
+      <div class="link-title">Курс по UI/UX дизайну</div>
+      <div class="link-sub">Для начинающих · Узбекский язык</div>
+    </div>
+    <span class="link-badge badge-hot">HOT</span>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <a href="#" class="link-card">
+    <div class="link-icon icon-purple">🛍️</div>
+    <div class="link-text">
+      <div class="link-title">Шаблоны и ресурсы</div>
+      <div class="link-sub">Figma, шаблоны сайтов, иконки</div>
+    </div>
+    <span class="link-badge badge-free">FREE</span>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <a href="#" class="link-card">
+    <div class="link-icon icon-pink">📱</div>
+    <div class="link-text">
+      <div class="link-title">Telegram канал</div>
+      <div class="link-sub">@anvarmedia · Советы, контент, новости</div>
+    </div>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <a href="#" class="link-card">
+    <div class="link-icon icon-white">📧</div>
+    <div class="link-text">
+      <div class="link-title">Написать мне</div>
+      <div class="link-sub">hello@anvarmedia.uz · Сотрудничество</div>
+    </div>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <!-- Phone -->
+  <a href="tel:+998901234567" class="link-card" style="animation-delay:0.45s" id="copy-phone">
+    <div class="link-icon icon-green">📞</div>
+    <div class="link-text">
+      <div class="link-title">+998 90 123 45 67</div>
+      <div class="link-sub">Нажмите, чтобы позвонить / скопировать</div>
+    </div>
+    <div class="link-arrow">⎘</div>
+  </a>
+
+  <!-- ── Section: Контакты и адрес ── -->
+  <div class="section-label" style="animation-delay:0.38s">
+    <span>📍 Адрес</span>
+  </div>
+
+  <!-- Map / Location -->
+  <a href="https://maps.google.com/?q=Tashkent,Uzbekistan" target="_blank" class="link-card" style="animation-delay:0.42s">
+    <div class="link-icon icon-blue" style="font-size:22px;">🗺️</div>
+    <div class="link-text">
+      <div class="link-title">Ташкент, Узбекистан</div>
+      <div class="link-sub">Мирзо-Улугбекский район · Открыть на карте</div>
+    </div>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <!-- WhatsApp -->
+  <a href="https://wa.me/998901234567" target="_blank" class="link-card" style="animation-delay:0.46s">
+    <div class="link-icon icon-green" style="font-size:22px;">💬</div>
+    <div class="link-text">
+      <div class="link-title">WhatsApp</div>
+      <div class="link-sub">+998 90 123 45 67 · Написать сейчас</div>
+    </div>
+    <div class="link-arrow">›</div>
+  </a>
+
+  <!-- Email -->
+  <a href="mailto:hello@anvarmedia.uz" class="link-card" id="copy-email" style="animation-delay:0.50s">
+    <div class="link-icon icon-gold" style="font-size:22px;">✉️</div>
+    <div class="link-text">
+      <div class="link-title">hello@anvarmedia.uz</div>
+      <div class="link-sub">Нажмите, чтобы написать / скопировать</div>
+    </div>
+    <div class="link-arrow">⎘</div>
+  </a>
+
+  <!-- ── Social icons ── -->
+  <div class="section-label" style="animation-delay:0.28s">
+    <span>↗ Соцсети</span>
+  </div>
+
+  <div class="socials">
+    <a href="#" class="social-btn tg" title="Telegram">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M21.93 3.24L18.5 19.5c-.26 1.17-1.06 1.46-2.14.91l-5.26-3.87-2.54 2.45c-.28.28-.51.51-1.05.51l.37-5.35L17.1 7.02c.44-.39-.1-.61-.69-.22L5.28 13.99 0.08 12.36c-1.12-.35-1.14-1.12.24-1.66l20.69-7.97c.93-.33 1.75.23 1.92 1.51z" fill="#2196F3"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn ig" title="Instagram">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="url(#igGrad)">
+        <defs>
+          <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#F58529"/>
+            <stop offset="50%" stop-color="#DD2A7B"/>
+            <stop offset="100%" stop-color="#8134AF"/>
+          </linearGradient>
+        </defs>
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn yt" title="YouTube">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF0000">
+        <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn tiktok" title="TikTok">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.2 8.2 0 004.79 1.53V6.77a4.85 4.85 0 01-1.02-.08z"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn gh" title="GitHub">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+      </svg>
+    </a>
+    <a href="#" class="social-btn tw" title="Twitter / X">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <div class="footer-made">
+      Сделано с ♥ · <a href="/">NameGen.uz</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">✓ Скопировано</div>
+
+<script>
+function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text);
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+}
+
+document.getElementById('copy-phone')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  copyText('+998901234567');
+  showToast('✓ Номер скопирован');
+});
+
+document.getElementById('copy-email')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  copyText('hello@anvarmedia.uz');
+  showToast('✓ Email скопирован');
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Ripple effect on link cards
+document.querySelectorAll('.link-card').forEach(card => {
+  card.addEventListener('pointerdown', function(e) {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const ripple = document.createElement('span');
+    ripple.style.cssText = `
+      position:absolute; border-radius:50%; pointer-events:none;
+      background:rgba(255,255,255,0.07);
+      width:10px; height:10px;
+      left:${x - 5}px; top:${y - 5}px;
+      transform:scale(0); animation:ripple-anim 0.5s ease-out forwards;
+    `;
+    card.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+  });
+});
+
+// inject ripple keyframes
+const style = document.createElement('style');
+style.textContent = '@keyframes ripple-anim{to{transform:scale(30);opacity:0}}';
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
