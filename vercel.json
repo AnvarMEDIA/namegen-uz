@@ -1,0 +1,11 @@
+{
+  "framework": null,
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/api/generate",        "destination": "/api/generate" },
+    { "source": "/api/check-uz/:name",  "destination": "/api/check-uz/:name" },
+    { "source": "/api/check-tg/:name",  "destination": "/api/check-tg/:name" },
+    { "source": "/api/check-ig/:name",  "destination": "/api/check-ig/:name" },
+    { "source": "/((?!api/).*)",        "destination": "/index.html" }
+  ]
+}
