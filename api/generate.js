@@ -89,28 +89,21 @@ const randMap = {
   high:   { temperature: 1.0, hint: 'Be BOLD and experimental. Unexpected associations, unusual combinations, high creative risk. Surprise the user — avoid the obvious.' },
 };
 
-const json = (data, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-export async function onRequestPost(context) {
-  const { request, env } = context;
-  const ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
-
-  if (!ANTHROPIC_API_KEY) return json({ error: 'ANTHROPIC_API_KEY не задан' }, 500);
-
-  let keywords, style, randomness, mode, name;
-  try {
-    ({ keywords, style, randomness, mode, name } = await request.json());
-  } catch {
-    return json({ error: 'Невалидный JSON' }, 400);
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // ── Analyse mode ─────────────────────────────────────
+  const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY не задан' });
+  }
+
+  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+  const { keywords, style, randomness, mode, name } = body;
+
   if (mode === 'analyse') {
-    if (!name || !name.trim()) return json({ error: 'name обязателен' }, 400);
+    if (!name || !name.trim()) return res.status(400).json({ error: 'name обязателен' });
     const safeName = name.trim().slice(0, 40);
 
     const aResp = await fetch('https://api.anthropic.com/v1/messages', {
@@ -147,20 +140,21 @@ export async function onRequestPost(context) {
 
     if (!aResp.ok) {
       const t = await aResp.text();
-      return json({ error: `API ${aResp.status}: ${t.slice(0, 200)}` }, aResp.status);
+      return res.status(aResp.status).json({ error: `API ${aResp.status}: ${t.slice(0, 200)}` });
     }
 
     const aData = await aResp.json();
     const aRaw = (aData?.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
     try {
-      return json(JSON.parse(aRaw));
+      return res.status(200).json(JSON.parse(aRaw));
     } catch {
-      return json({ error: 'Невалидный JSON от AI', raw: aRaw.slice(0, 200) }, 500);
+      return res.status(500).json({ error: 'Невалидный JSON от AI', raw: aRaw.slice(0, 200) });
     }
   }
 
-  // ── Generate mode (default) ───────────────────────────
-  if (!keywords || !keywords.trim()) return json({ error: 'keywords обязателен' }, 400);
+  if (!keywords || !keywords.trim()) {
+    return res.status(400).json({ error: 'keywords обязателен' });
+  }
 
   const styleLabel = styleMap[style] || styleMap['auto'];
   const extraInstruction = styleExtra[style]
@@ -169,7 +163,7 @@ export async function onRequestPost(context) {
 
   const rand = randMap[randomness] || randMap['medium'];
 
-  const body = {
+  const apiBody = {
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2000,
     temperature: rand.temperature,
@@ -206,7 +200,7 @@ export async function onRequestPost(context) {
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(apiBody),
     });
 
     if (resp.status === 429 || resp.status === 529) {
@@ -216,21 +210,21 @@ export async function onRequestPost(context) {
         await new Promise(r => setTimeout(r, wait));
         continue;
       }
-      return json({ error: 'API перегружен, попробуйте позже' }, 503);
+      return res.status(503).json({ error: 'API перегружен, попробуйте позже' });
     }
 
     if (!resp.ok) {
       const text = await resp.text();
-      return json({ error: `Anthropic API ${resp.status}: ${text.slice(0, 300)}` }, resp.status);
+      return res.status(resp.status).json({ error: `Anthropic API ${resp.status}: ${text.slice(0, 300)}` });
     }
 
     const data = await resp.json();
     const raw = (data?.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
-    if (!raw) return json({ error: 'Пустой ответ от API' }, 500);
+    if (!raw) return res.status(500).json({ error: 'Пустой ответ от API' });
 
     let parsed;
     try { parsed = JSON.parse(raw); }
-    catch { return json({ error: 'Невалидный JSON от API', raw: raw.slice(0, 200) }, 500); }
+    catch { return res.status(500).json({ error: 'Невалидный JSON от API', raw: raw.slice(0, 200) }); }
 
     const names = (parsed.names || [])
       .filter(r => {
@@ -250,18 +244,10 @@ export async function onRequestPost(context) {
       .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
       .slice(0, 8);
 
-    if (!names.length) return json({ error: 'Нет валидных имён в ответе' }, 500);
+    if (!names.length) return res.status(500).json({ error: 'Нет валидных имён в ответе' });
 
-    return json({ names });
+    return res.status(200).json({ names });
   }
 
-  return json({ error: 'API перегружен, попробуйте позже' }, 503);
-}
-
-export async function onRequest(context) {
-  if (context.request.method === 'POST') return onRequestPost(context);
-  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
-    status: 405,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
+  return res.status(503).json({ error: 'API перегружен, попробуйте позже' });
+};

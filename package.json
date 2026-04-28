@@ -1,15 +1,19 @@
 {
-  "name": "namegen-uz",
+  "name": "naming-maze-uz",
   "version": "1.0.0",
-  "description": "AI-powered business name generator for Uzbekistan market",
+  "private": true,
+  "description": "AI-powered business name generator — naming.maze.uz",
   "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
+    "dev": "node --watch server.js",
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "vercel-dev": "vercel dev"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "node-fetch": "^2.7.0",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   }
 }
