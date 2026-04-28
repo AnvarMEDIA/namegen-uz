@@ -1,4 +1,8 @@
 module.exports = async (req, res) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
   const nameRaw = req.query?.name || '';
   const name = String(nameRaw).replace(/[^a-z0-9_]/gi, '').slice(0, 32);
 

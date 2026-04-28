@@ -1,3 +1,31 @@
+// ── Security helpers ──────────────────────────────────────
+// In-memory rate-limiter (per warm instance). For multi-instance global
+// enforcement use Upstash/Redis or Vercel KV.
+const RL_WINDOW_MS = 60_000;
+const RL_MAX = 10;
+const _rl = new Map(); // ip -> { count, resetAt }
+function rateLimit(ip) {
+  const now = Date.now();
+  // periodic cleanup to bound memory
+  if (_rl.size > 2000) {
+    for (const [k, v] of _rl) if (v.resetAt < now) _rl.delete(k);
+  }
+  const e = _rl.get(ip);
+  if (!e || e.resetAt < now) {
+    _rl.set(ip, { count: 1, resetAt: now + RL_WINDOW_MS });
+    return true;
+  }
+  if (e.count >= RL_MAX) return false;
+  e.count++;
+  return true;
+}
+
+// Strip control characters (NUL, CR, LF, tab, etc.) — main vector for
+// prompt-injection breakouts via fake "system" lines.
+function sanitiseUserText(s) {
+  return String(s).replace(/[\x00-\x1F\x7F]+/g, ' ').trim();
+}
+
 const styleMap = {
   auto:        'Best style chosen automatically — mix of all approaches for maximum creativity',
   brandable:   'Invented/coined words — sounds real but means nothing (Spotify, Kodak, Zillow, Canva, Google)',
@@ -90,8 +118,38 @@ const randMap = {
 };
 
 module.exports = async (req, res) => {
+  // ── Origin allow-list ──────────────────────────────────
+  // Browser cross-origin POST always sets Origin; same-origin XHR usually does too.
+  // Empty Origin = direct call (curl etc) — allow but rate-limit still applies.
+  const origin = req.headers.origin || '';
+  const ALLOWED_HOST_RE = /^https:\/\/(naming\.maze\.uz|maze\.uz|[a-z0-9-]+\.vercel\.app)$/;
+  const ALLOWED_DEV_RE  = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+  const originOk = !origin || ALLOWED_HOST_RE.test(origin) || ALLOWED_DEV_RE.test(origin);
+  if (!originOk) {
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Max-Age', '86400');
+  }
+
+  // ── Method ─────────────────────────────────────────────
+  if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // ── Per-IP rate-limit ──────────────────────────────────
+  // Best-effort in-memory bucket. On Vercel each warm instance has its own Map,
+  // so true global enforcement requires Upstash/Redis — TODO.
+  const ip = (req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || '')
+    .toString().split(',')[0].trim() || 'unknown';
+  if (!rateLimit(ip)) {
+    res.setHeader('Retry-After', '60');
+    return res.status(429).json({ error: 'Слишком много запросов. Попробуйте через минуту.' });
   }
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -103,8 +161,12 @@ module.exports = async (req, res) => {
   const { keywords, style, randomness, mode, name } = body;
 
   if (mode === 'analyse') {
-    if (!name || !name.trim()) return res.status(400).json({ error: 'name обязателен' });
-    const safeName = name.trim().slice(0, 40);
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'name обязателен' });
+    }
+    // Strip control chars + cap length to prevent prompt-injection / token-burn
+    const safeName = sanitiseUserText(name).slice(0, 40);
+    if (!safeName) return res.status(400).json({ error: 'name недопустим' });
 
     const aResp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -152,8 +214,13 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (!keywords || !keywords.trim()) {
+  if (!keywords || typeof keywords !== 'string' || !keywords.trim()) {
     return res.status(400).json({ error: 'keywords обязателен' });
+  }
+  // Strip control chars + cap length to prevent prompt-injection / token-burn
+  const safeKw = sanitiseUserText(keywords).slice(0, 200);
+  if (!safeKw) {
+    return res.status(400).json({ error: 'keywords недопустим' });
   }
 
   const styleLabel = styleMap[style] || styleMap['auto'];
@@ -176,7 +243,7 @@ module.exports = async (req, res) => {
     messages: [{
       role: 'user',
       content:
-        `Generate 8 high-quality brand names for the niche: "${keywords.trim()}"\n\n` +
+        `Generate 8 high-quality brand names for the niche: "${safeKw}"\n\n` +
         `Creativity level: ${rand.hint}\n\n` +
         `Style: ${styleLabel}${extraInstruction}\n\n` +
         `${phoneticRule}\n\n` +

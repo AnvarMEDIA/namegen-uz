@@ -848,7 +848,10 @@ function gen(){
     });
   })
   .catch(function(e){
-    document.getElementById('ea').innerHTML='<div class="errbox">Ошибка: '+e.message+'</div>';
+    var ea=document.getElementById('ea');ea.innerHTML='';
+    var box=document.createElement('div');box.className='errbox';
+    box.textContent='Ошибка: '+(e&&e.message?e.message:'неизвестная');
+    ea.appendChild(box);
     document.getElementById('em').style.display='block';
     document.getElementById('em').innerHTML='<div class="empty-icon">⚠</div><p>Что-то пошло не так.<br><strong>Детали выше ↑</strong></p>';
   })

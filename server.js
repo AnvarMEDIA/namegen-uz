@@ -10,7 +10,7 @@ const checkIg  = require('./api/check-ig/[name].js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '4kb' }));
 app.use(express.static(__dirname, { index: false, extensions: ['html'] }));
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch(err => {

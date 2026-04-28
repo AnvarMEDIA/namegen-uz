@@ -1,6 +1,10 @@
 module.exports = async (req, res) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
   const nameRaw = req.query?.name || '';
-  const name = String(nameRaw).toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const name = String(nameRaw).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 63);
 
   if (!name || name.length < 2) {
     return res.status(200).json({ status: 'error', msg: 'слишком короткое имя' });
