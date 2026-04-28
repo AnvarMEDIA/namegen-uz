@@ -11,6 +11,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: '4kb' }));
+
+// JSON parse / payload errors → clean 400/413 instead of Express HTML stack traces
+app.use((err, req, res, next) => {
+  if (err && err.type === 'entity.too.large')   return res.status(413).json({ error: 'Payload too large' });
+  if (err && err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Невалидный JSON' });
+  if (err) return res.status(400).json({ error: 'Bad request' });
+  next();
+});
 app.use(express.static(__dirname, { index: false, extensions: ['html'] }));
 
 const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch(err => {

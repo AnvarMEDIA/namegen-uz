@@ -26,6 +26,43 @@ function sanitiseUserText(s) {
   return String(s).replace(/[\x00-\x1F\x7F]+/g, ' ').trim();
 }
 
+// Structured security log — surfaces in Vercel function logs, grep-able by [SEC].
+// Never include raw user input or secrets — only IP, origin, event type.
+function logSec(event, extra) {
+  try {
+    console.warn('[SEC] ' + JSON.stringify({ event, ts: Date.now(), ...(extra || {}) }));
+  } catch (_) { /* never throw from logger */ }
+}
+
+// ── Strict enum validation ────────────────────────────────
+const STYLE_ENUM = new Set(['auto','brandable','evocative','compound','alternate','nonEnglish','real_words','uzbek_roots']);
+const RAND_ENUM  = new Set(['low','medium','high']);
+const MODE_ENUM  = new Set(['analyse']);  // omitted = generate mode
+
+// Returns { ok:true, ... } on success, { ok:false, msg } on failure.
+function validateBody(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return { ok: false, msg: 'тело запроса должно быть объектом' };
+  }
+  const { mode, keywords, name, style, randomness } = body;
+
+  if (mode !== undefined && !MODE_ENUM.has(mode))           return { ok: false, msg: 'mode недопустим' };
+  if (style !== undefined && !STYLE_ENUM.has(style))        return { ok: false, msg: 'style недопустим' };
+  if (randomness !== undefined && !RAND_ENUM.has(randomness)) return { ok: false, msg: 'randomness недопустим' };
+
+  if (mode === 'analyse') {
+    if (typeof name !== 'string')                           return { ok: false, msg: 'name должен быть строкой' };
+    const safeName = sanitiseUserText(name).slice(0, 40);
+    if (!safeName)                                          return { ok: false, msg: 'name недопустим' };
+    return { ok: true, mode, name: safeName };
+  }
+
+  if (typeof keywords !== 'string')                         return { ok: false, msg: 'keywords должен быть строкой' };
+  const safeKw = sanitiseUserText(keywords).slice(0, 200);
+  if (!safeKw)                                              return { ok: false, msg: 'keywords обязателен' };
+  return { ok: true, keywords: safeKw, style, randomness };
+}
+
 const styleMap = {
   auto:        'Best style chosen automatically — mix of all approaches for maximum creativity',
   brandable:   'Invented/coined words — sounds real but means nothing (Spotify, Kodak, Zillow, Canva, Google)',
@@ -126,6 +163,7 @@ module.exports = async (req, res) => {
   const ALLOWED_DEV_RE  = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
   const originOk = !origin || ALLOWED_HOST_RE.test(origin) || ALLOWED_DEV_RE.test(origin);
   if (!originOk) {
+    logSec('origin_blocked', { origin });
     return res.status(403).json({ error: 'Origin not allowed' });
   }
   if (origin) {
@@ -148,8 +186,23 @@ module.exports = async (req, res) => {
   const ip = (req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || '')
     .toString().split(',')[0].trim() || 'unknown';
   if (!rateLimit(ip)) {
+    logSec('rate_limited', { ip });
     res.setHeader('Retry-After', '60');
     return res.status(429).json({ error: 'Слишком много запросов. Попробуйте через минуту.' });
+  }
+
+  let body;
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+  } catch {
+    logSec('invalid_json', { ip });
+    return res.status(400).json({ error: 'Невалидный JSON' });
+  }
+
+  const v = validateBody(body);
+  if (!v.ok) {
+    logSec('validation_failed', { ip, reason: v.msg });
+    return res.status(400).json({ error: v.msg });
   }
 
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -157,16 +210,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY не задан' });
   }
 
-  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-  const { keywords, style, randomness, mode, name } = body;
-
-  if (mode === 'analyse') {
-    if (!name || typeof name !== 'string' || !name.trim()) {
-      return res.status(400).json({ error: 'name обязателен' });
-    }
-    // Strip control chars + cap length to prevent prompt-injection / token-burn
-    const safeName = sanitiseUserText(name).slice(0, 40);
-    if (!safeName) return res.status(400).json({ error: 'name недопустим' });
+  if (v.mode === 'analyse') {
+    const safeName = v.name;
 
     const aResp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -214,14 +259,10 @@ module.exports = async (req, res) => {
     }
   }
 
-  if (!keywords || typeof keywords !== 'string' || !keywords.trim()) {
-    return res.status(400).json({ error: 'keywords обязателен' });
-  }
-  // Strip control chars + cap length to prevent prompt-injection / token-burn
-  const safeKw = sanitiseUserText(keywords).slice(0, 200);
-  if (!safeKw) {
-    return res.status(400).json({ error: 'keywords недопустим' });
-  }
+  // Generate-mode (default). All fields validated above by validateBody().
+  const safeKw = v.keywords;
+  const style = v.style;
+  const randomness = v.randomness;
 
   const styleLabel = styleMap[style] || styleMap['auto'];
   const extraInstruction = styleExtra[style]
