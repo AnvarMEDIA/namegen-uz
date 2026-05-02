@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 
-const generate = require('./api/generate.js');
+// /api/generate moved to api/generate.ts (TypeScript). Local Express dev
+// can no longer require it directly — use `npm run vercel-dev` for the
+// full /api stack including /api/generate.
 const checkUz  = require('./api/check-uz/[name].js');
 const checkTg  = require('./api/check-tg/[name].js');
 const checkIg  = require('./api/check-ig/[name].js');
@@ -26,7 +28,9 @@ const wrap = (fn) => (req, res) => Promise.resolve(fn(req, res)).catch(err => {
   res.status(500).json({ error: err.message });
 });
 
-app.post('/api/generate', wrap(generate));
+app.post('/api/generate', (_req, res) => res.status(501).json({
+  error: 'Generate route is TypeScript-only. Run `npm run vercel-dev` instead of `npm run dev` to test it locally.',
+}));
 app.get('/api/check-uz/:name', wrap((req, res) => { req.query.name = req.params.name; return checkUz(req, res); }));
 app.get('/api/check-tg/:name', wrap((req, res) => { req.query.name = req.params.name; return checkTg(req, res); }));
 app.get('/api/check-ig/:name', wrap((req, res) => { req.query.name = req.params.name; return checkIg(req, res); }));
