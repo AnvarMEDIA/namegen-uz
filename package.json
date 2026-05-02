@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'Static build — Vercel serves index.html, name.html, and /api/* automatically' && exit 0",
     "deploy": "vercel deploy --prod",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
