@@ -5,9 +5,9 @@ const path = require('path');
 // /api/generate moved to api/generate.ts (TypeScript). Local Express dev
 // can no longer require it directly — use `npm run vercel-dev` for the
 // full /api stack including /api/generate.
-const checkUz  = require('./api/check-uz/[name].js');
-const checkTg  = require('./api/check-tg/[name].js');
-const checkIg  = require('./api/check-ig/[name].js');
+const checkUz  = require('./api/check-uz/[name].cjs');
+const checkTg  = require('./api/check-tg/[name].cjs');
+const checkIg  = require('./api/check-ig/[name].cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
