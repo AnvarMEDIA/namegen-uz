@@ -5,8 +5,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "wrangler pages dev public --compatibility-date=2026-03-18",
-    "deploy": "wrangler deploy",
+    "dev": "vercel dev",
+    "build": "echo 'Static build — Vercel serves index.html, name.html, and /api/* automatically' && exit 0",
+    "deploy": "vercel deploy --prod",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -15,10 +16,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251201.0",
     "@types/node": "^22.10.0",
+    "@vercel/node": "^5.7.15",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8",
-    "wrangler": "^3.95.0"
+    "vercel": "^53.1.0",
+    "vitest": "^2.1.8"
   }
 }

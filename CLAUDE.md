@@ -5,12 +5,12 @@
 
 ## 1. Тех-стек и языки
 
-- **Backend** — TypeScript **strict mode** во всех новых файлах (`functions/api/**`, `lib/**`, `tests/**`).
-  - `tsconfig.json` с `"strict": true`, `"noUncheckedIndexedAccess": true`, `"noImplicitOverride": true`.
-  - Wrangler нативно компилирует `.ts` для Cloudflare Pages Functions — отдельный билд-шаг для бэка не нужен.
+- **Backend** — TypeScript **strict mode** во всех новых файлах (`api/**`, `lib/**`, `tests/**`).
+  - `tsconfig.json` с `"strict": true`, `"noUncheckedIndexedAccess": true`, `"noImplicitOverride": true`, `"exactOptionalPropertyTypes": true`.
+  - Vercel Serverless Functions нативно компилируют `.ts` — отдельный билд-шаг для бэка не нужен.
   - Никаких `any`, `as unknown as X`, `// @ts-ignore`. Если тип не выводится — нужен честный тип или Zod-схема.
-- **Frontend** — текущий vanilla JS в `public/index.html` остаётся; новые модули фронта пишем как отдельные `.ts`-файлы в `public/js/` и компилируем в JS через `esbuild` (один скрипт `npm run build:web`). Любой новый код фронта — TS strict.
-- **Runtime** — Cloudflare Workers / Pages Functions. Никаких Node-специфичных API без явного обоснования.
+- **Frontend** — текущий vanilla JS в `index.html` (корень репозитория) остаётся; новые модули фронта пишем как отдельные `.ts`-файлы в `public/js/` и компилируем в JS через `esbuild` (один скрипт `npm run build:web`). Любой новый код фронта — TS strict.
+- **Runtime** — Vercel Node.js Serverless Functions (по умолчанию). Edge runtime включаем явно через `export const config = { runtime: 'edge' }` только когда это даёт измеримый выигрыш.
 
 ## 2. Git-дисциплина
 
@@ -57,22 +57,28 @@
 - Если в фиче нужен demo-режим (например, платежи без реальных ключей) — он включается **только** через `env.PAYMENTS_MODE === 'demo'` и явно описан в README. Демо-ветка не должна быть путём по умолчанию в production.
 - Тестовые фикстуры живут в `tests/fixtures/**` и не импортируются из `lib/` или `functions/`.
 
-## 7. Структура каталогов (после рефакторинга)
+## 7. Структура каталогов
 
 ```
-functions/api/        # Cloudflare Pages Functions (роуты, .ts)
+api/                  # Vercel Serverless Functions (TS, авто-роутинг по файловой системе)
+  generate.ts         # POST /api/generate
+  check-uz/[name].ts  # GET  /api/check-uz/:name
+  check-tg/[name].ts  # GET  /api/check-tg/:name
+  check-ig/[name].ts  # GET  /api/check-ig/:name
 lib/
+  anthropic/          # клиент + ID моделей (models.ts, client.ts)
   prompts/            # все промпты к Claude API
-  connotation/        # blacklist + логика проверки
-  payments/           # Click / Payme / Stripe провайдеры
-  pdf/                # шаблон и рендер PDF-брифа
-  anthropic/          # клиент + ID моделей
+  schemas/            # Zod-схемы и нормализация ответов AI
+  connotation/        # blacklist + логика проверки (Фича 2)
+  payments/           # Click / Payme / Stripe провайдеры (Фича 5)
+  pdf/                # шаблон и рендер PDF-брифа (Фича 4)
   domains/            # проверка .com / .uz / .com.uz
 public/
-  index.html          # legacy vanilla — постепенно вычищается
   js/                 # новый TS-код фронта (компилируется в public/dist/)
 tests/                # Vitest, зеркалит lib/
-src/index.js          # Worker-роутер (тонкая обёртка)
+index.html            # production-фронт (vanilla, постепенно вычищается)
+name.html             # детальная страница имени
+vercel.json           # конфиг Vercel
 ```
 
 ## 8. Проверки перед коммитом
