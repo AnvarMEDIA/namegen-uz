@@ -127,3 +127,38 @@ describe('production runtime parity (esbuild bundle + Node ESM import)', () => {
     expect(result.stdout).toContain('"handle"');
   });
 });
+
+// Dynamic [name].js routes broke once on Vercel preview when they were renamed
+// to [name].cjs in commit c2c83d1 — Vercel's auto-router doesn't pick up .cjs
+// dynamic routes. This guard imports each handler the same way Vercel will at
+// request time, so a regression of that kind fails CI before it reaches a
+// preview deploy.
+describe('production runtime parity — /api/check-* dynamic routes', () => {
+  const ROUTES = ['check-uz', 'check-tg', 'check-ig'] as const;
+  const bundles: BundleResult[] = [];
+
+  afterAll(() => {
+    for (const b of bundles) rmSync(b.workDir, { recursive: true, force: true });
+  });
+
+  it.each(ROUTES)('api/%s/[name].js bundles + loads as ESM with default export', (route) => {
+    const b = bundleEntry(join('api', route, '[name].js'));
+    bundles.push(b);
+    const result = importBundle(
+      b.outFile,
+      `
+        if (typeof m.default !== 'function') {
+          throw new Error('expected default export to be the dynamic-route handler');
+        }
+      `,
+    );
+    if (result.status !== 0) {
+      throw new Error(
+        `Vercel-style load failed for /api/${route}/[name].js (exit ${result.status}).\n` +
+          `STDOUT: ${result.stdout}\nSTDERR: ${result.stderr}`,
+      );
+    }
+    expect(result.stdout).toContain('SMOKE_OK');
+    expect(result.stdout).toContain('"default"');
+  });
+});
