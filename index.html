@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NameGen.uz — Генератор названий для бизнеса</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,500..800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -148,6 +149,89 @@ main{width:100%;padding:56px clamp(16px,5vw,72px) 80px;flex:1}
 .ctag{font-size:14px;color:var(--text2);margin:0 0 3px;line-height:1.5;font-weight:400;flex-grow:1}
 .ctag-uz{font-size:12px;color:var(--text3);margin:0 0 14px;line-height:1.4;font-style:italic}
 
+/* ── Typography preview (Feature 3) ───────────────────── */
+/* Pure black on pure white island. Identical in light and dark
+   themes — the preview is an "exhibition swatch" and stays neutral
+   regardless of the host card's palette. */
+.preview{
+  --pv-bg:#ffffff;
+  --pv-fg:#000000;
+  --pv-line:rgba(0,0,0,.09);   /* hairline at low alpha — reads as 0.5px on retina */
+  --pv-label:rgba(0,0,0,.40);
+  background:var(--pv-bg);
+  color:var(--pv-fg);
+  border-radius:10px;
+  padding:24px 22px 20px;
+  margin:6px 0 18px;
+  position:relative;
+  /* Crisp inset hairline frame. box-shadow renders sharper than border on retina. */
+  box-shadow:inset 0 0 0 1px var(--pv-line);
+  /* prevent the white island from bleeding into the host card visually */
+  isolation:isolate;
+}
+.preview-row{
+  padding:14px 0;
+}
+.preview-row:first-child{padding-top:2px}
+.preview-row:last-child{padding-bottom:2px}
+.preview-row + .preview-row{
+  border-top:1px solid var(--pv-line);
+}
+.preview-label{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--pv-label);
+  margin-bottom:10px;
+  display:block;
+}
+.preview-name{
+  display:block;
+  color:var(--pv-fg);
+  line-height:1;
+  -webkit-font-smoothing:antialiased;
+}
+.preview-serif{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:700;
+  font-size:42px;
+  letter-spacing:-.025em;
+  font-variation-settings:"opsz" 144;     /* display optical size */
+  font-feature-settings:"ss01";
+}
+.preview-grotesk{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:34px;
+  letter-spacing:-.02em;
+  text-transform:lowercase;
+}
+
+/* Modal-sized preview: same styling, larger type, three rows */
+.preview-modal{
+  padding:32px 28px 26px;
+  margin:18px 0 22px;
+  border-radius:12px;
+}
+.preview-modal .preview-row{padding:18px 0}
+.preview-modal .preview-row:first-child{padding-top:4px}
+.preview-modal .preview-row:last-child{padding-bottom:4px}
+.preview-modal .preview-serif{font-size:clamp(36px,9.5vw,56px)}
+.preview-modal .preview-grotesk{font-size:clamp(30px,8vw,46px)}
+.preview-modal .preview-wordmark{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:clamp(16px,4.5vw,22px);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+@media(max-width:479px){
+  .preview-modal{padding:24px 20px 20px;margin:14px 0 18px}
+  .preview-modal .preview-row{padding:14px 0}
+}
+
 /* ── Favourite button ────────────────────────────────── */
 .card-divider{height:1px;background:var(--border);margin:16px 0}
 .card-btns{display:flex;flex-direction:column;gap:7px}
@@ -278,12 +362,20 @@ footer a:hover{color:var(--text)}
   .ctag{font-size:12px}
   .ctag-uz{font-size:11px;margin-bottom:10px}
   .chip{font-size:10px;padding:4px 7px}
+  .preview{padding:18px 16px 14px;margin:4px 0 14px}
+  .preview-row{padding:10px 0}
+  .preview-label{font-size:8px;letter-spacing:.14em;margin-bottom:6px}
+  .preview-serif{font-size:30px}
+  .preview-grotesk{font-size:24px}
 }
 @container (min-width:201px) and (max-width:270px){
   .cname{font-size:20px}
   .cname-ext{display:none}
   .card-num{display:none}
   .chip{font-size:10px;padding:5px 8px}
+  .preview{padding:20px 18px 16px}
+  .preview-serif{font-size:34px}
+  .preview-grotesk{font-size:28px}
 }
 
 /* ── Responsive ──────────────────────────────────────── */
@@ -462,6 +554,7 @@ footer a:hover{color:var(--text)}
     </div>
     <div class="modal-tru" id="m-tru"></div>
     <div class="modal-tuz" id="m-tuz"></div>
+    <div id="m-preview"></div>
     <div class="modal-chips" id="m-chips"></div>
     <div class="modal-actions">
       <button class="modal-copy" id="m-copy" onclick="copyModalName()">
@@ -535,6 +628,7 @@ function openModal(name){
   var tuzEl=document.getElementById('m-tuz');
   tuzEl.textContent=e.tagline_uz||'';
   tuzEl.style.display=e.tagline_uz?'':'none';
+  document.getElementById('m-preview').innerHTML=buildPreviewModal(name);
   document.getElementById('m-chips').innerHTML=buildModalChips(dn,un,dcache[dn],tgcache[un],igcache[un]);
   var dl=document.getElementById('m-detail');
   if(e.id){dl.href='/name.html?id='+e.id;dl.style.display='';}
@@ -799,6 +893,41 @@ function gen(){
   });
 }
 
+// ── Typography preview (Feature 3) ─────────────────────
+// Two-row preview for the result card — pure b/w, hairline frame.
+function buildPreview(name){
+  var n=esc(name);
+  return '<div class="preview" aria-hidden="true">'+
+           '<div class="preview-row">'+
+             '<span class="preview-label">Serif · Fraunces 700</span>'+
+             '<span class="preview-name preview-serif">'+n+'</span>'+
+           '</div>'+
+           '<div class="preview-row">'+
+             '<span class="preview-label">Grotesk · Syne 800</span>'+
+             '<span class="preview-name preview-grotesk">'+n+'</span>'+
+           '</div>'+
+         '</div>';
+}
+// Three-row preview for the modal — adds an uppercase tracked wordmark.
+function buildPreviewModal(name){
+  var n=esc(name);
+  var upper=esc(name.toUpperCase());
+  return '<div class="preview preview-modal" aria-hidden="true">'+
+           '<div class="preview-row">'+
+             '<span class="preview-label">Serif · Fraunces 700 · opsz 144</span>'+
+             '<span class="preview-name preview-serif">'+n+'</span>'+
+           '</div>'+
+           '<div class="preview-row">'+
+             '<span class="preview-label">Grotesk · Syne 800</span>'+
+             '<span class="preview-name preview-grotesk">'+n+'</span>'+
+           '</div>'+
+           '<div class="preview-row">'+
+             '<span class="preview-label">Wordmark · Syne 800 tracked</span>'+
+             '<span class="preview-name preview-wordmark">'+upper+'</span>'+
+           '</div>'+
+         '</div>';
+}
+
 // ── Render grid ────────────────────────────────────────
 function renderGrid(){
   var g=document.getElementById('gr');g.innerHTML='';
@@ -841,6 +970,7 @@ function renderGrid(){
           '</button>'+
         '</div>'+
       '</div>'+
+      buildPreview(r.name)+
       '<div class="ctag">'+esc(tru)+'</div>'+
       '<div class="ctag-uz">'+esc(tuz)+'</div>'+
       '<div class="checks">'+
