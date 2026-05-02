@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { RANDOMNESS_KEYS, STYLE_KEYS } from '../prompts/styles';
+import { RANDOMNESS_KEYS, STYLE_KEYS } from '../prompts/styles.js';
 
 const CONTROL_CHARS_RE = /[\x00-\x1F\x7F]+/g;
 

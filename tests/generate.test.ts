@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { MODELS, ANTHROPIC_VERSION, ANTHROPIC_ENDPOINT } from '../lib/anthropic/models';
-import { buildAnalysePrompt } from '../lib/prompts/analyse';
-import { buildGeneratePrompt } from '../lib/prompts/generate';
+import { MODELS, ANTHROPIC_VERSION, ANTHROPIC_ENDPOINT } from '../lib/anthropic/models.js';
+import { buildAnalysePrompt } from '../lib/prompts/analyse.js';
+import { buildGeneratePrompt } from '../lib/prompts/generate.js';
 import {
   isRandomnessKey,
   isStyleKey,
   RANDOMNESS,
   STYLE_LABELS,
   STYLE_RULES,
-} from '../lib/prompts/styles';
+} from '../lib/prompts/styles.js';
 import {
   AnalyseBodySchema,
   GenerateBodySchema,
   isValidName,
   normaliseNames,
   sanitiseUserText,
-} from '../lib/schemas/generate';
+} from '../lib/schemas/generate.js';
 
 describe('models registry', () => {
   it('pins the documented model IDs', () => {

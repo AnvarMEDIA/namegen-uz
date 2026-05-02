@@ -1,20 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { AnthropicError, callAnthropic, extractText } from '../lib/anthropic/client';
-import { MODELS } from '../lib/anthropic/models';
-import { buildAnalysePrompt } from '../lib/prompts/analyse';
-import { buildGeneratePrompt } from '../lib/prompts/generate';
+import { AnthropicError, callAnthropic, extractText } from '../lib/anthropic/client.js';
+import { MODELS } from '../lib/anthropic/models.js';
+import { buildAnalysePrompt } from '../lib/prompts/analyse.js';
+import { buildGeneratePrompt } from '../lib/prompts/generate.js';
 import {
   isModeKey,
   isRandomnessKey,
   isStyleKey,
   type RandomnessKey,
   type StyleKey,
-} from '../lib/prompts/styles';
-import { normaliseNames, sanitiseUserText } from '../lib/schemas/generate';
-import { logSecurityEvent } from '../lib/security/log';
-import { isOriginAllowed } from '../lib/security/origin';
-import { checkRateLimit } from '../lib/security/rate-limit';
+} from '../lib/prompts/styles.js';
+import { normaliseNames, sanitiseUserText } from '../lib/schemas/generate.js';
+import { logSecurityEvent } from '../lib/security/log.js';
+import { isOriginAllowed } from '../lib/security/origin.js';
+import { checkRateLimit } from '../lib/security/rate-limit.js';
 
 // ── Minimal request/response shape so the handler can be tested with plain
 // objects without depending on @vercel/node runtime internals. VercelRequest

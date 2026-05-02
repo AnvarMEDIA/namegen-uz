@@ -1,4 +1,4 @@
-import { ANTHROPIC_ENDPOINT, ANTHROPIC_VERSION } from './models';
+import { ANTHROPIC_ENDPOINT, ANTHROPIC_VERSION } from './models.js';
 
 export interface AnthropicMessage {
   readonly role: 'user' | 'assistant';

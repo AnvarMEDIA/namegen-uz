@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isOriginAllowed } from '../../lib/security/origin';
+import { isOriginAllowed } from '../../lib/security/origin.js';
 
 describe('isOriginAllowed', () => {
   it('allows empty Origin (direct calls / curl)', () => {

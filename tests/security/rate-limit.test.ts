@@ -3,7 +3,7 @@ import {
   __resetRateLimitForTest,
   checkRateLimit,
   RATE_LIMIT_CONFIG,
-} from '../../lib/security/rate-limit';
+} from '../../lib/security/rate-limit.js';
 
 describe('checkRateLimit', () => {
   beforeEach(() => {

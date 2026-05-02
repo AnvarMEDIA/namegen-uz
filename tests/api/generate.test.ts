@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { handle, type RequestLike, type ResponseLike } from '../../api/generate';
-import { __resetRateLimitForTest, RATE_LIMIT_CONFIG } from '../../lib/security/rate-limit';
+import { handle, type RequestLike, type ResponseLike } from '../../api/generate.js';
+import { __resetRateLimitForTest, RATE_LIMIT_CONFIG } from '../../lib/security/rate-limit.js';
 
 interface Capture {
   status: number;

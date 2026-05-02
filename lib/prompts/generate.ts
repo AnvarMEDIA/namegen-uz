@@ -6,7 +6,7 @@ import {
   RANDOMNESS,
   STYLE_LABELS,
   STYLE_RULES,
-} from './styles';
+} from './styles.js';
 
 export interface GeneratePromptInput {
   readonly keywords: string;
