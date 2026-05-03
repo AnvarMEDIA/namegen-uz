@@ -1,19 +1,14 @@
 // Telegram username availability check (t.me/<name>).
 //
-// Same architecture as api/check-ig/[name].js: per-source timeout, retry
-// on 429/503, conservative default 'taken'. Markers reduced to the
-// minimal set that survives any t.me layout iteration:
-//   - dynamic `tg://resolve?domain=<name>` deep link (gold-standard —
-//     can never appear in a shell template because of the per-request
-//     handle suffix)
-//   - `<meta property="og:title"` (any real profile / channel ships
-//     OpenGraph metadata)
-//   - redirect-off-t.me (Telegram pushes unknown handles to telegram.org)
+// Logic restored to the original Netlify implementation (commit 8ea3076,
+// April 2026) — those two markers and the !r.ok → 'free' branch shipped
+// continuously through Netlify / Cloudflare / Vercel migrations and worked
+// in production. The 3d4e4e8 rewrite that replaced them with hypothesised
+// 2026 markers caused regression and is reverted here.
 //
-// NEVER returns 'unknown'. False-negative ('taken' when actually free)
-// is preferred over false-positive ('free' when actually taken) — the
-// latter would mislead a brand owner into buying a $30 .uz domain
-// against an unavailable Telegram identity.
+// The only behavioural addition is a per-attempt timeout + 429/503 retry
+// (same shape as api/check-ig/[name].js) so a single hung connection
+// can't burn the whole Vercel function budget.
 
 const PER_SOURCE_TIMEOUT_MS = 4000;
 const MAX_ATTEMPTS_PER_SOURCE = 2;
@@ -57,46 +52,6 @@ async function attemptWithRetry(url, opts) {
   throw new Error('exhausted retries');
 }
 
-function classifyHtml(html, name) {
-  // Gold-standard positive signal — dynamic deep-link with the actual
-  // requested handle. A shell template can't fake the per-request
-  // domain= suffix, so a match is high-confidence proof the entity
-  // exists.
-  if (html.includes('tg://resolve?domain=' + name)) return 'taken';
-  // Any real profile / channel / bot page emits OpenGraph metadata.
-  if (html.includes('<meta property="og:title"')) return 'taken';
-  return null;
-}
-
-async function tryTelegramPage(name) {
-  const url = 'https://t.me/' + encodeURIComponent(name);
-  const r = await attemptWithRetry(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'text/html',
-    },
-    redirect: 'follow',
-  });
-
-  // HTTP 404 still means free if Telegram ever brings it back.
-  if (r.status === 404) return 'free';
-  if (r.status !== 200) return null;
-
-  // Strongest negative signal: redirected off t.me. Telegram's modern
-  // modal for unknown handles is 200-with-redirect to telegram.org.
-  let finalHostname = '';
-  try {
-    finalHostname = new URL(r.url).hostname;
-  } catch (_) {
-    /* leave empty */
-  }
-  if (finalHostname && finalHostname !== 't.me') return 'free';
-
-  const html = await r.text();
-  return classifyHtml(html, name);
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -110,21 +65,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const result = await tryTelegramPage(name);
-    if (result === 'free') return res.status(200).json({ status: 'free', source: 'TG page' });
-    if (result === 'taken') return res.status(200).json({ status: 'taken', source: 'TG page' });
-  } catch (_) {
-    /* fall through to default */
+    const r = await attemptWithRetry(`https://t.me/${name}`, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html',
+      },
+      redirect: 'follow',
+    });
+    if (!r.ok) return res.status(200).json({ status: 'free' });
+    const html = await r.text();
+    const taken = html.includes('tgme_page_title') || html.includes('tgme_page_description');
+    return res.status(200).json({ status: taken ? 'taken' : 'free' });
+  } catch (e) {
+    return res.status(200).json({ status: 'error', msg: e.message.slice(0, 100) });
   }
-
-  return res.status(200).json({ status: 'taken', source: 'default' });
 }
-
-export const __test__ = {
-  PER_SOURCE_TIMEOUT_MS,
-  MAX_ATTEMPTS_PER_SOURCE,
-  BACKOFF_MS,
-  MAX_RETRY_AFTER_MS,
-  parseRetryAfter,
-  classifyHtml,
-};

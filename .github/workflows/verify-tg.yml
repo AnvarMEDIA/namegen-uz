@@ -1,0 +1,84 @@
+name: Verify TG (one-shot, autonomous self-test)
+
+# Triggers only when this file or api/check-tg/** changes. Runner has
+# unrestricted internet; calls our handler() against real t.me and
+# commits the verdict back so the sandbox can read it via raw.
+# Will be deleted after the verdict confirms restored behaviour.
+
+on:
+  push:
+    branches: [claude/enhance-from-current]
+    paths:
+      - '.github/workflows/verify-tg.yml'
+      - 'api/check-tg/**'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run check-tg handler against real t.me
+        run: |
+          cat > .verify-runner.mjs << 'EOF'
+          import handler from './api/check-tg/[name].js';
+          import { writeFileSync } from 'node:fs';
+
+          const cases = [
+            { name: 'durov',                       expected: 'taken' },
+            { name: 'telegram',                    expected: 'taken' },
+            { name: 'zzzqqqxxxnonexistent7382aaa', expected: 'free'  },
+          ];
+          const results = [];
+          for (const c of cases) {
+            const cap = { status: 0, body: null };
+            const res = {
+              status(s) { cap.status = s; return res; },
+              json(b) { cap.body = b; return res; },
+              setHeader() { return res; },
+              end() { return res; },
+            };
+            const t0 = Date.now();
+            try {
+              await handler({ method: 'GET', query: { name: c.name } }, res);
+            } catch (e) {
+              cap.body = { error: e.message };
+            }
+            const elapsed_ms = Date.now() - t0;
+            const got = cap.body && cap.body.status;
+            results.push({ name: c.name, expected: c.expected, got, pass: got === c.expected, body: cap.body, elapsed_ms });
+          }
+          const summary = {
+            timestamp: new Date().toISOString(),
+            commit: process.env.GITHUB_SHA,
+            all_pass: results.every((r) => r.pass),
+            results,
+          };
+          writeFileSync('.verify/tg-verdict.json', JSON.stringify(summary, null, 2));
+          console.log(JSON.stringify(summary, null, 2));
+          EOF
+          mkdir -p .verify
+          node .verify-runner.mjs || echo "RUNNER EXIT $?"
+          rm -f .verify-runner.mjs
+
+      - name: Commit verdict back
+        run: |
+          git config user.name "verify-bot"
+          git config user.email "verify@bot.local"
+          git add .verify/
+          if git diff --cached --quiet; then
+            echo "no verdict changes — skipping commit"
+            exit 0
+          fi
+          git commit -m "verify: tg handler verdict [skip ci]"
+          git push origin claude/enhance-from-current

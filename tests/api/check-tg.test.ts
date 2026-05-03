@@ -37,21 +37,19 @@ function mockRes(): { res: ResponseLike; cap: Capture } {
   return { res, cap };
 }
 
-function mockReq(name: string): { method: string; query: Record<string, string> } {
-  return { method: 'GET', query: { name } };
+function mockReq(name: string, method = 'GET'): { method: string; query: Record<string, string> } {
+  return { method, query: { name } };
 }
 
-function htmlResponse(html: string, status = 200, finalUrl = 'https://t.me/'): Response {
-  const r = new Response(html, { status, headers: { 'Content-Type': 'text/html' } });
-  Object.defineProperty(r, 'url', { value: finalUrl, configurable: true });
-  return r;
+function htmlResponse(html: string, status = 200): Response {
+  return new Response(html, { status, headers: { 'Content-Type': 'text/html' } });
 }
 
 function emptyResponse(status: number, headers: Record<string, string> = {}): Response {
   return new Response('', { status, headers });
 }
 
-describe('api/check-tg — minimal markers', () => {
+describe('api/check-tg — restored original markers', () => {
   beforeEach(() => {
     vi.unstubAllGlobals();
   });
@@ -59,15 +57,23 @@ describe('api/check-tg — minimal markers', () => {
     vi.unstubAllGlobals();
   });
 
-  it("200 with tg://resolve?domain=<name> deep-link → taken (gold-standard)", async () => {
+  it('returns 405 for non-GET methods without touching fetch', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    vi.stubGlobal('fetch', fetchMock);
+    const { res, cap } = mockRes();
+    await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
+      mockReq('durov', 'POST'),
+      res,
+    );
+    expect(cap.status).toBe(405);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('200 with tgme_page_title marker → taken', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>().mockImplementation(async () =>
-        htmlResponse(
-          '<html><a href="tg://resolve?domain=durov">Open</a></html>',
-          200,
-          'https://t.me/durov',
-        ),
+        htmlResponse('<div class="tgme_page_title">Pavel</div>'),
       ),
     );
     const { res, cap } = mockRes();
@@ -75,19 +81,14 @@ describe('api/check-tg — minimal markers', () => {
       mockReq('durov'),
       res,
     );
-    expect(cap.status).toBe(200);
-    expect(cap.body).toEqual({ status: 'taken', source: 'TG page' });
+    expect(cap.body).toEqual({ status: 'taken' });
   });
 
-  it('200 with og:title meta → taken', async () => {
+  it('200 with tgme_page_description marker → taken', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>().mockImplementation(async () =>
-        htmlResponse(
-          '<head><meta property="og:title" content="Telegram"></head>',
-          200,
-          'https://t.me/telegram',
-        ),
+        htmlResponse('<meta property="tgme_page_description">about</meta>'),
       ),
     );
     const { res, cap } = mockRes();
@@ -95,48 +96,53 @@ describe('api/check-tg — minimal markers', () => {
       mockReq('telegram'),
       res,
     );
-    expect(cap.body).toEqual({ status: 'taken', source: 'TG page' });
+    expect(cap.body).toEqual({ status: 'taken' });
   });
 
-  it('redirected off t.me (telegram.org) → free', async () => {
+  it('200 with no markers → free (matches original Netlify behaviour)', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn<typeof fetch>().mockImplementation(async () =>
-        htmlResponse(
-          '<html><body>telegram.org</body></html>',
-          200,
-          'https://telegram.org/?error=USERNAME_NOT_OCCUPIED',
-        ),
-      ),
+      vi.fn<typeof fetch>().mockImplementation(async () => htmlResponse('<html>nothing</html>')),
     );
     const { res, cap } = mockRes();
     await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
       mockReq('zzzqqqxxxnone7382'),
       res,
     );
-    expect(cap.body).toEqual({ status: 'free', source: 'TG page' });
+    expect(cap.body).toEqual({ status: 'free' });
   });
 
-  it('200 with no markers → taken (conservative default)', async () => {
+  it('non-200 (e.g. 404) → free (matches original Netlify behaviour)', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn<typeof fetch>().mockImplementation(async () =>
-        htmlResponse(
-          '<html><body>opaque markup with nothing</body></html>',
-          200,
-          'https://t.me/durov',
-        ),
-      ),
+      vi.fn<typeof fetch>().mockImplementation(async () => emptyResponse(404)),
     );
+    const { res, cap } = mockRes();
+    await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
+      mockReq('zzzqqqxxxnone7382'),
+      res,
+    );
+    expect(cap.body).toEqual({ status: 'free' });
+  });
+
+  it('429 once → retry succeeds → markers classified', async () => {
+    let call = 0;
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => {
+      call += 1;
+      if (call === 1) return emptyResponse(429, { 'retry-after': '0' });
+      return htmlResponse('<div class="tgme_page_title">x</div>');
+    });
+    vi.stubGlobal('fetch', fetchMock);
     const { res, cap } = mockRes();
     await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
       mockReq('durov'),
       res,
     );
-    expect(cap.body).toEqual({ status: 'taken', source: 'default' });
+    expect(cap.body).toEqual({ status: 'taken' });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it('429 twice → taken (default after retry exhaustion)', async () => {
+  it('429 twice → falls through with 429 status → free (non-OK branch)', async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockImplementation(async () => emptyResponse(429, { 'retry-after': '0' }));
@@ -146,7 +152,22 @@ describe('api/check-tg — minimal markers', () => {
       mockReq('durov'),
       res,
     );
-    expect(cap.body).toEqual({ status: 'taken', source: 'default' });
+    expect(cap.body).toEqual({ status: 'free' });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('network error on every attempt → error status', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(async () => {
+      throw new TypeError('fetch failed');
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const { res, cap } = mockRes();
+    await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
+      mockReq('durov'),
+      res,
+    );
+    const body = cap.body as { status: string };
+    expect(body.status).toBe('error');
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
