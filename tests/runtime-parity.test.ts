@@ -128,6 +128,59 @@ describe('production runtime parity (esbuild bundle + Node ESM import)', () => {
   });
 });
 
+// Feature 1 inspiration code lives in lib/prompts/generate.ts +
+// lib/inspiration/uzbek.ts. The api/generate.ts bundle test above already
+// covers them transitively, but explicit per-module bundles catch
+// regressions where one of the two files becomes un-bundle-able in
+// isolation (e.g. a stray top-level await, a missing .js extension on a
+// new import added in a future commit).
+describe('production runtime parity — Feature 1 inspiration modules', () => {
+  const bundles: BundleResult[] = [];
+
+  afterAll(() => {
+    for (const b of bundles) rmSync(b.workDir, { recursive: true, force: true });
+  });
+
+  it('lib/prompts/generate.ts bundles + loads as ESM with buildGeneratePrompt named export', () => {
+    const b = bundleEntry(join('lib', 'prompts', 'generate.ts'));
+    bundles.push(b);
+    const result = importBundle(
+      b.outFile,
+      `if (typeof m.buildGeneratePrompt !== 'function') {
+         throw new Error('expected buildGeneratePrompt named export');
+       }`,
+    );
+    if (result.status !== 0) {
+      throw new Error(
+        `Vercel-style load failed for lib/prompts/generate.ts (exit ${result.status}).\n` +
+          `STDOUT: ${result.stdout}\nSTDERR: ${result.stderr}`,
+      );
+    }
+    expect(result.stdout).toContain('SMOKE_OK');
+  });
+
+  it('lib/inspiration/uzbek.ts bundles + loads with non-empty UZBEK_ROOTS and pickRoots helper', () => {
+    const b = bundleEntry(join('lib', 'inspiration', 'uzbek.ts'));
+    bundles.push(b);
+    const result = importBundle(
+      b.outFile,
+      `if (!Array.isArray(m.UZBEK_ROOTS)) throw new Error('UZBEK_ROOTS not array');
+       if (m.UZBEK_ROOTS.length < 100) {
+         throw new Error('UZBEK_ROOTS unexpectedly small: ' + m.UZBEK_ROOTS.length);
+       }
+       if (typeof m.pickRoots !== 'function') throw new Error('pickRoots missing');
+       if (typeof m.getRootsByCategory !== 'function') throw new Error('getRootsByCategory missing');`,
+    );
+    if (result.status !== 0) {
+      throw new Error(
+        `Vercel-style load failed for lib/inspiration/uzbek.ts (exit ${result.status}).\n` +
+          `STDOUT: ${result.stdout}\nSTDERR: ${result.stderr}`,
+      );
+    }
+    expect(result.stdout).toContain('SMOKE_OK');
+  });
+});
+
 // Dynamic [name].js routes broke once on Vercel preview when they were renamed
 // to [name].cjs in commit c2c83d1 — Vercel's auto-router doesn't pick up .cjs
 // dynamic routes. This guard imports each handler the same way Vercel will at

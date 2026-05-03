@@ -307,3 +307,134 @@ describe('api/generate route', () => {
     sleepSpy.mockRestore();
   });
 });
+
+// ── Feature 1 — inspiration parameter integration ───────────
+
+describe('api/generate route — Feature 1 inspiration', () => {
+  beforeEach(() => {
+    __resetRateLimitForTest();
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.stubEnv('ANTHROPIC_API_KEY', 'test-key');
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it('rejects unknown inspiration value with 400 + Russian error string', async () => {
+    const { res, cap } = mockRes();
+    await handle(
+      mockReq({
+        headers: { origin: PROD_ORIGIN, 'x-forwarded-for': '7.7.7.1' },
+        body: { keywords: 'кофейня', inspiration: 'french_modern' },
+      }),
+      res,
+    );
+    expect(cap.status).toBe(400);
+    expect(cap.body).toEqual({ error: 'inspiration недопустим' });
+  });
+
+  it('inspired generate flow returns names with meaning_uz/ru/en + bumps prompt to 2600 max_tokens', async () => {
+    const aiPayload = {
+      names: [
+        {
+          name: 'mehrli', tagline_ru: 'Тепло', tagline_uz: 'Iliq',
+          meaning_uz: "mehr ildizidan — har piyolada iliqlik",
+          meaning_ru: 'корень меҳр (тепло) — забота в каждой чашке',
+          meaning_en: 'rooted in mehr (warmth) — care in every cup',
+        },
+        {
+          name: 'nurli', tagline_ru: 'Свет', tagline_uz: 'Nur',
+          meaning_uz: "nur ildizi — yorug'lik beruvchi",
+          meaning_ru: 'корень нур — несущий свет',
+          meaning_en: 'rooted in nur — light-bringing',
+        },
+        {
+          name: 'aqlim', tagline_ru: 'Разум', tagline_uz: 'Aql',
+          meaning_uz: 'aqlim — har qaror ortida',
+          meaning_ru: 'ақлим — за каждым решением',
+          meaning_en: 'aqlim — behind every decision',
+        },
+        {
+          name: 'baxtli', tagline_ru: 'Счастье', tagline_uz: 'Baxt',
+          meaning_uz: 'baxt — saodat',
+          meaning_ru: 'бахт — счастье',
+          meaning_en: 'baxt — happiness',
+        },
+      ],
+    };
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockImplementation(async () => ANTHROPIC_OK(JSON.stringify(aiPayload)));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { res, cap } = mockRes();
+    await handle(
+      mockReq({
+        headers: { origin: PROD_ORIGIN, 'x-forwarded-for': '7.7.7.2' },
+        body: {
+          keywords: 'кофейня',
+          style: 'auto',
+          randomness: 'medium',
+          inspiration: 'uzbek_modern',
+        },
+      }),
+      res,
+    );
+    expect(cap.status).toBe(200);
+    const body = cap.body as { names: Array<Record<string, unknown>> };
+    expect(body.names).toHaveLength(4);
+    expect(body.names[0]).toMatchObject({
+      name: 'mehrli',
+      meaning_uz: "mehr ildizidan — har piyolada iliqlik",
+      meaning_ru: 'корень меҳр (тепло) — забота в каждой чашке',
+      meaning_en: 'rooted in mehr (warmth) — care in every cup',
+    });
+
+    const sentBody = JSON.parse(
+      (fetchMock.mock.calls[0]?.[1] as RequestInit).body as string,
+    );
+    expect(sentBody.messages[0].content).toContain('ROOTS:');
+    expect(sentBody.messages[0].content).toContain('INSPIRATION (Uzbek modern roots)');
+    expect(sentBody.max_tokens).toBe(2600);
+  });
+
+  it('without inspiration: response carries no meaning_* fields and prompt stays at 2000 tokens (backward compat)', async () => {
+    const aiPayload = {
+      names: [
+        { name: 'mehrli', tagline_ru: 'Тепло', tagline_uz: 'Iliq' },
+        { name: 'nurli', tagline_ru: 'Свет', tagline_uz: 'Nur' },
+        { name: 'aqlim', tagline_ru: 'Разум', tagline_uz: 'Aql' },
+        { name: 'baxtli', tagline_ru: 'Счастье', tagline_uz: 'Baxt' },
+      ],
+    };
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockImplementation(async () => ANTHROPIC_OK(JSON.stringify(aiPayload)));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { res, cap } = mockRes();
+    await handle(
+      mockReq({
+        headers: { origin: PROD_ORIGIN, 'x-forwarded-for': '7.7.7.3' },
+        body: { keywords: 'кофейня', style: 'auto', randomness: 'medium' },
+      }),
+      res,
+    );
+    expect(cap.status).toBe(200);
+    const body = cap.body as { names: Array<Record<string, unknown>> };
+    for (const n of body.names) {
+      expect('meaning_uz' in n).toBe(false);
+      expect('meaning_ru' in n).toBe(false);
+      expect('meaning_en' in n).toBe(false);
+    }
+
+    const sentBody = JSON.parse(
+      (fetchMock.mock.calls[0]?.[1] as RequestInit).body as string,
+    );
+    expect(sentBody.messages[0].content).not.toContain('ROOTS:');
+    expect(sentBody.max_tokens).toBe(2000);
+  });
+});

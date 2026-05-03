@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { MODELS, ANTHROPIC_VERSION, ANTHROPIC_ENDPOINT } from '../lib/anthropic/models.js';
+import type { UzbekRoot } from '../lib/inspiration/uzbek.js';
 import { buildAnalysePrompt } from '../lib/prompts/analyse.js';
 import { buildGeneratePrompt } from '../lib/prompts/generate.js';
 import {
+  isInspirationKey,
   isRandomnessKey,
   isStyleKey,
   RANDOMNESS,
@@ -256,5 +258,190 @@ describe('buildAnalysePrompt', () => {
 
   it('uses the dedicated analyst system prompt', () => {
     expect(buildAnalysePrompt({ name: 'x' }).system).toContain('expert brand analyst');
+  });
+});
+
+// ── Feature 1 — inspiration parameter ────────────────────────
+
+describe('isInspirationKey type guard', () => {
+  it('accepts the documented uzbek_modern key', () => {
+    expect(isInspirationKey('uzbek_modern')).toBe(true);
+  });
+
+  it('rejects unknown / non-string values', () => {
+    expect(isInspirationKey('french_modern')).toBe(false);
+    expect(isInspirationKey('')).toBe(false);
+    expect(isInspirationKey(undefined)).toBe(false);
+    expect(isInspirationKey(42)).toBe(false);
+    expect(isInspirationKey(null)).toBe(false);
+  });
+});
+
+describe('GenerateBodySchema — inspiration field', () => {
+  it('accepts inspiration: uzbek_modern and preserves the value', () => {
+    const parsed = GenerateBodySchema.parse({
+      keywords: 'кофейня',
+      inspiration: 'uzbek_modern',
+    });
+    expect(parsed.inspiration).toBe('uzbek_modern');
+  });
+
+  it('rejects unknown inspiration enum values', () => {
+    const result = GenerateBodySchema.safeParse({
+      keywords: 'кофейня',
+      inspiration: 'french_modern',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('treats inspiration as optional (omitted → undefined)', () => {
+    const parsed = GenerateBodySchema.parse({ keywords: 'кофейня' });
+    expect(parsed.inspiration).toBeUndefined();
+  });
+});
+
+describe('normaliseNames — meaning_uz / meaning_ru / meaning_en passthrough', () => {
+  it('preserves all three meaning fields when present', () => {
+    const ai = {
+      names: [
+        {
+          name: 'mehrli',
+          tagline_ru: 'Тепло',
+          tagline_uz: 'Iliq',
+          meaning_uz: "mehr ildizidan — har piyolada iliqlik",
+          meaning_ru: 'корень меҳр — тепло в каждой чашке',
+          meaning_en: 'rooted in mehr — warmth in every cup',
+        },
+      ],
+    };
+    const out = normaliseNames(ai);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({
+      name: 'mehrli',
+      meaning_uz: "mehr ildizidan — har piyolada iliqlik",
+      meaning_ru: 'корень меҳр — тепло в каждой чашке',
+      meaning_en: 'rooted in mehr — warmth in every cup',
+    });
+  });
+
+  it('omits meaning_* keys entirely when AI returns empty / whitespace strings', () => {
+    const ai = {
+      names: [
+        {
+          name: 'nurli',
+          tagline_ru: 'Свет',
+          tagline_uz: 'Nur',
+          meaning_uz: '',
+          meaning_ru: '   ',
+          meaning_en: '',
+        },
+      ],
+    };
+    const out = normaliseNames(ai);
+    expect(out).toHaveLength(1);
+    const item = out[0]!;
+    expect('meaning_uz' in item).toBe(false);
+    expect('meaning_ru' in item).toBe(false);
+    expect('meaning_en' in item).toBe(false);
+  });
+
+  it('omits meaning_* keys entirely when AI never returns them (legacy payload)', () => {
+    const ai = {
+      names: [{ name: 'aqlim', tagline_ru: 'Ум', tagline_uz: 'Aql' }],
+    };
+    const out = normaliseNames(ai);
+    expect(out).toHaveLength(1);
+    const item = out[0]!;
+    expect('meaning_uz' in item).toBe(false);
+    expect('meaning_ru' in item).toBe(false);
+    expect('meaning_en' in item).toBe(false);
+  });
+});
+
+describe('buildGeneratePrompt — inspiration code path', () => {
+  // Tiny deterministic sample — keeps assertions stable without depending
+  // on the live UZBEK_ROOTS array (which can grow).
+  const sampleRoots: readonly UzbekRoot[] = [
+    { latin: 'mehr', cyrillic: 'меҳр', meaning_uz: 'sevgi, iliqlik',
+      meaning_ru: 'любовь, ласка', meaning_en: 'affection', category: 'emotion' },
+    { latin: 'nur', cyrillic: 'нур', meaning_uz: "yorug'lik",
+      meaning_ru: 'луч, свет', meaning_en: 'ray, light', category: 'light' },
+    { latin: 'aql', cyrillic: 'ақл', meaning_uz: 'fikr quroli',
+      meaning_ru: 'разум', meaning_en: 'intellect', category: 'wisdom' },
+  ];
+
+  it('without inspiration: produces the legacy prompt and 2000 max tokens', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'кофейня',
+      style: 'auto',
+      randomness: 'medium',
+    });
+    expect(prompt.user).not.toContain('ROOTS:');
+    expect(prompt.user).not.toContain('INSPIRATION');
+    expect(prompt.user).not.toContain('meaning_en');
+    expect(prompt.maxTokens).toBe(2000);
+  });
+
+  it('with inspiration + roots: embeds ROOTS section, header, and trilingual glosses', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'кофейня',
+      style: 'auto',
+      randomness: 'medium',
+      inspiration: 'uzbek_modern',
+      inspirationRoots: sampleRoots,
+    });
+    expect(prompt.user).toContain('ROOTS:');
+    expect(prompt.user).toContain('INSPIRATION (Uzbek modern roots)');
+    expect(prompt.user).toContain('mehr');
+    expect(prompt.user).toContain('меҳр');
+    expect(prompt.user).toContain('affection');
+    expect(prompt.user).toContain('любовь');
+  });
+
+  it('with inspiration: JSON shape example includes meaning_en for the model', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'x',
+      style: 'auto',
+      randomness: 'medium',
+      inspiration: 'uzbek_modern',
+      inspirationRoots: sampleRoots,
+    });
+    expect(prompt.user).toContain('meaning_uz');
+    expect(prompt.user).toContain('meaning_ru');
+    expect(prompt.user).toContain('meaning_en');
+  });
+
+  it('with inspiration: maxTokens bumps from 2000 to 2600', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'x',
+      style: 'auto',
+      randomness: 'medium',
+      inspiration: 'uzbek_modern',
+      inspirationRoots: sampleRoots,
+    });
+    expect(prompt.maxTokens).toBe(2600);
+  });
+
+  it('inspiration with empty inspirationRoots array falls back to the legacy prompt', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'x',
+      style: 'auto',
+      randomness: 'medium',
+      inspiration: 'uzbek_modern',
+      inspirationRoots: [],
+    });
+    expect(prompt.user).not.toContain('ROOTS:');
+    expect(prompt.maxTokens).toBe(2000);
+  });
+
+  it('inspiration without inspirationRoots field falls back to the legacy prompt', () => {
+    const prompt = buildGeneratePrompt({
+      keywords: 'x',
+      style: 'auto',
+      randomness: 'medium',
+      inspiration: 'uzbek_modern',
+    });
+    expect(prompt.user).not.toContain('ROOTS:');
+    expect(prompt.maxTokens).toBe(2000);
   });
 });
