@@ -676,11 +676,10 @@ function buildModalChips(dn,un,uzR,tgR,igR){
   if(!tgR)      h+=_modalChipHtml('tg-checking',_mIcoTg,'t.me/'+un,'https://t.me/'+un);
   else if(tgR.status==='free')  h+=_modalChipHtml('tg-free',_mIcoTg,'t.me/'+un+' — свободен ✓','https://t.me/'+un);
   else          h+=_modalChipHtml('tg-taken',_mIcoTg,'t.me/'+un+(tgR.status==='taken'?' — занят':''),'https://t.me/'+un);
-  // Instagram
+  // Instagram — see updateIg(): no manual-check fallback.
   if(!igR)      h+=_modalChipHtml('ig-checking',_mIcoIg,'@'+un,'https://www.instagram.com/'+un+'/');
   else if(igR.status==='free')  h+=_modalChipHtml('ig-free',_mIcoIg,'@'+un+' — свободен ✓','https://www.instagram.com/'+un+'/');
-  else if(igR.status==='taken') h+=_modalChipHtml('ig-taken',_mIcoIg,'@'+un+' — занят','https://www.instagram.com/'+un+'/');
-  else          h+=_modalChipHtml('ig-btn',_mIcoIg,'@'+un,'https://www.instagram.com/'+un+'/');
+  else          h+=_modalChipHtml('ig-taken',_mIcoIg,'@'+un+' — занят','https://www.instagram.com/'+un+'/');
   return h;
 }
 
@@ -990,19 +989,18 @@ function checkIg(un){
 }
 function updateIg(un,result){
   var el=document.getElementById('ig-'+un);if(!el)return;
+  // After Feature: robust IG check — backend always returns 'free' or
+  // 'taken' (incl. conservative default 'taken' when both sources fail).
+  // Frontend treats anything that isn't an explicit 'free' as 'taken'
+  // — there is no longer a "проверьте вручную" branch.
   if(result.status==='free'){
     el.className='chip ig-free';
     el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span>';
-    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
-  } else if(result.status==='taken'){
+  } else {
     el.className='chip ig-taken';
     el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span>';
-    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
-  } else {
-    el.className='chip ig-btn';
-    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — проверьте вручную</span>';
-    el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
   }
+  el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
 }
 
 // ── Generate ───────────────────────────────────────────
@@ -1332,9 +1330,11 @@ function updateFavChip(elId,result,type,handle){
     if(result.status==='free'){el.className='chip tg-free';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+' — свободен ✓</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
     else{el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+(result.status==='taken'?' — занят':'')+'</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
   } else {
-    if(result.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — свободен ✓</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
-    else if(result.status==='taken'){el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — занят</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
-    else{el.className='chip ig-btn';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — проверьте вручную</span>';el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};}
+    // IG chip: anything that isn't an explicit 'free' is rendered as 'taken'
+    // (matches updateIg/ buildModalChips post-Feature: robust IG check).
+    if(result.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — свободен ✓</span>';}
+    else{el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — занят</span>';}
+    el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};
   }
 }
 
