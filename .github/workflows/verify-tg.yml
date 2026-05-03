@@ -71,6 +71,49 @@ jobs:
           node .verify-runner.mjs || echo "RUNNER EXIT $?"
           rm -f .verify-runner.mjs
 
+      - name: Dump first 6KB of t.me HTML for marker discovery
+        run: |
+          cat > .dump-runner.mjs << 'EOF'
+          import { writeFileSync } from 'node:fs';
+          const names = ['durov', 'telegram', 'zzzqqqxxxnonexistent7382aaa'];
+          const out = {};
+          for (const u of names) {
+            const r = await fetch('https://t.me/' + u, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html',
+              },
+              redirect: 'follow',
+            });
+            const html = await r.text();
+            const headers = {};
+            for (const [k, v] of r.headers.entries()) headers[k] = v;
+            out[u] = {
+              status: r.status,
+              redirected: r.redirected,
+              final_url: r.url,
+              html_length: html.length,
+              headers,
+              tgme_page_title_found: html.includes('tgme_page_title'),
+              tgme_page_description_found: html.includes('tgme_page_description'),
+              tgme_page_action_found: html.includes('tgme_page_action'),
+              tgme_action_button_label_found: html.includes('tgme_action_button_label'),
+              tgme_page_photo_image_found: html.includes('tgme_page_photo_image'),
+              tg_resolve_link_found: html.includes('tg://resolve?domain=' + u),
+              og_title_found: html.includes('<meta property="og:title"'),
+              og_image_found: html.includes('<meta property="og:image"'),
+              og_description_found: html.includes('<meta property="og:description"'),
+              tgme_404_found: html.includes('tgme_404'),
+              telegram_logo_found: html.includes('telegram_logo'),
+              joinchat_found: html.includes('joinchat'),
+              html_first_6kb: html.slice(0, 6144),
+            };
+          }
+          writeFileSync('.verify/tg-html-dump.json', JSON.stringify(out, null, 2));
+          EOF
+          node .dump-runner.mjs || echo "DUMP EXIT $?"
+          rm -f .dump-runner.mjs
+
       - name: Commit verdict back
         run: |
           git config user.name "verify-bot"
