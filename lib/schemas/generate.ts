@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { RANDOMNESS_KEYS, STYLE_KEYS } from '../prompts/styles.js';
+import { INSPIRATION_KEYS, RANDOMNESS_KEYS, STYLE_KEYS } from '../prompts/styles.js';
 
 const CONTROL_CHARS_RE = /[\x00-\x1F\x7F]+/g;
 
@@ -22,6 +22,7 @@ export const GenerateBodySchema = z
       .transform((v) => sanitiseUserText(v).slice(0, KEYWORDS_MAX)),
     style: z.enum(STYLE_KEYS).optional(),
     randomness: z.enum(RANDOMNESS_KEYS).optional(),
+    inspiration: z.enum(INSPIRATION_KEYS).optional(),
   })
   .refine((v) => v.keywords.length > 0, {
     path: ['keywords'],
@@ -49,6 +50,13 @@ const NameItemSchema = z.object({
   tagline_ru: z.string().optional(),
   tagline_uz: z.string().optional(),
   tagline: z.string().optional(),
+  // Returned only when the request used inspiration='uzbek_modern' — the
+  // model fills these with a 1-sentence "why this name works" rationale
+  // tied to the Uzbek root that anchored it. Optional so legacy /api
+  // payloads without inspiration keep validating.
+  meaning_uz: z.string().optional(),
+  meaning_ru: z.string().optional(),
+  meaning_en: z.string().optional(),
 });
 
 export const AiGenerateResponseSchema = z.object({
@@ -61,6 +69,10 @@ export interface NormalisedName {
   readonly name: string;
   readonly tagline_ru: string;
   readonly tagline_uz: string;
+  /** Set only when the AI returned a non-empty meaning rationale. */
+  readonly meaning_uz?: string;
+  readonly meaning_ru?: string;
+  readonly meaning_en?: string;
 }
 
 const NAME_RE = /^[a-z0-9]+$/;
@@ -100,12 +112,20 @@ export function normaliseNames(input: unknown): NormalisedName[] {
     if (!isValidName(lower)) continue;
     if (seen.has(lower)) continue;
     seen.add(lower);
+    const muz = (item.meaning_uz ?? '').trim();
+    const mru = (item.meaning_ru ?? '').trim();
+    const men = (item.meaning_en ?? '').trim();
     cleaned.push({
       name: lower,
       tagline_ru: (item.tagline_ru ?? item.tagline ?? '')
         .replace(TRAILING_PUNCT_RE, '')
         .trim(),
       tagline_uz: (item.tagline_uz ?? '').replace(TRAILING_PUNCT_RE, '').trim(),
+      // Spread-conditional so absent meaning_* never materialise as
+      // explicit `undefined` (exactOptionalPropertyTypes guards on this).
+      ...(muz ? { meaning_uz: muz } : {}),
+      ...(mru ? { meaning_ru: mru } : {}),
+      ...(men ? { meaning_en: men } : {}),
     });
     if (cleaned.length >= RESULT_CAP) break;
   }

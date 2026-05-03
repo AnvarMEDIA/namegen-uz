@@ -17,9 +17,16 @@ export type RandomnessKey = (typeof RANDOMNESS_KEYS)[number];
 export const MODE_KEYS = ['analyse'] as const;
 export type ModeKey = (typeof MODE_KEYS)[number];
 
+// Inspiration corpus selectors. Currently a single value; future iterations
+// will add 'turkic_modern', 'arabic_modern', 'persian_modern' once the
+// matching corpora are curated.
+export const INSPIRATION_KEYS = ['uzbek_modern'] as const;
+export type InspirationKey = (typeof INSPIRATION_KEYS)[number];
+
 const STYLE_KEY_SET: ReadonlySet<string> = new Set(STYLE_KEYS);
 const RANDOMNESS_KEY_SET: ReadonlySet<string> = new Set(RANDOMNESS_KEYS);
 const MODE_KEY_SET: ReadonlySet<string> = new Set(MODE_KEYS);
+const INSPIRATION_KEY_SET: ReadonlySet<string> = new Set(INSPIRATION_KEYS);
 
 export function isStyleKey(value: unknown): value is StyleKey {
   return typeof value === 'string' && STYLE_KEY_SET.has(value);
@@ -31,6 +38,10 @@ export function isRandomnessKey(value: unknown): value is RandomnessKey {
 
 export function isModeKey(value: unknown): value is ModeKey {
   return typeof value === 'string' && MODE_KEY_SET.has(value);
+}
+
+export function isInspirationKey(value: unknown): value is InspirationKey {
+  return typeof value === 'string' && INSPIRATION_KEY_SET.has(value);
 }
 
 export const STYLE_LABELS: Readonly<Record<StyleKey, string>> = {

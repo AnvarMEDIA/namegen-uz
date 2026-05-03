@@ -5,13 +5,16 @@ import { MODELS } from '../lib/anthropic/models.js';
 import { buildAnalysePrompt } from '../lib/prompts/analyse.js';
 import { buildGeneratePrompt } from '../lib/prompts/generate.js';
 import {
+  isInspirationKey,
   isModeKey,
   isRandomnessKey,
   isStyleKey,
+  type InspirationKey,
   type RandomnessKey,
   type StyleKey,
 } from '../lib/prompts/styles.js';
 import { normaliseNames, sanitiseUserText } from '../lib/schemas/generate.js';
+import { pickRoots } from '../lib/inspiration/uzbek.js';
 import { logSecurityEvent } from '../lib/security/log.js';
 import { isOriginAllowed } from '../lib/security/origin.js';
 import { checkRateLimit } from '../lib/security/rate-limit.js';
@@ -43,8 +46,14 @@ type ValidatedBody =
       keywords: string;
       style: StyleKey | undefined;
       randomness: RandomnessKey | undefined;
+      inspiration: InspirationKey | undefined;
     }
   | { ok: false; msg: string };
+
+// Number of roots sampled per request when inspiration='uzbek_modern'.
+// Picked once per request via pickRoots() with Math.random — different
+// callers get different anchors, which improves output variety.
+const INSPIRATION_SAMPLE_COUNT = 12;
 
 function pickHeader(req: RequestLike, name: string): string | undefined {
   const value = req.headers[name];
@@ -69,6 +78,7 @@ function validateBody(body: unknown): ValidatedBody {
   const rawMode = b['mode'];
   const rawStyle = b['style'];
   const rawRandomness = b['randomness'];
+  const rawInspiration = b['inspiration'];
 
   if (rawMode !== undefined && !isModeKey(rawMode)) {
     return { ok: false, msg: 'mode недопустим' };
@@ -78,6 +88,9 @@ function validateBody(body: unknown): ValidatedBody {
   }
   if (rawRandomness !== undefined && !isRandomnessKey(rawRandomness)) {
     return { ok: false, msg: 'randomness недопустим' };
+  }
+  if (rawInspiration !== undefined && !isInspirationKey(rawInspiration)) {
+    return { ok: false, msg: 'inspiration недопустим' };
   }
 
   if (rawMode === 'analyse') {
@@ -101,6 +114,7 @@ function validateBody(body: unknown): ValidatedBody {
     keywords: safe,
     style: isStyleKey(rawStyle) ? rawStyle : undefined,
     randomness: isRandomnessKey(rawRandomness) ? rawRandomness : undefined,
+    inspiration: isInspirationKey(rawInspiration) ? rawInspiration : undefined,
   };
 }
 
@@ -145,8 +159,22 @@ async function runGenerate(
   keywords: string,
   style: StyleKey | undefined,
   randomness: RandomnessKey | undefined,
+  inspiration: InspirationKey | undefined,
 ): Promise<unknown> {
-  const prompt = buildGeneratePrompt({ keywords, style, randomness });
+  // When inspiration is requested, sample 12 roots to anchor the AI's output.
+  // The corpus is shared across all 'uzbek_modern' callers; sampling per-
+  // request keeps variety high without requiring server-side caching.
+  const inspirationRoots =
+    inspiration === 'uzbek_modern'
+      ? pickRoots({ count: INSPIRATION_SAMPLE_COUNT })
+      : undefined;
+  const prompt = buildGeneratePrompt({
+    keywords,
+    style,
+    randomness,
+    inspiration,
+    inspirationRoots,
+  });
   try {
     const response = await callAnthropic({
       apiKey,
@@ -245,7 +273,7 @@ export async function handle(req: RequestLike, res: ResponseLike): Promise<unkno
   if (v.mode === 'analyse') {
     return runAnalyse(res, apiKey, v.name);
   }
-  return runGenerate(res, apiKey, v.keywords, v.style, v.randomness);
+  return runGenerate(res, apiKey, v.keywords, v.style, v.randomness, v.inspiration);
 }
 
 export default function handler(

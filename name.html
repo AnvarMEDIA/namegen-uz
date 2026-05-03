@@ -21,6 +21,8 @@ body{min-height:100vh;display:flex;flex-direction:column;font-family:'Manrope',s
   --accent:#C4FF3F;--accent2:#D9FF6E;--accent-deep:#A7E12B;--ink:#0A0A0D;
   --adim:rgba(196,255,63,.06);--aglow:rgba(196,255,63,.22);
   --red:#FF6B6B;--redbg:#1C1013;--redbr:#33181E;
+  --taken-bg:rgba(255,107,107,.07);--taken-border:rgba(255,107,107,.30);
+  --taken-color:var(--red);--taken-glow:rgba(255,107,107,.40);
   --radius:12px;--radius-sm:8px;--radius-lg:18px;--radius-xl:28px;
   --pad:clamp(16px,3vw,56px);
   --header-bg:rgba(10,10,13,.74);
@@ -37,6 +39,8 @@ body{min-height:100vh;display:flex;flex-direction:column;font-family:'Manrope',s
   --accent:#3D7A0E;--accent2:#4D8F18;--accent-deep:#2E5C0A;--ink:#FFFFFF;
   --adim:rgba(61,122,14,.07);--aglow:rgba(61,122,14,.18);
   --red:#B83A3A;--redbg:#FFF4F4;--redbr:#F0BFBF;
+  --taken-bg:rgba(184,58,58,.06);--taken-border:rgba(184,58,58,.32);
+  --taken-color:#9B2226;--taken-glow:rgba(184,58,58,.28);
   --header-bg:rgba(255,255,255,.84);
   --uz-free-bg:rgba(61,122,14,.07);--uz-free-color:#2E5C0A;--uz-free-border:rgba(61,122,14,.30);
   --grid-line:rgba(0,0,0,.04);
@@ -82,6 +86,27 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .badge-taken{background:var(--redbg);color:var(--red);border-color:var(--redbr)}
 .badge-unknown{background:var(--bg3);color:var(--text3);border-color:var(--border2)}
 .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;box-shadow:0 0 6px currentColor}
+
+/* ── Meaning island (Фича 1 · 3-language semantic explainer) ── */
+.meaning{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);
+  padding:18px 20px;margin:0 0 24px;max-width:680px;display:flex;flex-direction:column;gap:6px}
+.meaning-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--text3)}
+.meaning-langs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  margin-top:12px;padding-top:14px;border-top:1px solid var(--border)}
+.meaning-row{display:flex;flex-direction:column;gap:3px;padding:0 14px}
+.meaning-row + .meaning-row{border-left:1px solid var(--border)}
+.meaning-row:first-child{padding-left:0}
+.meaning-row:last-child{padding-right:0}
+.meaning-row-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--text3)}
+.meaning-row-text{font-family:'Manrope',sans-serif;font-size:14px;font-weight:500;
+  line-height:1.45;color:var(--text)}
+@media(max-width:560px){
+  .meaning-langs{grid-template-columns:1fr;gap:12px}
+  .meaning-row{padding:0;border-left:none !important}
+  .meaning-row + .meaning-row{padding-top:12px;border-top:1px solid var(--border)}
+}
 
 /* ── Typography preview (Фича 3 · type specimen island) ── */
 .preview{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);
@@ -146,8 +171,8 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .chip-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .uz-free,.tg-free,.ig-free{background:var(--uz-free-bg);color:var(--uz-free-color);border-color:var(--uz-free-border)}
 .uz-free .chip-dot,.tg-free .chip-dot,.ig-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.uz-taken,.tg-taken,.ig-taken{background:var(--bg3);color:var(--text3);border-color:var(--border2);opacity:.85}
-.uz-taken .chip-dot,.tg-taken .chip-dot,.ig-taken .chip-dot{background:var(--red)}
+.uz-taken,.tg-taken,.ig-taken{background:var(--taken-bg);color:var(--taken-color);border-color:var(--taken-border)}
+.uz-taken .chip-dot,.tg-taken .chip-dot,.ig-taken .chip-dot{background:var(--taken-color);box-shadow:0 0 6px var(--taken-glow)}
 .uz-checking,.tg-checking,.ig-checking,.ig-btn{background:var(--bg3);color:var(--text3);border-color:var(--border)}
 .uz-checking .chip-dot,.tg-checking .chip-dot,.ig-checking .chip-dot{animation:pulseChip 1.2s ease infinite}
 @keyframes pulseChip{0%,100%{opacity:.4}50%{opacity:1}}
@@ -230,6 +255,24 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function cleanDomain(n){return(n||'').toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/^-+|-+$/g,'');}
 function cleanUser(n){return(n||'').toLowerCase().replace(/[^a-z0-9_.]/g,'');}
 
+// ── Meaning island (Фича 1 · 3-language semantic explainer) ──
+// Detail page renders the 3 languages side-by-side. Returns '' when
+// no meaning fields are present on the entry — gracefully hides the
+// island for legacy names generated without inspiration.
+function buildMeaning(entry){
+  if(!entry)return '';
+  var muz=entry.meaning_uz||'',mru=entry.meaning_ru||'',men=entry.meaning_en||'';
+  if(!muz&&!mru&&!men)return '';
+  return '<div class="meaning">'+
+           '<span class="meaning-label">Смысл</span>'+
+           '<div class="meaning-langs">'+
+             (muz?'<div class="meaning-row"><span class="meaning-row-label">UZ</span><span class="meaning-row-text">'+esc(muz)+'</span></div>':'')+
+             (mru?'<div class="meaning-row"><span class="meaning-row-label">RU</span><span class="meaning-row-text">'+esc(mru)+'</span></div>':'')+
+             (men?'<div class="meaning-row"><span class="meaning-row-label">EN</span><span class="meaning-row-text">'+esc(men)+'</span></div>':'')+
+           '</div>'+
+         '</div>';
+}
+
 // ── Typography preview (Фича 3 · type specimen island) ──
 // Detail page всегда показывает 3-строчный preview (display + body + mono)
 // с meta-таблицей (имя шрифта, weight·tracking, size в px).
@@ -237,13 +280,13 @@ function buildPreview(name){
   var n=esc(name);
   return '<div class="preview" aria-hidden="true">'+
            '<div class="preview-display">'+n+'</div>'+
-           '<div class="preview-meta"><b>Display</b><br>Manrope · 800<br>−3.5% · 46px</div>'+
+           '<div class="preview-meta">800 · −3.5%<br>46px</div>'+
            '<div class="preview-divider"></div>'+
            '<div class="preview-body">'+n+'</div>'+
-           '<div class="preview-meta"><b>Body</b><br>Manrope · 600<br>−2% · 26px</div>'+
+           '<div class="preview-meta">600 · −2%<br>26px</div>'+
            '<div class="preview-divider"></div>'+
            '<div class="preview-mono">'+n+'</div>'+
-           '<div class="preview-meta"><b>Mono</b><br>JetBrains · 500<br>−1% · 20px</div>'+
+           '<div class="preview-meta">500 · −1%<br>20px</div>'+
          '</div>';
 }
 
@@ -304,6 +347,7 @@ function renderPage(e){
           '<span class="hero-ext">.uz</span>'+
         '</div>'+
         buildPreview(name)+
+        buildMeaning(entry)+
         '<div class="hero-meta">'+
           (tru?'<div class="hero-tagline-ru">'+esc(tru)+'</div>':'')+
           (tuz?'<div class="hero-tagline-uz">'+esc(tuz)+'</div>':'')+
@@ -402,19 +446,19 @@ function updateBadge(dn,r){
 function updateChipUz(dn,r){
   var el=document.getElementById('chip-uz');if(!el)return;
   if(r.status==='free'){el.className='chip uz-free';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — свободен ✓</span>';}
-  else if(r.status==='taken'){el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — занят</span>';}
+  else if(r.status==='taken'){el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — занят ✗</span>';}
   else{el.className='chip uz-checking';el.innerHTML='<div class="chip-icon">'+ICO_DOMAIN+'</div><div class="chip-dot"></div><span class="chip-label">'+dn+'.uz — ошибка</span>';}
 }
 function updateChipTg(un,r){
   var el=document.getElementById('chip-tg');if(!el)return;
   if(r.status==='free'){el.className='chip tg-free';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — свободен ✓</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
-  else if(r.status==='taken'){el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
+  else if(r.status==='taken'){el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят ✗</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
   else{el.className='chip tg-checking';el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span>';el.onclick=function(){window.open('https://t.me/'+un,'_blank');};}
 }
 function updateChipIg(un,r){
   var el=document.getElementById('chip-ig');if(!el)return;
   if(r.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
-  else if(r.status==='taken'){el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
+  else if(r.status==='taken'){el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят ✗</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
   else{el.className='chip ig-btn';el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — проверьте вручную</span>';el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};}
 }
 
