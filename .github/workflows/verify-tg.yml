@@ -1,4 +1,5 @@
 name: Verify TG (one-shot, autonomous self-test)
+# trigger: HTML dump for marker discovery
 
 # Triggers only when this file or api/check-tg/** changes. Runner has
 # unrestricted internet; calls our handler() against real t.me and
