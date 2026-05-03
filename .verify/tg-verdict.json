@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-05-03T19:50:54.694Z",
-  "commit": "43ddb00255fde6e3701807f8adff9bd251073f43",
-  "all_pass": false,
+  "timestamp": "2026-05-03T19:52:10.884Z",
+  "commit": "66617b216885cd2a99c68ef2bb5efd96cc337837",
+  "all_pass": true,
   "results": [
     {
       "name": "durov",
@@ -11,7 +11,7 @@
       "body": {
         "status": "taken"
       },
-      "elapsed_ms": 371
+      "elapsed_ms": 386
     },
     {
       "name": "telegram",
@@ -26,12 +26,12 @@
     {
       "name": "zzzqqqxxxnonexistent7382aaa",
       "expected": "free",
-      "got": "taken",
-      "pass": false,
+      "got": "free",
+      "pass": true,
       "body": {
-        "status": "taken"
+        "status": "free"
       },
-      "elapsed_ms": 113
+      "elapsed_ms": 110
     }
   ]
 }
