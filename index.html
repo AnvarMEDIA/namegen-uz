@@ -30,6 +30,10 @@ body{min-height:100vh;display:flex;flex-direction:column;font-family:'Manrope',s
   --accent:#C4FF3F;--accent2:#D9FF6E;--accent-deep:#A7E12B;--ink:#0A0A0D;
   --adim:rgba(196,255,63,.06);--aglow:rgba(196,255,63,.22);
   --red:#FF6B6B;--redbg:#1C1013;--redbr:#33181E;
+  /* Status:taken (chips) — muted coral-red on cool dark canvas, plays
+     with electric-lime accent without competing for attention. */
+  --taken-bg:rgba(255,107,107,.07);--taken-border:rgba(255,107,107,.30);
+  --taken-color:var(--red);--taken-glow:rgba(255,107,107,.40);
   --radius:12px;--radius-sm:8px;--radius-lg:18px;--radius-xl:28px;
   --header-bg:rgba(10,10,13,.74);
   --uz-free-bg:rgba(196,255,63,.08);--uz-free-color:var(--accent);--uz-free-border:rgba(196,255,63,.30);
@@ -54,6 +58,9 @@ body{min-height:100vh;display:flex;flex-direction:column;font-family:'Manrope',s
   --accent:#3D7A0E;--accent2:#4D8F18;--accent-deep:#2E5C0A;--ink:#FFFFFF;
   --adim:rgba(61,122,14,.07);--aglow:rgba(61,122,14,.18);
   --red:#B83A3A;--redbg:#FFF4F4;--redbr:#F0BFBF;
+  /* Status:taken (chips) — deep red for WCAG contrast on pure white. */
+  --taken-bg:rgba(184,58,58,.06);--taken-border:rgba(184,58,58,.32);
+  --taken-color:#9B2226;--taken-glow:rgba(184,58,58,.28);
   --header-bg:rgba(255,255,255,.84);
   --uz-free-bg:rgba(61,122,14,.07);--uz-free-color:#2E5C0A;--uz-free-border:rgba(61,122,14,.30);
   --card-fv-bg:rgba(61,122,14,.04);--card-fv-border:rgba(61,122,14,.22);
@@ -307,15 +314,17 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 .chip.uz-free{background:var(--uz-free-bg);border-color:var(--uz-free-border);color:var(--uz-free-color)}
 .chip.uz-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.chip.uz-taken{color:var(--text3);opacity:.7}
-.chip.uz-taken .chip-dot{background:var(--red)}
+.chip.uz-taken{background:var(--taken-bg);border-color:var(--taken-border);color:var(--taken-color)}
+.chip.uz-taken .chip-dot{background:var(--taken-color);box-shadow:0 0 6px var(--taken-glow)}
 .chip.tg-free{background:var(--uz-free-bg);border-color:var(--uz-free-border);color:var(--uz-free-color);cursor:pointer}
 .chip.tg-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.chip.tg-taken{cursor:pointer}
+.chip.tg-taken{background:var(--taken-bg);border-color:var(--taken-border);color:var(--taken-color);cursor:pointer}
+.chip.tg-taken .chip-dot{background:var(--taken-color);box-shadow:0 0 6px var(--taken-glow)}
 .chip.tg-taken:hover,.chip.tg-free:hover{transform:translateY(-1px);border-color:var(--border3)}
 .chip.ig-free{background:var(--uz-free-bg);border-color:var(--uz-free-border);color:var(--uz-free-color);cursor:pointer}
 .chip.ig-free .chip-dot{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.chip.ig-taken,.chip.ig-btn{cursor:pointer}
+.chip.ig-taken,.chip.ig-btn{background:var(--taken-bg);border-color:var(--taken-border);color:var(--taken-color);cursor:pointer}
+.chip.ig-taken .chip-dot,.chip.ig-btn .chip-dot{background:var(--taken-color);box-shadow:0 0 6px var(--taken-glow)}
 .chip.ig-taken:hover,.chip.ig-btn:hover{transform:translateY(-1px);border-color:var(--border3)}
 
 /* ── Card bottom ───────────────────────────────────────── */
@@ -671,15 +680,15 @@ function buildModalChips(dn,un,uzR,tgR,igR){
   // Domain
   if(!uzR)      h+=_modalChipHtml('uz-checking',_mIcoDomain,dn+'.uz — проверяем...','');
   else if(uzR.status==='free') h+=_modalChipHtml('uz-free',_mIcoDomain,dn+'.uz — свободен ✓','');
-  else          h+=_modalChipHtml('uz-taken',_mIcoDomain,dn+'.uz — занят','');
+  else          h+=_modalChipHtml('uz-taken',_mIcoDomain,dn+'.uz — занят ✗','');
   // Telegram
   if(!tgR)      h+=_modalChipHtml('tg-checking',_mIcoTg,'t.me/'+un,'https://t.me/'+un);
   else if(tgR.status==='free')  h+=_modalChipHtml('tg-free',_mIcoTg,'t.me/'+un+' — свободен ✓','https://t.me/'+un);
-  else          h+=_modalChipHtml('tg-taken',_mIcoTg,'t.me/'+un+(tgR.status==='taken'?' — занят':''),'https://t.me/'+un);
+  else          h+=_modalChipHtml('tg-taken',_mIcoTg,'t.me/'+un+(tgR.status==='taken'?' — занят ✗':''),'https://t.me/'+un);
   // Instagram — see updateIg(): no manual-check fallback.
   if(!igR)      h+=_modalChipHtml('ig-checking',_mIcoIg,'@'+un,'https://www.instagram.com/'+un+'/');
   else if(igR.status==='free')  h+=_modalChipHtml('ig-free',_mIcoIg,'@'+un+' — свободен ✓','https://www.instagram.com/'+un+'/');
-  else          h+=_modalChipHtml('ig-taken',_mIcoIg,'@'+un+' — занят','https://www.instagram.com/'+un+'/');
+  else          h+=_modalChipHtml('ig-taken',_mIcoIg,'@'+un+' — занят ✗','https://www.instagram.com/'+un+'/');
   return h;
 }
 
@@ -792,21 +801,21 @@ function buildPreview(name,mode){
   if(mode==='modal'){
     return '<div class="preview preview-modal" aria-hidden="true">'+
              '<div class="preview-display">'+n+'</div>'+
-             '<div class="preview-meta"><b>Display</b><br>Manrope · 800<br>−3.5% · 46px</div>'+
+             '<div class="preview-meta">800 · −3.5%<br>46px</div>'+
              '<div class="preview-divider"></div>'+
              '<div class="preview-body">'+n+'</div>'+
-             '<div class="preview-meta"><b>Body</b><br>Manrope · 600<br>−2% · 26px</div>'+
+             '<div class="preview-meta">600 · −2%<br>26px</div>'+
              '<div class="preview-divider"></div>'+
              '<div class="preview-mono">'+n+'</div>'+
-             '<div class="preview-meta"><b>Mono</b><br>JetBrains · 500<br>−1% · 20px</div>'+
+             '<div class="preview-meta">500 · −1%<br>20px</div>'+
            '</div>';
   }
   return '<div class="preview preview-card" aria-hidden="true">'+
            '<div class="preview-display">'+n+'</div>'+
-           '<div class="preview-meta"><b>Manrope</b><br>800 · −3.5%</div>'+
+           '<div class="preview-meta">800 · −3.5%</div>'+
            '<div class="preview-divider"></div>'+
            '<div class="preview-mono">'+n+'</div>'+
-           '<div class="preview-meta"><b>JetBrains</b><br>500 · −1%</div>'+
+           '<div class="preview-meta">500 · −1%</div>'+
          '</div>';
 }
 function toggleClear(){
@@ -969,7 +978,7 @@ function updateTg(un,result){
     el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
   } else if(result.status==='taken'){
     el.className='chip tg-taken';
-    el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят</span>';
+    el.innerHTML='<div class="chip-icon">'+ICO_TG+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — занят ✗</span>';
     el.onclick=function(){window.open('https://t.me/'+un,'_blank');};
   } else {
     el.className='chip tg-taken';
@@ -998,7 +1007,7 @@ function updateIg(un,result){
     el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span>';
   } else {
     el.className='chip ig-taken';
-    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span>';
+    el.innerHTML='<div class="chip-icon">'+ICO_IG+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят ✗</span>';
   }
   el.onclick=function(){window.open('https://www.instagram.com/'+un+'/','_blank');};
 }
@@ -1254,12 +1263,12 @@ function rfl(){
     function chipHtmlTg(){
       if(!tgCached)return '<div class="chip tg-checking" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+'</span></div>';
       if(tgCached.status==='free')return '<div class="chip tg-free" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+' — свободен ✓</span></div>';
-      return '<div class="chip tg-taken" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+(tgCached.status==='taken'?' — занят':'')+'</span></div>';
+      return '<div class="chip tg-taken" id="ftg-'+un+'"><div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+un+(tgCached.status==='taken'?' — занят ✗':'')+'</span></div>';
     }
     function chipHtmlIg(){
       if(!igCached)return '<div class="chip ig-checking" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+'</span></div>';
       if(igCached.status==='free')return '<div class="chip ig-free" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — свободен ✓</span></div>';
-      if(igCached.status==='taken')return '<div class="chip ig-taken" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят</span></div>';
+      if(igCached.status==='taken')return '<div class="chip ig-taken" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+' — занят ✗</span></div>';
       return '<div class="chip ig-btn" id="fig-'+un+'"><div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+un+'</span></div>';
     }
 
@@ -1328,12 +1337,12 @@ function updateFavChip(elId,result,type,handle){
     else{el.className='chip uz-taken';el.innerHTML='<div class="chip-icon">'+icoDomain+'</div><div class="chip-dot"></div><span class="chip-label">'+handle+'.uz</span>';}
   } else if(type==='tg'){
     if(result.status==='free'){el.className='chip tg-free';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+' — свободен ✓</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
-    else{el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+(result.status==='taken'?' — занят':'')+'</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
+    else{el.className='chip tg-taken';el.innerHTML='<div class="chip-icon">'+icoTg+'</div><div class="chip-dot"></div><span class="chip-label">t.me/'+handle+(result.status==='taken'?' — занят ✗':'')+'</span>';el.onclick=function(){window.open('https://t.me/'+handle,'_blank');};}
   } else {
     // IG chip: anything that isn't an explicit 'free' is rendered as 'taken'
     // (matches updateIg/ buildModalChips post-Feature: robust IG check).
     if(result.status==='free'){el.className='chip ig-free';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — свободен ✓</span>';}
-    else{el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — занят</span>';}
+    else{el.className='chip ig-taken';el.innerHTML='<div class="chip-icon">'+icoIg+'</div><div class="chip-dot"></div><span class="chip-label">@'+handle+' — занят ✗</span>';}
     el.onclick=function(){window.open('https://www.instagram.com/'+handle+'/','_blank');};
   }
 }
