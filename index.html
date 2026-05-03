@@ -168,6 +168,9 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 .sc{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--sc-border);border-radius:var(--radius);background:transparent;text-align:left;width:100%;cursor:pointer;transition:all .15s}
 .sc:hover{border-color:var(--border3);background:var(--sc-hover)}
 .sc.on{border-color:var(--accent);background:var(--sc-on-bg)}
+.sc.disabled{cursor:not-allowed;opacity:.45;pointer-events:auto}
+.sc.disabled:hover{border-color:var(--sc-border);background:transparent}
+.sc-soon{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-left:6px;border:1px solid var(--border2)}
 .sc-radio{position:relative;width:18px;height:18px;border:1.5px solid var(--border3);border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .sc.on .sc-radio{border-color:var(--accent);background:var(--accent)}
 .sc.on .sc-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--ink)}
@@ -215,6 +218,49 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 .fav-rm-btn:hover{color:var(--red);border-color:var(--redbr);background:var(--redbg)}
 .ctag{font-size:14px;color:var(--text2);line-height:1.45;font-weight:400}
 .ctag-uz{font-size:12px;color:var(--text3);font-style:italic;line-height:1.4}
+
+/* ── Meaning island (Фича 1 — inspiration semantic explainer) ── */
+/* Renders ONLY when generated with inspiration='uzbek_modern' (response
+   carries meaning_uz/ru/en). Below the type-specimen preview in cards;
+   3-language layout in modal + name.html detail page. All values via
+   tokens — no hardcoded colours. */
+.meaning{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);
+  padding:14px 16px;margin:0 0 4px;display:flex;flex-direction:column;gap:6px}
+.meaning-head{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none}
+.meaning-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--text3)}
+.meaning-chevron{width:14px;height:14px;color:var(--text3);transition:transform .25s;flex-shrink:0}
+.meaning.open .meaning-chevron{transform:rotate(180deg)}
+.meaning-summary{font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;
+  line-height:1.45;color:var(--text);margin:0}
+.meaning-summary em{font-style:normal;color:var(--text2)}
+.meaning-langs{display:none;margin-top:8px;padding-top:10px;border-top:1px solid var(--border);
+  flex-direction:column;gap:10px}
+.meaning.open .meaning-langs{display:flex}
+.meaning-row{display:flex;flex-direction:column;gap:3px}
+.meaning-row-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--text3)}
+.meaning-row-text{font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;
+  line-height:1.45;color:var(--text)}
+
+/* Modal + detail-page meaning: 3 columns side-by-side on wide screens,
+   3 stacked rows on narrow. No collapse here — full transparency for the
+   detail view. */
+.meaning-modal{padding:18px 20px}
+.meaning-modal .meaning-head{cursor:default}
+.meaning-modal .meaning-langs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;margin-top:12px;padding-top:14px;border-top:1px solid var(--border)}
+.meaning-modal .meaning-row{padding:0 14px}
+.meaning-modal .meaning-row + .meaning-row{border-left:1px solid var(--border)}
+.meaning-modal .meaning-row:first-child{padding-left:0}
+.meaning-modal .meaning-row:last-child{padding-right:0}
+.meaning-modal .meaning-row-text{font-size:14px}
+.meaning-modal .meaning-summary{display:none}
+@media(max-width:560px){
+  .meaning-modal .meaning-langs{grid-template-columns:1fr;gap:12px}
+  .meaning-modal .meaning-row{padding:0;border-left:none !important}
+  .meaning-modal .meaning-row + .meaning-row{padding-top:12px;border-top:1px solid var(--border)}
+}
 
 /* ── Typography preview (Фича 3 — type specimen island) ── */
 .preview{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);
@@ -496,6 +542,20 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
           <div class="rand-list" id="rc"></div>
         </div>
       </div>
+
+      <div class="fp open" id="fp-insp">
+        <div class="fp-header" onclick="toggleFp('fp-insp')">
+          <div class="fp-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16 8 14 14 8 16 10 10 16 8"/></svg>
+            Источник вдохновения
+            <span class="fp-pill" id="insp-pill">Не выбран</span>
+          </div>
+          <svg class="fp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="fp-body">
+          <div class="rand-list" id="ic"></div>
+        </div>
+      </div>
     </div>
 
     <div id="ea"></div>
@@ -549,6 +609,7 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
         <span class="modal-ext">.uz</span>
       </div>
       <div id="m-preview"></div>
+      <div id="m-meaning"></div>
       <div class="modal-tru" id="m-tru"></div>
       <div class="modal-tuz" id="m-tuz"></div>
       <div class="modal-chips" id="m-chips"></div>
@@ -579,9 +640,12 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 // ── Name store (localStorage) ──────────────────────────
 var nameStore={}; // name → {id, tagline_ru, tagline_uz, uz_status, ...}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-function saveNameEntry(name,tru,tuz){
+function saveNameEntry(name,tru,tuz,muz,mru,men){
   var id=genId(),now=Date.now();
   var entry={id:id,name:name,tagline_ru:tru,tagline_uz:tuz,uz_status:null,created_at:now,expires_at:now+7*24*60*60*1000};
+  if(muz)entry.meaning_uz=muz;
+  if(mru)entry.meaning_ru=mru;
+  if(men)entry.meaning_en=men;
   nameStore[name]=entry;
   try{localStorage.setItem('ng_name_'+id,JSON.stringify(entry));}catch(e){}
   return id;
@@ -625,6 +689,7 @@ function openModal(name){
   var dn=cleanDomain(name),un=cleanUser(name);
   document.getElementById('m-name').textContent=name;
   document.getElementById('m-preview').innerHTML=buildPreview(name,'modal');
+  document.getElementById('m-meaning').innerHTML=buildMeaning(e,'modal');
   document.getElementById('m-tru').textContent=e.tagline_ru||'';
   var tuzEl=document.getElementById('m-tuz');
   tuzEl.textContent=e.tagline_uz||'';
@@ -679,6 +744,46 @@ function toggleTheme(){
 function cleanDomain(n){return (n||'').toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/^-+|-+$/g,'');}
 function cleanUser(n){return (n||'').toLowerCase().replace(/[^a-z0-9_.]/g,'');}
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Meaning island (Фича 1 · semantic explainer for inspired names) ──
+// mode: 'card'  → collapsed by default, click expands to 3 languages
+// mode: 'modal' → 3-column always-visible (UZ / RU / EN)
+// Returns '' when entry has no meaning fields → block is not rendered.
+function buildMeaning(entry,mode){
+  if(!entry)return '';
+  var muz=entry.meaning_uz||'',mru=entry.meaning_ru||'',men=entry.meaning_en||'';
+  if(!muz&&!mru&&!men)return '';
+  var summary=mru||men||muz;
+  if(mode==='modal'){
+    return '<div class="meaning meaning-modal">'+
+             '<div class="meaning-head">'+
+               '<span class="meaning-label">Смысл</span>'+
+             '</div>'+
+             '<div class="meaning-langs">'+
+               (muz?'<div class="meaning-row"><span class="meaning-row-label">UZ</span><span class="meaning-row-text">'+esc(muz)+'</span></div>':'')+
+               (mru?'<div class="meaning-row"><span class="meaning-row-label">RU</span><span class="meaning-row-text">'+esc(mru)+'</span></div>':'')+
+               (men?'<div class="meaning-row"><span class="meaning-row-label">EN</span><span class="meaning-row-text">'+esc(men)+'</span></div>':'')+
+             '</div>'+
+           '</div>';
+  }
+  // card mode — collapsed by default with summary visible
+  return '<div class="meaning" onclick="toggleMeaning(event,this)">'+
+           '<div class="meaning-head">'+
+             '<span class="meaning-label">Смысл</span>'+
+             '<svg class="meaning-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>'+
+           '</div>'+
+           '<p class="meaning-summary">'+esc(summary)+'</p>'+
+           '<div class="meaning-langs">'+
+             (muz?'<div class="meaning-row"><span class="meaning-row-label">UZ</span><span class="meaning-row-text">'+esc(muz)+'</span></div>':'')+
+             (mru?'<div class="meaning-row"><span class="meaning-row-label">RU</span><span class="meaning-row-text">'+esc(mru)+'</span></div>':'')+
+             (men?'<div class="meaning-row"><span class="meaning-row-label">EN</span><span class="meaning-row-text">'+esc(men)+'</span></div>':'')+
+           '</div>'+
+         '</div>';
+}
+function toggleMeaning(ev,el){
+  ev.stopPropagation();
+  el.classList.toggle('open');
+}
 
 // ── Typography preview (Фича 3 · type specimen island) ──
 // mode: 'card'  → 2 строки (display + mono) с meta-таблицей справа (имя шрифта, weight·tracking)
@@ -749,7 +854,14 @@ var RAND=[
   {id:'medium', l:'Средняя',  desc:'Сбалансировано. Более креативные результаты'},
   {id:'high',   l:'Высокая',  desc:'Случайные идеи. Максимум разнообразия и риска'},
 ];
-var cs='auto', cr='medium', favs=[], res=[], dcache={}, tgcache={}, igcache={};
+var INSP=[
+  {id:'',             l:'Не выбран',       desc:'Стандартная генерация — без специального семантического корпуса', enabled:true,  short:'Не выбран'},
+  {id:'uzbek_modern', l:'🇺🇿 Узбекские корни', desc:'Курированный словарь узбекских корней (нур, меҳр, ақл, юлдуз и т.д.) как семантические якоря. Каждое имя сопровождается переводом смысла на 3 языках', enabled:true,  short:'🇺🇿 Узбекский'},
+  {id:'turkic',       l:'🌙 Тюркский',     desc:'Общетюркский пласт корней. Скоро', enabled:false, short:'🌙 Тюркский'},
+  {id:'arabic',       l:'🕌 Арабский',     desc:'Арабские корни культурного слоя. Скоро', enabled:false, short:'🕌 Арабский'},
+  {id:'persian',      l:'✨ Персидский',   desc:'Персидские корни поэтического слоя. Скоро', enabled:false, short:'✨ Персидский'},
+];
+var cs='auto', cr='medium', ci='', favs=[], res=[], dcache={}, tgcache={}, igcache={};
 try{favs=JSON.parse(localStorage.getItem('ng_f')||'[]')}catch(e){}
 
 // Render style cards
@@ -789,6 +901,28 @@ RAND.forEach(function(r){
     document.getElementById('rand-pill').textContent=r.l;
   };
   document.getElementById('rc').appendChild(b);
+});
+
+// Render inspiration cards (Feature 1 — Step 3 UI)
+INSP.forEach(function(s){
+  var b=document.createElement('button');
+  b.className='sc'+(s.id===ci?' on':'')+(s.enabled?'':' disabled');
+  b.disabled=!s.enabled;
+  var soonHtml=s.enabled?'':'<span class="sc-soon">скоро</span>';
+  b.innerHTML=
+    '<div class="sc-radio"></div>'+
+    '<div class="sc-text">'+
+      '<div class="sc-name">'+s.l+soonHtml+'</div>'+
+      '<div class="sc-desc">'+s.desc+'</div>'+
+    '</div>';
+  b.onclick=function(){
+    if(!s.enabled)return;
+    ci=s.id;
+    document.querySelectorAll('#ic .sc').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.getElementById('insp-pill').textContent=s.short;
+  };
+  document.getElementById('ic').appendChild(b);
 });
 ufb();
 
@@ -883,11 +1017,14 @@ function gen(){
   // Collapse filter panels when generating
   document.getElementById('fp-style').classList.remove('open');
   document.getElementById('fp-rand').classList.remove('open');
+  document.getElementById('fp-insp').classList.remove('open');
 
+  var reqBody={keywords:kw,style:cs,randomness:cr};
+  if(ci)reqBody.inspiration=ci;
   fetch('/api/generate',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({keywords:kw,style:cs,randomness:cr})
+    body:JSON.stringify(reqBody)
   })
   .then(function(r){
     if(!r.ok)return r.json().then(function(d){throw new Error(d.error||'Ошибка сервера '+r.status);});
@@ -932,7 +1069,7 @@ function renderGrid(){
     var tru=r.tagline_ru||r.tagline||'';
     var tuz=r.tagline_uz||'';
     // save to localStorage for detail page
-    var nid=saveNameEntry(r.name,tru,tuz);
+    var nid=saveNameEntry(r.name,tru,tuz,r.meaning_uz,r.meaning_ru,r.meaning_en);
     var c=document.createElement('div');
     c.className='card'+(isFv?' fv':'');
     c.id='card-'+dn;
@@ -965,6 +1102,7 @@ function renderGrid(){
         '</div>'+
       '</div>'+
       buildPreview(r.name,'card')+
+      buildMeaning(r,'card')+
       '<div class="ctag">'+esc(tru)+'</div>'+
       '<div class="ctag-uz">'+esc(tuz)+'</div>'+
       '<div class="checks">'+
