@@ -75,7 +75,15 @@ export default async function handler(req, res) {
     });
     if (!r.ok) return res.status(200).json({ status: 'free' });
     const html = await r.text();
-    const taken = html.includes('tgme_page_title') || html.includes('tgme_page_description');
+    // Discriminating markers — empirically validated against real t.me HTML
+    // for durov / telegram (taken) vs zzzqqqxxxnonexistent7382aaa (free):
+    //   tgme_page_title         taken=true,true / free=false  ← original
+    //   tgme_page_photo_image   taken=true,true / free=false  ← backup
+    // The original-code partner `tgme_page_description` was dropped because
+    // it leaks into the 404 shell template (true for the nonexistent name
+    // too — the source of the all-8-таken regression).
+    const taken =
+      html.includes('tgme_page_title') || html.includes('tgme_page_photo_image');
     return res.status(200).json({ status: taken ? 'taken' : 'free' });
   } catch (e) {
     return res.status(200).json({ status: 'error', msg: e.message.slice(0, 100) });

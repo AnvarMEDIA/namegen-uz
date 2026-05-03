@@ -84,11 +84,11 @@ describe('api/check-tg — restored original markers', () => {
     expect(cap.body).toEqual({ status: 'taken' });
   });
 
-  it('200 with tgme_page_description marker → taken', async () => {
+  it('200 with tgme_page_photo_image marker → taken (discriminating backup)', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>().mockImplementation(async () =>
-        htmlResponse('<meta property="tgme_page_description">about</meta>'),
+        htmlResponse('<img class="tgme_page_photo_image" src="...">'),
       ),
     );
     const { res, cap } = mockRes();
@@ -97,6 +97,24 @@ describe('api/check-tg — restored original markers', () => {
       res,
     );
     expect(cap.body).toEqual({ status: 'taken' });
+  });
+
+  it('200 with only tgme_page_description (leaks into 404 shell) → free, not taken', async () => {
+    // Real t.me HTML evidence: tgme_page_description appears in the 404
+    // shell template too, so it's not a reliable taken-signal. Verify the
+    // restored handler does NOT classify it as taken.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockImplementation(async () =>
+        htmlResponse('<meta property="tgme_page_description" content="">'),
+      ),
+    );
+    const { res, cap } = mockRes();
+    await (handler as (req: unknown, res: ResponseLike) => Promise<unknown>)(
+      mockReq('zzzqqqxxxnone7382'),
+      res,
+    );
+    expect(cap.body).toEqual({ status: 'free' });
   });
 
   it('200 with no markers → free (matches original Netlify behaviour)', async () => {
