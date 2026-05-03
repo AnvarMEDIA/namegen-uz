@@ -167,12 +167,15 @@
   enum-rejected, prompt-injection-suspected) логируются в `console.error`
   c полем `event` для grep-а в Vercel-логах.
 - **Security headers** в `vercel.json`:
-  - `Content-Security-Policy` (строгий, без `unsafe-eval`)
+  - `Content-Security-Policy` (строгий, без `unsafe-eval`; `object-src 'none'`,
+    `upgrade-insecure-requests`, `frame-ancestors 'none'`)
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
   - `X-Frame-Options: DENY`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()`
+  - `Cross-Origin-Opener-Policy: same-origin` — изоляция document от
+    cross-origin окон/попапов (защита от `window.opener`-attacks)
 
 При добавлении любого нового `api/**` файла — те же защиты применяются и
 к нему. Если нужен дополнительный inbound, расширяем CSP `connect-src`
