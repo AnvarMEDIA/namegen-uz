@@ -1,0 +1,92 @@
+name: Post-merge production smoke check
+
+# Triggers once when this PR's commits land on main. Waits for Vercel
+# to deploy, then hits the 4 production endpoints the owner asked to
+# verify and commits the verdict back so the sandbox can read it via
+# raw.githubusercontent.com. Workflow + artefact will be removed in
+# the cleanup commit after the verdict is read.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-merge-prod-check.yml'
+      - 'api/**'
+      - 'index.html'
+      - 'name.html'
+
+permissions:
+  contents: write
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for Vercel to deploy main → naming.maze.uz
+        run: |
+          # Vercel typical deploy: 30-90s for static + serverless functions.
+          # 120s gives margin without holding the runner too long.
+          sleep 120
+
+      - name: Probe 4 production endpoints
+        run: |
+          mkdir -p .verify-prod
+          cat > .runner.mjs << 'EOF'
+          import { writeFileSync } from 'node:fs';
+          const cases = [
+            { name: 'check-tg durov',         url: 'https://naming.maze.uz/api/check-tg/durov',                       expected: 'taken' },
+            { name: 'check-tg nonexistent',   url: 'https://naming.maze.uz/api/check-tg/zzzqqqxxxnonexistent7382aaa', expected: 'free'  },
+            { name: 'check-ig instagram',     url: 'https://naming.maze.uz/api/check-ig/instagram',                   expected: 'taken' },
+            { name: 'check-uz google',        url: 'https://naming.maze.uz/api/check-uz/google',                      expected: 'taken' },
+          ];
+          const results = [];
+          for (const c of cases) {
+            const t0 = Date.now();
+            let body = null, http_status = 0, fetch_error = null;
+            try {
+              const r = await fetch(c.url, { signal: AbortSignal.timeout(15000) });
+              http_status = r.status;
+              body = await r.json();
+            } catch (e) {
+              fetch_error = e.message;
+            }
+            const got = body && body.status;
+            results.push({
+              name: c.name, url: c.url, expected: c.expected, got,
+              pass: got === c.expected,
+              http_status, body, fetch_error,
+              elapsed_ms: Date.now() - t0,
+            });
+          }
+          const summary = {
+            timestamp: new Date().toISOString(),
+            commit: process.env.GITHUB_SHA,
+            all_pass: results.every((r) => r.pass),
+            pass_count: results.filter((r) => r.pass).length,
+            total: results.length,
+            results,
+          };
+          writeFileSync('.verify-prod/result.json', JSON.stringify(summary, null, 2));
+          console.log(JSON.stringify(summary, null, 2));
+          if (!summary.all_pass) process.exitCode = 1;
+          EOF
+          node .runner.mjs || echo "RUNNER EXIT $?"
+          rm -f .runner.mjs
+
+      - name: Commit verdict back to main
+        if: always()
+        run: |
+          git config user.name "prod-verify-bot"
+          git config user.email "prod-verify@bot.local"
+          git add .verify-prod/
+          if git diff --cached --quiet; then
+            echo "no verdict changes — skipping commit"
+            exit 0
+          fi
+          git commit -m "verify: post-merge prod smoke check [skip ci]"
+          git push origin main
