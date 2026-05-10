@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin · naming.maze.uz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/shared/admin.css">
+</head>
+<!-- TODO(stage-2): add privacy notice link and instrumentation disclaimer in footer. -->
+<body style="visibility:hidden">
+  <div class="admin-shell">
+    <header class="admin-topbar">
+      <div class="brand">
+        <strong>maze</strong>
+        <span>/ admin</span>
+      </div>
+      <div class="who">
+        <span class="email" data-admin-email>—</span>
+        <a class="btn" href="/api/auth/google/logout">Logout</a>
+      </div>
+    </header>
+    <main class="admin-main">
+      <div class="admin-grid">
+        <div class="kpi">
+          <p class="kpi-label">Sessions · 24h</p>
+          <p class="kpi-value">—</p>
+          <p class="kpi-sub">Stage 5</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi-label">Page views · 24h</p>
+          <p class="kpi-value">—</p>
+          <p class="kpi-sub">Stage 5</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi-label">Generations · 24h</p>
+          <p class="kpi-value">—</p>
+          <p class="kpi-sub">Stage 5</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi-label">Leads (new)</p>
+          <p class="kpi-value">—</p>
+          <p class="kpi-sub">Stage 6</p>
+        </div>
+        <div class="kpi">
+          <p class="kpi-label">Recordings · 24h</p>
+          <p class="kpi-value">—</p>
+          <p class="kpi-sub">Stage 3</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Roadmap</h2>
+      <div class="placeholder-note">
+        Stage 1 of 7 — foundation in place. Live data starts arriving once
+        track.js (Stage 2) is wired up on naming.maze.uz.
+      </div>
+    </main>
+  </div>
+  <script src="/admin/shared/auth-check.js"></script>
+</body>
+</html>
