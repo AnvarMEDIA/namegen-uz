@@ -168,7 +168,13 @@
   c полем `event` для grep-а в Vercel-логах.
 - **Security headers** в `vercel.json`:
   - `Content-Security-Policy` (строгий, без `unsafe-eval`; `object-src 'none'`,
-    `upgrade-insecure-requests`, `frame-ancestors 'none'`)
+    `upgrade-insecure-requests`, `frame-ancestors 'none'`).
+    Внешние хосты в allow-list:
+    `script-src` + `img-src` + `connect-src`: `https://mc.yandex.ru`
+    (Yandex.Metrika tag.js + tracking pixels + analytics beacons),
+    `connect-src`: `https://mc.webvisor.org` (Webvisor session replay),
+    `style-src` + `font-src`: `https://fonts.googleapis.com`,
+    `https://fonts.gstatic.com` (Manrope + JetBrains Mono).
   - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
   - `X-Frame-Options: DENY`
   - `X-Content-Type-Options: nosniff`
