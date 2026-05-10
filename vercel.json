@@ -12,7 +12,9 @@
     }
   },
   "rewrites": [
-    { "source": "/name/:name", "destination": "/name.html" }
+    { "source": "/name/:name", "destination": "/name.html" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" }
   ],
   "headers": [
     {

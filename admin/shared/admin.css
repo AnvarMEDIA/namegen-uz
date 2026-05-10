@@ -1,0 +1,170 @@
+/* admin/shared/admin.css — Stage 1.
+ * Utilitarian dashboard styling: Geist Sans + Geist Mono, MAZE-lime accent.
+ * Dark by default; toggling to light is Stage 5 work.
+ */
+
+:root {
+  --bg:        #0A0A0D;
+  --bg2:       #111114;
+  --bg3:       #17171B;
+  --border:    #1E1E22;
+  --border2:   #2A2A30;
+  --text:      #F2F2EE;
+  --text2:     #A0A0A6;
+  --text3:     #5C5C63;
+  --accent:    #C4FF3F;
+  --accent2:   #D9FF6E;
+  --danger:    #FF6B6B;
+  --radius:    10px;
+  --radius-sm: 6px;
+  --shadow:    0 1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px rgba(0, 0, 0, 0.4);
+  --mono: 'Geist Mono', ui-monospace, 'JetBrains Mono', SFMono-Regular, monospace;
+  --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body { min-height: 100vh; }
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+
+.admin-shell {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  min-height: 100vh;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.admin-topbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.admin-topbar .brand strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.admin-topbar .who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.admin-topbar .who .email { color: var(--text); }
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+}
+
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0A0A0D;
+}
+
+.btn-primary:hover { background: var(--accent2); border-color: var(--accent2); color: #0A0A0D; }
+
+.admin-main { padding: 24px; }
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.kpi {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.kpi-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin: 0 0 8px;
+}
+
+.kpi-value {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.kpi-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin: 6px 0 0;
+}
+
+.section-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin: 32px 0 12px;
+}
+
+.placeholder-note {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  border: 1px dashed var(--border2);
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+}
