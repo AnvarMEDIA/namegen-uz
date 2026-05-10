@@ -73,8 +73,6 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .hero-section::before{content:'';position:absolute;top:-160px;left:-120px;width:580px;height:580px;background:radial-gradient(circle,var(--aglow) 0%,transparent 60%);pointer-events:none;z-index:0}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .hero-inner{position:relative;z-index:1;width:100%;max-width:none;margin:0}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid var(--uz-free-border);padding:6px 12px;border-radius:100px;margin-bottom:18px}
-.hero-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
 .hero-name-row{display:flex;align-items:baseline;gap:clamp(6px,1.2vw,14px);flex-wrap:wrap;margin-bottom:18px;line-height:1}
 .hero-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:clamp(40px,7vw,72px);letter-spacing:-.04em;color:var(--text);line-height:1;text-transform:lowercase}
 .hero-ext{font-family:'JetBrains Mono',monospace;font-size:clamp(18px,2.4vw,28px);color:var(--accent);font-weight:500;letter-spacing:-.02em}
@@ -202,7 +200,6 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 }
 @media(max-width:640px){
   .hero-section{padding:44px var(--pad) 36px}
-  .hero-eyebrow{font-size:10px;padding:5px 10px;margin-bottom:14px}
   .hero-name{font-size:clamp(34px,9vw,52px)}
   .hero-ext{font-size:clamp(16px,4.5vw,24px)}
   .hero-meta{margin-bottom:18px}
@@ -341,7 +338,6 @@ function renderPage(e){
     // ── Hero ─────────────────────────────────────────
     '<div class="hero-section">'+
       '<div class="hero-inner">'+
-        '<div class="hero-eyebrow">Детальный AI-анализ</div>'+
         '<div class="hero-name-row">'+
           '<span class="hero-name">'+esc(name)+'</span>'+
           '<span class="hero-ext">.uz</span>'+
