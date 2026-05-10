@@ -116,8 +116,9 @@
 - **Layout / chrome:** `.marquee`, `.marquee-track`, `header`, `.logo`,
   `.logo-mark`, `.logo-slash`, `.logo-sub`, `.theme-btn`, `nav`, `.nbtn`,
   `.badge`, `main`.
-- **Hero:** `.hero`, `.hero-eyebrow`, `.hero h1`, `.hero p`, `.hero-stats`,
-  `.stat`, `.stat-num`, `.stat-lbl`.
+- **Hero:** `.hero`, `.hero h1`, `.hero p`, `.hero-stats`,
+  `.stat`, `.stat-num`, `.stat-lbl`. (Templated `.hero-eyebrow` pill
+  with pulsing accent dot was removed — do not reintroduce.)
 - **Search box:** `.sbox`, `.irow`, `.inp-wrap`, `.inp`, `.inp-icon`,
   `.clr-btn`, `.gbtn`.
 - **Filter panels:** `.filter-panels`, `.fp`, `.fp-header`, `.fp-title`,

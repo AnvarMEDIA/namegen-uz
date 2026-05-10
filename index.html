@@ -121,9 +121,6 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 
 /* ── Hero (compact — рамка, не герой) ──────────────────── */
 .hero{margin:0 auto 24px;max-width:760px;text-align:center}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid var(--eyebrow-border);padding:6px 12px;border-radius:100px;margin-bottom:18px}
-.hero-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:blink 2.4s ease infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 .hero h1{font-family:'Manrope',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,52px);line-height:1.05;letter-spacing:-.035em;color:var(--text);margin-bottom:14px}
 .hero h1 em{font-style:normal;color:var(--accent);position:relative;display:inline-block}
 .hero h1 em::after{content:'';position:absolute;left:0;right:0;bottom:.04em;height:.22em;background:var(--accent);opacity:.22;z-index:-1;border-radius:3px}
@@ -414,7 +411,6 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   .marquee-track{font-size:11px;gap:24px}
   main{padding:28px 14px 48px}
   .hero{margin-bottom:18px}
-  .hero-eyebrow{font-size:10px;padding:5px 10px;margin-bottom:14px}
   .sbox{padding:10px}
   .irow{flex-direction:column}
   .gbtn{justify-content:center;padding:14px 22px;height:auto}
@@ -489,7 +485,6 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   <!-- Generator view -->
   <div id="v-gen">
     <section class="hero">
-      <div class="hero-eyebrow">AI-NAMING ОТ MAZE</div>
       <h1>Придумайте <em>имя</em> для бренда</h1>
       <p>Опишите идею — соберём 8 вариантов с автопроверкой <strong>.uz</strong>, <strong>Telegram</strong> и <strong>Instagram</strong>.</p>
     </section>
