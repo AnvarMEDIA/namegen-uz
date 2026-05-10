@@ -1,0 +1,102 @@
+name: Post-merge UI smoke check
+
+# Triggers on push to main where the relevant files (HTML / vercel.json /
+# this workflow) change. Waits 120s for Vercel to deploy
+# naming.maze.uz, then checks both PRs landed correctly:
+#   PR #7 (Y.Metrika)  — tag.js URL is in HTML + reachable
+#   PR #8 (eyebrow)    — no hero-eyebrow class in HTML
+# Commits verdict to .verify-prod/ui-smoke.json with [skip ci].
+# Workflow + artefacts removed in cleanup once read.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/post-merge-ui-smoke.yml'
+      - 'index.html'
+      - 'name.html'
+      - 'vercel.json'
+
+permissions:
+  contents: write
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wait for Vercel to deploy main → naming.maze.uz
+        run: sleep 120
+
+      - name: UI smoke check (Y.Metrika + eyebrow removal)
+        run: |
+          mkdir -p .verify-prod
+          cat > .runner.mjs << 'EOF'
+          import { writeFileSync } from 'node:fs';
+          const TAG_URL = 'https://mc.yandex.ru/metrika/tag.js?id=108142778';
+          const targets = [
+            { name: 'index.html',  url: 'https://naming.maze.uz/' },
+            { name: 'name.html',   url: 'https://naming.maze.uz/name.html' },
+          ];
+          const checks = [];
+          for (const t of targets) {
+            const t0 = Date.now();
+            let html = '', http_status = 0, fetch_error = null;
+            try {
+              const r = await fetch(t.url, { signal: AbortSignal.timeout(15000) });
+              http_status = r.status;
+              html = await r.text();
+            } catch (e) { fetch_error = e.message; }
+            const has_metrika = html.includes('mc.yandex.ru/metrika/tag.js?id=108142778');
+            const has_metrika_id = html.includes('108142778');
+            const has_eyebrow_class = html.includes('hero-eyebrow');
+            checks.push({
+              target: t.name, url: t.url, http_status, html_length: html.length,
+              has_metrika, has_metrika_id, has_eyebrow_class,
+              metrika_pass: has_metrika,
+              eyebrow_pass: !has_eyebrow_class,
+              fetch_error, elapsed_ms: Date.now() - t0,
+            });
+          }
+          // Y.Metrika tag.js direct reachability
+          let tag_status = 0, tag_error = null;
+          try {
+            const r = await fetch(TAG_URL, { signal: AbortSignal.timeout(10000) });
+            tag_status = r.status;
+          } catch (e) { tag_error = e.message; }
+          const tag_check = { url: TAG_URL, http_status: tag_status, pass: tag_status === 200, fetch_error: tag_error };
+          const all_pass = checks.every((c) => c.metrika_pass && c.eyebrow_pass) && tag_check.pass;
+          const summary = {
+            timestamp: new Date().toISOString(),
+            commit: process.env.GITHUB_SHA,
+            all_pass,
+            checks,
+            tag_check,
+          };
+          writeFileSync('.verify-prod/ui-smoke.json', JSON.stringify(summary, null, 2));
+          console.log(JSON.stringify(summary, null, 2));
+          if (!all_pass) process.exitCode = 1;
+          EOF
+          node .runner.mjs || echo "RUNNER EXIT $?"
+          rm -f .runner.mjs
+
+      - name: Commit verdict back to main
+        if: always()
+        run: |
+          git config user.name "ui-smoke-bot"
+          git config user.email "ui-smoke@bot.local"
+          git add .verify-prod/
+          if git diff --cached --quiet; then
+            echo "no verdict changes — skipping commit"
+            exit 0
+          fi
+          git commit -m "verify: post-merge UI smoke check [skip ci]"
+          git push origin main
