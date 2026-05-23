@@ -12,7 +12,10 @@
     }
   },
   "rewrites": [
-    { "source": "/name/:name", "destination": "/name.html" }
+    { "source": "/name/:name", "destination": "/name.html" },
+    { "source": "/uz", "destination": "/uz.html" },
+    { "source": "/en", "destination": "/en.html" },
+    { "source": "/ru", "destination": "/index.html" }
   ],
   "headers": [
     {
