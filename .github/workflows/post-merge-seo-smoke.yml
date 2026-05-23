@@ -1,0 +1,112 @@
+name: Post-merge SEO smoke check
+
+# Runs on every push to main. Waits 180s for Vercel to deploy
+# naming.maze.uz, then verifies the SEO surface area landed:
+#   - Yandex verification meta + HTML file
+#   - JSON-LD (WebApplication, Organization, BreadcrumbList, FAQPage)
+#   - Per-locale pages /uz and /en reachable
+#   - robots.txt, sitemap.xml, manifest.json reachable
+#   - hreflang link tags present
+# Commits verdict to .verify-prod/seo-smoke.json with [skip ci].
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seo-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Wait for Vercel to deploy main → naming.maze.uz
+        run: sleep 180
+
+      - name: SEO smoke check
+        run: |
+          mkdir -p .verify-prod
+          cat > .runner.mjs << 'EOF'
+          import { writeFileSync } from 'node:fs';
+          const ORIGIN = 'https://naming.maze.uz';
+          async function fetchText(url) {
+            const t0 = Date.now();
+            try {
+              const r = await fetch(url, { signal: AbortSignal.timeout(15000) });
+              const body = await r.text();
+              return { url, http_status: r.status, body, length: body.length, elapsed_ms: Date.now() - t0, fetch_error: null };
+            } catch (e) {
+              return { url, http_status: 0, body: '', length: 0, elapsed_ms: Date.now() - t0, fetch_error: e.message };
+            }
+          }
+          const home = await fetchText(`${ORIGIN}/`);
+          const uz   = await fetchText(`${ORIGIN}/uz`);
+          const en   = await fetchText(`${ORIGIN}/en`);
+          const yndx = await fetchText(`${ORIGIN}/yandex_90dee1899184f344.html`);
+          const rbt  = await fetchText(`${ORIGIN}/robots.txt`);
+          const smap = await fetchText(`${ORIGIN}/sitemap.xml`);
+          const mnf  = await fetchText(`${ORIGIN}/manifest.json`);
+          const og   = await fetchText(`${ORIGIN}/og/og-ru.png`);
+          const homeChecks = {
+            yandex_meta: home.body.includes('name="yandex-verification" content="90dee1899184f344"'),
+            jsonld_webapp: home.body.includes('"@type":"WebApplication"') || home.body.includes('"@type": "WebApplication"'),
+            jsonld_org: home.body.includes('"@type":"Organization"') || home.body.includes('"@type": "Organization"'),
+            hreflang_uz: home.body.includes('hreflang="uz"'),
+            hreflang_en: home.body.includes('hreflang="en"'),
+            og_image: home.body.includes('property="og:image"'),
+            bridge_step: home.body.includes('Шаг 1 из 4'),
+          };
+          const summary = {
+            timestamp: new Date().toISOString(),
+            commit: process.env.GITHUB_SHA,
+            home: { http_status: home.http_status, length: home.length, fetch_error: home.fetch_error, checks: homeChecks },
+            uz: { http_status: uz.http_status, length: uz.length, fetch_error: uz.fetch_error },
+            en: { http_status: en.http_status, length: en.length, fetch_error: en.fetch_error },
+            yandex_file: { http_status: yndx.http_status, length: yndx.length, contains_code: yndx.body.includes('90dee1899184f344') },
+            robots_txt: { http_status: rbt.http_status, length: rbt.length, contains_sitemap: rbt.body.toLowerCase().includes('sitemap') },
+            sitemap_xml: { http_status: smap.http_status, length: smap.length, contains_uz: smap.body.includes('/uz') },
+            manifest_json: { http_status: mnf.http_status, length: mnf.length },
+            og_image_ru: { http_status: og.http_status, length: og.length },
+          };
+          const homeOk = home.http_status === 200 && Object.values(homeChecks).every(Boolean);
+          const allOk = homeOk
+            && uz.http_status === 200
+            && en.http_status === 200
+            && yndx.http_status === 200 && summary.yandex_file.contains_code
+            && rbt.http_status === 200 && summary.robots_txt.contains_sitemap
+            && smap.http_status === 200 && summary.sitemap_xml.contains_uz
+            && mnf.http_status === 200
+            && og.http_status === 200;
+          summary.all_pass = allOk;
+          writeFileSync('.verify-prod/seo-smoke.json', JSON.stringify(summary, null, 2));
+          console.log(JSON.stringify(summary, null, 2));
+          if (!allOk) process.exitCode = 1;
+          EOF
+          node .runner.mjs || echo "RUNNER EXIT $?"
+          rm -f .runner.mjs
+
+      - name: Commit verdict back to main
+        if: always()
+        run: |
+          git config user.name "seo-smoke-bot"
+          git config user.email "seo-smoke@bot.local"
+          git add .verify-prod/
+          if git diff --cached --quiet; then
+            echo "no verdict changes — skipping commit"
+            exit 0
+          fi
+          git commit -m "verify: post-merge SEO smoke check [skip ci]"
+          git push origin main
