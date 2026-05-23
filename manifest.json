@@ -1,0 +1,22 @@
+{
+  "name": "MAZE Naming — AI Brand Name Generator",
+  "short_name": "MAZE Naming",
+  "description": "First AI-powered brand name generator in Uzbek language. 8 brand names in 10 seconds with .uz / Telegram / Instagram availability checks.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0A0D",
+  "theme_color": "#0A0A0D",
+  "lang": "ru",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
