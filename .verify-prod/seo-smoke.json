@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-05-23T20:58:20.779Z",
+  "commit": "9c6c2b43641808dab82808f338beef9c0069f6c8",
+  "home": {
+    "http_status": 200,
+    "length": 114179,
+    "fetch_error": null,
+    "checks": {
+      "yandex_meta": false,
+      "jsonld_webapp": true,
+      "jsonld_org": true,
+      "hreflang_uz": true,
+      "hreflang_en": true,
+      "og_image": true,
+      "bridge_step": true
+    }
+  },
+  "uz": {
+    "http_status": 404,
+    "length": 79,
+    "fetch_error": null
+  },
+  "en": {
+    "http_status": 404,
+    "length": 79,
+    "fetch_error": null
+  },
+  "yandex_file": {
+    "http_status": 404,
+    "length": 79,
+    "contains_code": false
+  },
+  "robots_txt": {
+    "http_status": 404,
+    "length": 79,
+    "contains_sitemap": false
+  },
+  "sitemap_xml": {
+    "http_status": 404,
+    "length": 79,
+    "contains_uz": false
+  },
+  "manifest_json": {
+    "http_status": 404,
+    "length": 79
+  },
+  "og_image_ru": {
+    "http_status": 404,
+    "length": 79
+  },
+  "all_pass": false
+}
