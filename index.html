@@ -19,6 +19,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MAZE Naming">
+<meta name="application-name" content="MAZE Naming">
+<meta name="msapplication-TileColor" content="#0A0A0D">
+<meta name="msapplication-config" content="none">
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="manifest" href="/manifest.json">
@@ -721,7 +724,7 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
         <span class="badge" id="fb" style="display:none">0</span>
       </button>
     </nav>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Сменить тему"></button>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Сменить тему" aria-label="Сменить тему оформления"></button>
   </div>
 </header>
 
@@ -742,6 +745,13 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   </div>
 </div>
 
+<noscript>
+  <div style="padding:18px 22px;margin:24px auto;max-width:680px;border:1px solid #2A2A30;border-radius:12px;background:#17171B;color:#F2F2EE;font-family:Manrope,sans-serif;text-align:center;line-height:1.6">
+    <strong>Для генерации названий включите JavaScript.</strong><br>
+    <span style="font-size:14px;color:#A0A0A6">Информационные разделы ниже доступны и без него.</span>
+  </div>
+</noscript>
+
 <main>
   <!-- Generator view -->
   <div id="v-gen">
@@ -761,7 +771,7 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
           </svg>
           <input class="inp" id="kw" placeholder="кофе, доставка, Ташкент..." autocomplete="off"
             onkeydown="if(event.key==='Enter')gen()" oninput="toggleClear()"/>
-          <button class="clr-btn" id="clr-btn" onclick="clearKw()" title="Очистить">✕</button>
+          <button class="clr-btn" id="clr-btn" onclick="clearKw()" title="Очистить" aria-label="Очистить поле ввода">✕</button>
         </div>
         <button class="gbtn" id="gb" onclick="gen()">
           <span>Сгенерировать</span>
@@ -869,7 +879,7 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   <!-- Modal -->
   <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
     <div class="modal-card" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()" aria-label="Закрыть окно">✕</button>
       <div class="modal-hero">
         <span class="modal-name" id="m-name"></span>
         <span class="modal-ext">.uz</span>
@@ -1005,19 +1015,19 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   </div>
 </section>
 
-<section class="cta">
+<footer class="cta" aria-label="Контакты MAZE Studio">
   <div class="cta-eyebrow">GO@THEMAZE.UZ</div>
   <h2>Давайте создадим<br><em>смелый</em> бренд.</h2>
   <div class="cta-acts">
     <a class="cta-btn" href="https://www.maze.uz/brief" target="_blank" rel="noopener noreferrer" data-brief-link>Заполнить бриф ↗
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
     <p class="cta-proof">200+ брендов · Ташкент, Узбекистан</p>
     <a class="cta-email" href="mailto:go@themaze.uz">go@themaze.uz
-      <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
-</section>
+</footer>
 
 <div id="brief-toast" class="toast" role="alert" aria-live="polite">
   <div class="toast-head">
