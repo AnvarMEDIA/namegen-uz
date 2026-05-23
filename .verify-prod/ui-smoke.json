@@ -1,33 +1,33 @@
 {
-  "timestamp": "2026-05-23T20:30:59.119Z",
-  "commit": "9d5a7d66d9af8abb0a2e0a3347c5157d09a764a9",
+  "timestamp": "2026-05-23T21:05:06.191Z",
+  "commit": "4be97713932e0e3b14adc5e0fab9a0503a36250c",
   "all_pass": false,
   "checks": [
     {
       "target": "index.html",
       "url": "https://naming.maze.uz/",
       "http_status": 200,
-      "html_length": 114179,
+      "html_length": 116132,
       "has_metrika": false,
       "has_metrika_id": false,
       "has_eyebrow_class": false,
       "metrika_pass": false,
       "eyebrow_pass": true,
       "fetch_error": null,
-      "elapsed_ms": 580
+      "elapsed_ms": 771
     },
     {
       "target": "name.html",
       "url": "https://naming.maze.uz/name.html",
       "http_status": 200,
-      "html_length": 34226,
+      "html_length": 34645,
       "has_metrika": false,
       "has_metrika_id": false,
       "has_eyebrow_class": false,
       "metrika_pass": false,
       "eyebrow_pass": true,
       "fetch_error": null,
-      "elapsed_ms": 399
+      "elapsed_ms": 92
     }
   ],
   "tag_check": {
