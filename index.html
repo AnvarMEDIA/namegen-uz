@@ -460,7 +460,6 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 .nxt-btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 14px 40px rgba(196,255,63,.28)}
 .nxt-btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-family:'Manrope',sans-serif;font-size:14px;font-weight:500;border-radius:100px;text-decoration:none;transition:all .18s}
 .nxt-btn-ghost:hover{color:var(--text);border-color:var(--border3);background:var(--bg3)}
-.nxt-proof{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
 
 /* ── Toast ────────────────────────────────────────────── */
 .toast{position:fixed;bottom:24px;right:24px;z-index:300;max-width:340px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-card);display:none;flex-direction:column;gap:6px;transform:translateY(12px);opacity:0;transition:transform .3s ease,opacity .3s ease}
@@ -680,12 +679,11 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   <div class="nxt-inner">
     <div class="nxt-eyebrow">СЛЕДУЮЩИЙ ШАГ</div>
     <h2>У тебя есть имя.<br>Теперь нужна личность.</h2>
-    <p class="nxt-body">Логотип. Цвета. Типографика. Брендбук. MAZE превращает имена в бренды — 6 лет, 200+ проектов. Заполни бриф за 3 минуты — ответим за 24 часа.</p>
+    <p class="nxt-body">Логотип. Цвета. Типографика. Брендбук. MAZE превращает имена в бренды — <span data-maze-years>6 лет</span>, 200+ проектов. Заполни бриф за 3 минуты — ответим за 24 часа.</p>
     <div class="nxt-btns">
       <a class="nxt-btn-primary" href="https://www.maze.uz/brief" target="_blank" rel="noopener noreferrer" data-brief-link>Заполнить бриф →</a>
       <a class="nxt-btn-ghost" href="https://www.maze.uz/portfolio?cat=naming" target="_blank" rel="noopener noreferrer">Смотреть работы MAZE</a>
     </div>
-    <p class="nxt-proof">Kapital Bank · Beeline · Payme · и ещё 80+ клиентов</p>
   </div>
 </section>
 
@@ -1451,6 +1449,23 @@ function clearAllFavs(){
   try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
   ufb();rfl();
 }
+
+// ── MAZE years (auto-updates by current year) ──────────
+var MAZE_FOUNDED_YEAR=2020;
+function mazeYearsText(){
+  var n=Math.max(1,new Date().getFullYear()-MAZE_FOUNDED_YEAR);
+  var m10=n%10,m100=n%100,word;
+  if(m100>=11&&m100<=14)word='лет';
+  else if(m10===1)word='год';
+  else if(m10>=2&&m10<=4)word='года';
+  else word='лет';
+  return n+' '+word;
+}
+(function(){
+  var els=document.querySelectorAll('[data-maze-years]');
+  var txt=mazeYearsText();
+  for(var i=0;i<els.length;i++)els[i].textContent=txt;
+})();
 
 // ── Brief URL helper ───────────────────────────────────
 function getBriefUrl(name){
