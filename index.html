@@ -444,6 +444,49 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   .hero h1{font-size:24px}
   .scr-word{font-size:36px}
 }
+
+/* ── Hero step line ────────────────────────────────────── */
+.hero-step{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+
+/* ── "Что дальше?" section ──────────────────────────────── */
+.nxt{padding:80px clamp(16px,3vw,56px);border-top:1px solid var(--border);width:100%}
+.nxt-inner{max-width:680px;margin:0 auto;text-align:center}
+.nxt-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.nxt-eyebrow::before,.nxt-eyebrow::after{content:'';width:20px;height:1px;background:var(--accent)}
+.nxt h2{font-family:'Manrope',sans-serif;font-weight:800;font-size:clamp(28px,4.4vw,52px);line-height:1.05;letter-spacing:-.035em;color:var(--text);margin-bottom:16px}
+.nxt-body{font-size:15px;color:var(--text2);line-height:1.6;margin:0 auto 32px;max-width:520px}
+.nxt-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.nxt-btn-primary{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;background:var(--accent);color:var(--ink);font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border-radius:100px;text-decoration:none;box-shadow:var(--shadow-accent);transition:transform .18s,box-shadow .2s,background .18s}
+.nxt-btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 14px 40px rgba(196,255,63,.28)}
+.nxt-btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-family:'Manrope',sans-serif;font-size:14px;font-weight:500;border-radius:100px;text-decoration:none;transition:all .18s}
+.nxt-btn-ghost:hover{color:var(--text);border-color:var(--border3);background:var(--bg3)}
+.nxt-proof{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+
+/* ── Toast ────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:300;max-width:340px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-card);display:none;flex-direction:column;gap:6px;transform:translateY(12px);opacity:0;transition:transform .3s ease,opacity .3s ease}
+.toast.show{display:flex}
+.toast.in{transform:translateY(0);opacity:1}
+.toast-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.toast-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.2}
+.toast-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .15s}
+.toast-close:hover{color:var(--text)}
+.toast-body{font-size:13px;color:var(--text2);line-height:1.45}
+.toast-cta{display:inline-flex;align-items:center;gap:6px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;color:var(--accent);text-decoration:none;margin-top:4px;transition:color .15s}
+.toast-cta:hover{color:var(--accent2)}
+
+/* ── Footer CTA additions ──────────────────────────────── */
+.cta-acts{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+.cta-proof{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:10px}
+.cta-email{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;text-decoration:none;margin-top:14px;transition:color .15s;letter-spacing:.04em}
+.cta-email:hover{color:var(--text)}
+@media(max-width:560px){
+  .nxt{padding:48px 14px}
+  .nxt h2{font-size:clamp(24px,7vw,36px)}
+  .nxt-body{font-size:14px}
+  .nxt-btns{flex-direction:column;align-items:stretch}
+  .nxt-btn-primary,.nxt-btn-ghost{width:100%;justify-content:center}
+  .toast{bottom:16px;right:14px;left:14px;max-width:none}
+}
 </style>
 </head>
 <body>
@@ -486,6 +529,7 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
   <div id="v-gen">
     <section class="hero">
       <h1>Придумайте <em>имя</em> для бренда</h1>
+      <p class="hero-step">Шаг 1 из 4 к полноценному бренду</p>
       <p>Опишите идею — соберём 8 вариантов с автопроверкой <strong>.uz</strong>, <strong>Telegram</strong> и <strong>Instagram</strong>.</p>
     </section>
 
@@ -632,13 +676,41 @@ main{flex:1;width:100%;padding:48px clamp(16px,3vw,56px) 72px;max-width:none;mar
 
 </main>
 
+<section class="nxt">
+  <div class="nxt-inner">
+    <div class="nxt-eyebrow">СЛЕДУЮЩИЙ ШАГ</div>
+    <h2>У тебя есть имя.<br>Теперь нужна личность.</h2>
+    <p class="nxt-body">Логотип. Цвета. Типографика. Брендбук. MAZE превращает имена в бренды — 6 лет, 200+ проектов. Заполни бриф за 3 минуты — ответим за 24 часа.</p>
+    <div class="nxt-btns">
+      <a class="nxt-btn-primary" href="https://www.maze.uz/brief" target="_blank" rel="noopener noreferrer" data-brief-link>Заполнить бриф →</a>
+      <a class="nxt-btn-ghost" href="https://www.maze.uz/portfolio?cat=naming" target="_blank" rel="noopener noreferrer">Смотреть работы MAZE</a>
+    </div>
+    <p class="nxt-proof">Kapital Bank · Beeline · Payme · и ещё 80+ клиентов</p>
+  </div>
+</section>
+
 <section class="cta">
   <div class="cta-eyebrow">GO@THEMAZE.UZ</div>
   <h2>Давайте создадим<br><em>смелый</em> бренд.</h2>
-  <a class="cta-btn" href="mailto:go@themaze.uz">go@themaze.uz
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </a>
+  <div class="cta-acts">
+    <a class="cta-btn" href="https://www.maze.uz/brief" target="_blank" rel="noopener noreferrer" data-brief-link>Заполнить бриф ↗
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <p class="cta-proof">200+ брендов · Ташкент, Узбекистан</p>
+    <a class="cta-email" href="mailto:go@themaze.uz">go@themaze.uz
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
 </section>
+
+<div id="brief-toast" class="toast" role="alert" aria-live="polite">
+  <div class="toast-head">
+    <span class="toast-title">Имя сохранено.</span>
+    <button class="toast-close" onclick="hideToast()" aria-label="Закрыть">✕</button>
+  </div>
+  <p class="toast-body">Следующий шаг — заполнить бриф. Это займёт 3 минуты.</p>
+  <a class="toast-cta" id="toast-brief-link" href="https://www.maze.uz/brief" target="_blank" rel="noopener noreferrer">Заполнить бриф →</a>
+</div>
 
 <script>
 // ── Name store (localStorage) ──────────────────────────
@@ -1196,6 +1268,7 @@ function tf(name,e){
       setTimeout(function(){btn.classList.remove('pop');},400);
     }
   }
+  if(isFv){clearTimeout(_toastTimer);_toastTimer=setTimeout(function(){showToast(name);},1500);}
 }
 
 function ufb(){
@@ -1205,6 +1278,7 @@ function ufb(){
   // also update count pill in fav header
   var pill=document.getElementById('fav-cnt');
   if(pill){pill.textContent=favs.length;pill.style.display=favs.length>0?'inline-flex':'none';}
+  updateBriefLinks();
 }
 
 function rfl(){
@@ -1376,6 +1450,37 @@ function clearAllFavs(){
   favs=[];
   try{localStorage.setItem('ng_f',JSON.stringify(favs))}catch(x){}
   ufb();rfl();
+}
+
+// ── Brief URL helper ───────────────────────────────────
+function getBriefUrl(name){
+  var n=name||'';
+  if(!n&&favs.length)n=favs[0].name;
+  if(!n)return 'https://www.maze.uz/brief';
+  return 'https://www.maze.uz/brief?brand_name='+encodeURIComponent(n);
+}
+function updateBriefLinks(){
+  var url=getBriefUrl();
+  var els=document.querySelectorAll('[data-brief-link]');
+  for(var i=0;i<els.length;i++)els[i].href=url;
+}
+
+// ── Toast ──────────────────────────────────────────────
+var _toastTimer=null,_toastDismiss=null;
+function showToast(name){
+  var t=document.getElementById('brief-toast');if(!t)return;
+  var lnk=document.getElementById('toast-brief-link');
+  if(lnk)lnk.href=getBriefUrl(name);
+  clearTimeout(_toastDismiss);
+  t.classList.remove('in');
+  t.classList.add('show');
+  requestAnimationFrame(function(){requestAnimationFrame(function(){t.classList.add('in');});});
+  _toastDismiss=setTimeout(hideToast,7000);
+}
+function hideToast(){
+  var t=document.getElementById('brief-toast');if(!t)return;
+  t.classList.remove('in');
+  setTimeout(function(){t.classList.remove('show');},300);
 }
 </script>
 </body>
