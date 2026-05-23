@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-05-23T20:58:20.779Z",
-  "commit": "9c6c2b43641808dab82808f338beef9c0069f6c8",
+  "timestamp": "2026-05-23T21:14:44.541Z",
+  "commit": "721128114fff1df68f7e09fb97578281954f3621",
   "home": {
     "http_status": 200,
-    "length": 114179,
+    "length": 116132,
     "fetch_error": null,
     "checks": {
-      "yandex_meta": false,
+      "yandex_meta": true,
       "jsonld_webapp": true,
       "jsonld_org": true,
       "hreflang_uz": true,
@@ -16,37 +16,37 @@
     }
   },
   "uz": {
-    "http_status": 404,
-    "length": 79,
+    "http_status": 200,
+    "length": 116331,
     "fetch_error": null
   },
   "en": {
-    "http_status": 404,
-    "length": 79,
+    "http_status": 200,
+    "length": 115699,
     "fetch_error": null
   },
   "yandex_file": {
-    "http_status": 404,
-    "length": 79,
-    "contains_code": false
+    "http_status": 200,
+    "length": 162,
+    "contains_code": true
   },
   "robots_txt": {
-    "http_status": 404,
-    "length": 79,
-    "contains_sitemap": false
+    "http_status": 200,
+    "length": 84,
+    "contains_sitemap": true
   },
   "sitemap_xml": {
-    "http_status": 404,
-    "length": 79,
-    "contains_uz": false
+    "http_status": 200,
+    "length": 1509,
+    "contains_uz": true
   },
   "manifest_json": {
-    "http_status": 404,
-    "length": 79
+    "http_status": 200,
+    "length": 622
   },
   "og_image_ru": {
-    "http_status": 404,
-    "length": 79
+    "http_status": 200,
+    "length": 80207
   },
-  "all_pass": false
+  "all_pass": true
 }
